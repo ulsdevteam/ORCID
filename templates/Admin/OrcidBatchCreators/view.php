@@ -8,8 +8,11 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Orcid Batch Creator'), ['action' => 'edit', $orcidBatchCreator->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Orcid Batch Creator'), ['action' => 'delete', $orcidBatchCreator->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->id), 'class' => 'side-nav-item']) ?>
+            <?php if ($orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED): ?>
+                <?= $this->Form->postLink(__('Enable'), ['action' => 'enable', $orcidBatchCreator->id]) ?>
+            <?php else: ?>
+                <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->id]) ?>
+            <?php endif; ?>
             <?= $this->Html->link(__('List Orcid Batch Creators'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
             <?= $this->Html->link(__('New Orcid Batch Creator'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
         </div>
@@ -19,16 +22,16 @@
             <h3><?= h($orcidBatchCreator->name) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Name') ?></th>
+                    <th><?= __('Username') ?></th>
                     <td><?= h($orcidBatchCreator->name) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($orcidBatchCreator->id) ?></td>
+                    <th><?= __('Name') ?></th>
+                    <td></td>
                 </tr>
                 <tr>
-                    <th><?= __('Flags') ?></th>
-                    <td><?= $this->Number->format($orcidBatchCreator->flags) ?></td>
+                    <th><?= __('Disabled') ?></th>
+                    <td><?= $orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED ? __("Yes") : __("No") ?></td>
                 </tr>
             </table>
             <div class="related">

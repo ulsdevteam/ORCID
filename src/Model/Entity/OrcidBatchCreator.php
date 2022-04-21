@@ -16,6 +16,9 @@ use Cake\ORM\Entity;
  */
 class OrcidBatchCreator extends Entity
 {
+
+    const FLAG_DISABLED = 1;
+
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *

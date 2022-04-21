@@ -73,3 +73,11 @@ hr {
 #url-rewriting-warning {
     display: none;
 }
+
+.home.view {
+    float:right;
+}
+
+.actions {
+    float:left;
+}

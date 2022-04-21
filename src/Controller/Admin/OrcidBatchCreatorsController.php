@@ -13,6 +13,7 @@ use App\Controller\AppController;
  */
 class OrcidBatchCreatorsController extends AppController
 {
+    
     /**
      * Index method
      *
@@ -68,13 +69,32 @@ class OrcidBatchCreatorsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function enable($id = null)
     {
         $orcidBatchCreator = $this->OrcidBatchCreators->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
+            $orcidBatchCreator-> flags = $orcidBatchCreator->flags & ~ 1;
+            if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
+                $this->Flash->success(__('The orcid batch creator has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The orcid batch creator could not be saved. Please, try again.'));
+        }
+        $this->set(compact('orcidBatchCreator'));
+    }
+
+    public function disable($id = null)
+    {
+        $orcidBatchCreator = $this->OrcidBatchCreators->get($id, [
+            'contain' => [],
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
+            $orcidBatchCreator->flags = $orcidBatchCreator->flags | 1;
             if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
                 $this->Flash->success(__('The orcid batch creator has been saved.'));
 

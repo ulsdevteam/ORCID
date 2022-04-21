@@ -219,3 +219,15 @@ th {
         content: " \2190";
     }
 }
+.container {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.index.content {
+    flex-grow: 2;   
+}
+
+.actions {
+    flex-shrink: 2;
+}

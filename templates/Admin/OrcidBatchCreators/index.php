@@ -11,21 +11,23 @@
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('name') ?></th>
-                    <th><?= $this->Paginator->sort('flags') ?></th>
+                    <th><?= $this->Paginator->sort('Username') ?></th>
+                    <th><?= $this->Paginator->sort('Enabled') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($orcidBatchCreators as $orcidBatchCreator): ?>
                 <tr>
-                    <td><?= $this->Number->format($orcidBatchCreator->id) ?></td>
                     <td><?= h($orcidBatchCreator->name) ?></td>
-                    <td><?= $this->Number->format($orcidBatchCreator->flags) ?></td>
+                    <td><?= $orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED ? __("No") : __("Yes") ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchCreator->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchCreator->id]) ?>
+                        <?php if ($orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED): ?>
+                        <?= $this->Form->postLink(__('Enable'), ['action' => 'enable', $orcidBatchCreator->id]) ?>
+                        <?php else: ?>
+                        <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->id]) ?>
+                        <?php endif; ?>
                         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchCreator->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->id)]) ?>
                     </td>
                 </tr>
