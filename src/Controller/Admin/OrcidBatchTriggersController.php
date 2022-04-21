@@ -21,7 +21,7 @@ class OrcidBatchTriggersController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['OrcidStatusTypes', 'OrcidBatches', 'OrcidBatchGroups', 'RequireBatches'],
+            'contain' => ['OrcidStatusTypes', 'OrcidBatches', 'OrcidBatchGroups'],
         ];
         $orcidBatchTriggers = $this->paginate($this->OrcidBatchTriggers);
 
@@ -38,7 +38,7 @@ class OrcidBatchTriggersController extends AppController
     public function view($id = null)
     {
         $orcidBatchTrigger = $this->OrcidBatchTriggers->get($id, [
-            'contain' => ['OrcidStatusTypes', 'OrcidBatches', 'OrcidBatchGroups', 'RequireBatches'],
+            'contain' => ['OrcidStatusTypes', 'OrcidBatches', 'OrcidBatchGroups'],
         ]);
 
         $this->set(compact('orcidBatchTrigger'));
@@ -64,8 +64,7 @@ class OrcidBatchTriggersController extends AppController
         $orcidStatusTypes = $this->OrcidBatchTriggers->OrcidStatusTypes->find('list', ['limit' => 200])->all();
         $orcidBatches = $this->OrcidBatchTriggers->OrcidBatches->find('list', ['limit' => 200])->all();
         $orcidBatchGroups = $this->OrcidBatchTriggers->OrcidBatchGroups->find('list', ['limit' => 200])->all();
-        $requireBatches = $this->OrcidBatchTriggers->RequireBatches->find('list', ['limit' => 200])->all();
-        $this->set(compact('orcidBatchTrigger', 'orcidStatusTypes', 'orcidBatches', 'orcidBatchGroups', 'requireBatches'));
+        $this->set(compact('orcidBatchTrigger', 'orcidStatusTypes', 'orcidBatches', 'orcidBatchGroups'));
     }
 
     /**
@@ -92,8 +91,7 @@ class OrcidBatchTriggersController extends AppController
         $orcidStatusTypes = $this->OrcidBatchTriggers->OrcidStatusTypes->find('list', ['limit' => 200])->all();
         $orcidBatches = $this->OrcidBatchTriggers->OrcidBatches->find('list', ['limit' => 200])->all();
         $orcidBatchGroups = $this->OrcidBatchTriggers->OrcidBatchGroups->find('list', ['limit' => 200])->all();
-        $requireBatches = $this->OrcidBatchTriggers->RequireBatches->find('list', ['limit' => 200])->all();
-        $this->set(compact('orcidBatchTrigger', 'orcidStatusTypes', 'orcidBatches', 'orcidBatchGroups', 'requireBatches'));
+        $this->set(compact('orcidBatchTrigger', 'orcidStatusTypes', 'orcidBatches', 'orcidBatchGroups'));
     }
 
     /**
