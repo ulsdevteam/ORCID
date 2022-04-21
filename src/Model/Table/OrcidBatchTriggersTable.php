@@ -14,7 +14,6 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\OrcidStatusTypesTable&\Cake\ORM\Association\BelongsTo $OrcidStatusTypes
  * @property \App\Model\Table\OrcidBatchesTable&\Cake\ORM\Association\BelongsTo $OrcidBatches
  * @property \App\Model\Table\OrcidBatchGroupsTable&\Cake\ORM\Association\BelongsTo $OrcidBatchGroups
- * @property \App\Model\Table\RequireBatchesTable&\Cake\ORM\Association\BelongsTo $RequireBatches
  *
  * @method \App\Model\Entity\OrcidBatchTrigger newEmptyEntity()
  * @method \App\Model\Entity\OrcidBatchTrigger newEntity(array $data, array $options = [])
@@ -57,9 +56,6 @@ class OrcidBatchTriggersTable extends Table
         $this->belongsTo('OrcidBatchGroups', [
             'foreignKey' => 'orcid_batch_group_id',
         ]);
-        $this->belongsTo('RequireBatches', [
-            'foreignKey' => 'require_batch_id',
-        ]);
     }
 
     /**
@@ -97,9 +93,6 @@ class OrcidBatchTriggersTable extends Table
             ->allowEmptyDate('begin_date');
 
         $validator
-            ->allowEmptyString('require_batch_id');
-
-        $validator
             ->decimal('repeat')
             ->notEmptyString('repeat');
 
@@ -122,7 +115,6 @@ class OrcidBatchTriggersTable extends Table
         $rules->add($rules->existsIn('orcid_status_type_id', 'OrcidStatusTypes'), ['errorField' => 'orcid_status_type_id']);
         $rules->add($rules->existsIn('orcid_batch_id', 'OrcidBatches'), ['errorField' => 'orcid_batch_id']);
         $rules->add($rules->existsIn('orcid_batch_group_id', 'OrcidBatchGroups'), ['errorField' => 'orcid_batch_group_id']);
-        $rules->add($rules->existsIn('require_batch_id', 'RequireBatches'), ['errorField' => 'require_batch_id']);
 
         return $rules;
     }

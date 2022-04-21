@@ -42,7 +42,10 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         </div>
         <div class="top-nav-links">
             <a target="_blank" rel="noopener" href="https://book.cakephp.org/4/">Documentation</a>
-            <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
+            <a><?php echo $this->Html->link(__('List Batch Email Templates'), ['controller' => 'orcid_batches', 'action' => 'index', 'prefix' => 'Admin']); ?> </a>
+            <a><?php echo $this->Html->link(__('List Email Triggers'), ['controller' => 'orcid_batch_triggers', 'action' => 'index', 'prefix' => 'Admin']); ?> </a>
+            <a><?php echo $this->Html->link(__('List Groups'), ['controller' => 'orcid_batch_groups', 'action' => 'index', 'prefix' => 'Admin']); ?> </a>
+            <a><?php echo $this->Html->link(__('List Administrators'), ['controller' => 'orcid_batch_creators', 'action' => 'index', 'prefix' => 'Admin']); ?></a>
         </div>
     </nav>
     <main class="main">

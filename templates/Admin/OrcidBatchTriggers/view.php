@@ -43,10 +43,6 @@
                     <td><?= $this->Number->format($orcidBatchTrigger->trigger_delay) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Require Batch Id') ?></th>
-                    <td><?= $orcidBatchTrigger->require_batch_id === null ? '' : $this->Number->format($orcidBatchTrigger->require_batch_id) ?></td>
-                </tr>
-                <tr>
                     <th><?= __('Repeat') ?></th>
                     <td><?= $this->Number->format($orcidBatchTrigger->repeat) ?></td>
                 </tr>
