@@ -18,7 +18,7 @@
                     <th><?= $this->Paginator->sort('trigger_delay') ?></th>
                     <th><?= $this->Paginator->sort('orcid_batch_group_id') ?></th>
                     <th><?= $this->Paginator->sort('begin_date') ?></th>
-                    <th><?= $this->Paginator->sort('repeat') ?></th>
+                    <th><?= $this->Paginator->sort('repeat_value') ?></th>
                     <th><?= $this->Paginator->sort('maximum_repeat') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
@@ -33,7 +33,7 @@
                     <td><?= $this->Number->format($orcidBatchTrigger->trigger_delay) ?></td>
                     <td><?= $orcidBatchTrigger->has('orcid_batch_group') ? $this->Html->link($orcidBatchTrigger->orcid_batch_group->name, ['controller' => 'OrcidBatchGroups', 'action' => 'view', $orcidBatchTrigger->orcid_batch_group->id]) : '' ?></td>
                     <td><?= h($orcidBatchTrigger->begin_date) ?></td>
-                    <td><?= $this->Number->format($orcidBatchTrigger->repeat) ?></td>
+                    <td><?= $this->Number->format($orcidBatchTrigger->repeat_value) ?></td>
                     <td><?= $this->Number->format($orcidBatchTrigger->maximum_repeat) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchTrigger->id]) ?>

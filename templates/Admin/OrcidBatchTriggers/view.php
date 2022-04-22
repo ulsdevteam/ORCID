@@ -43,8 +43,8 @@
                     <td><?= $this->Number->format($orcidBatchTrigger->trigger_delay) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Repeat') ?></th>
-                    <td><?= $this->Number->format($orcidBatchTrigger->repeat) ?></td>
+                    <th><?= __('Repeat Value') ?></th>
+                    <td><?= $this->Number->format($orcidBatchTrigger->repeat_value) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Maximum Repeat') ?></th>

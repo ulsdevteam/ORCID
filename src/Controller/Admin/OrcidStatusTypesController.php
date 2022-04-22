@@ -20,6 +20,7 @@ class OrcidStatusTypesController extends AppController
      */
     public function index()
     {
+        $this->paginate = ['order' => ['OrcidStatusTypes.seq' => 'asc']];
         $orcidStatusTypes = $this->paginate($this->OrcidStatusTypes);
 
         $this->set(compact('orcidStatusTypes'));
@@ -35,7 +36,7 @@ class OrcidStatusTypesController extends AppController
     public function view($id = null)
     {
         $orcidStatusType = $this->OrcidStatusTypes->get($id, [
-            'contain' => ['OrcidBatchTriggers', 'OrcidStatuses'],
+            'contain' => ['OrcidBatchTriggers', 'OrcidStatuses', 'OrcidStatuses.OrcidUsers'],
         ]);
 
         $this->set(compact('orcidStatusType'));

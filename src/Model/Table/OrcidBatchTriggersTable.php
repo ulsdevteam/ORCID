@@ -93,8 +93,8 @@ class OrcidBatchTriggersTable extends Table
             ->allowEmptyDate('begin_date');
 
         $validator
-            ->decimal('repeat')
-            ->notEmptyString('repeat');
+            ->decimal('repeat_value')
+            ->notEmptyString('repeat_value');
 
         $validator
             ->decimal('maximum_repeat')

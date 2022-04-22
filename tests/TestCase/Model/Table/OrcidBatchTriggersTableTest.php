@@ -27,7 +27,7 @@ class OrcidBatchTriggersTableTest extends TestCase
         'app.OrcidBatchTriggers',
         'app.OrcidStatusTypes',
         'app.OrcidBatches',
-        'app.OrcidBatchGroups'
+        'app.OrcidBatchGroups',
     ];
 
     /**

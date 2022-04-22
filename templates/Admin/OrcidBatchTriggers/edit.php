@@ -31,7 +31,7 @@
                     echo $this->Form->control('trigger_delay');
                     echo $this->Form->control('orcid_batch_group_id', ['options' => $orcidBatchGroups, 'empty' => true]);
                     echo $this->Form->control('begin_date', ['empty' => true]);
-                    echo $this->Form->control('repeat');
+                    echo $this->Form->control('repeat_value');
                     echo $this->Form->control('maximum_repeat');
                 ?>
             </fieldset>

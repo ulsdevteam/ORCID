@@ -1,37 +1,40 @@
-<html>
-    <body>
-        <div class="home view">
-        <h2><?php echo __('Administration'); ?></h2>
-        <p>This site allows for maintenance and administration of the ORCID @ Pitt data and communications workflow.</p>
-        <h3>Users</h3>
-        <p>Manage Pitt users, ORCID identifiers, and Tokens (permissions granted by ORCID users).</p>
-        <h3>Checkpoints</h3>
-        <p>View checkpoints within the workflow, and the users at those checkpoints.</p>
-        <h3>Emails</h3>
-        <p>Manage batch email communication via automated messages to groups of users. <strong>Templates</strong> describe a standard email to be sent to a group of users. <strong>Triggers</strong> describe a set of conditions used to send an email template. <strong>Groups</strong> define Exchange or CDS criteria used to affect a trigger.</p>
-        <h3>Administrators</h3>
-        <p>Administer the staff allowed to create and change templates and triggers in this interface.</p>
-        </div>
-        <div class="actions">
-            <h3><?php echo __('ORCID Users'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-                <li><?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'find']); ?> </li>
-            </ul>
-            <h3><?php echo __('Workflow Checkpoints'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List Workflow Checkpoints'), ['controller' => 'OrcidStatusTypes', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-            </ul>
-            <h3><?php echo __('Email Batches'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List Batch Email Templates'), ['controller' => 'orcid_batches', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-                <li><?php echo $this->Html->link(__('List Email Triggers'), ['controller' => 'orcid_batch_triggers', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-                <li><?php echo $this->Html->link(__('List Groups'), ['controller' => 'orcid_batch_groups', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-            </ul>
-            <h3><?php echo __('Administrators'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List Administrators'), ['controller' => 'orcid_batch_creators', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-            </ul>
-        </div>
-    </body> 
+<!DOCTYPE html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<title>ORCID @ Pitt</title>
+<link href="/styles/default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="pitt-header" class="blue"><div id="pittlogo"><a id="p-link" title="University of Pittsburgh" href="http://pitt.edu/">University of Pittsburgh</a></div></div>
+<div id="wrapper">
+  <header>
+    <h1><img src="/images/header.jpg">ORCID @ Pitt</h1>
+  </header>
+  <section>
+        <h2>Create and connect your ORCID iD to the University of Pittsburgh</h2>
+          <p>Here you can create a new ORCID iD and connect it to Pitt.</p>
+          <p>If you already have an ORCID iD, please connect it to Pitt.</p>
+          <p><a href="connect/" class="actionbutton">Create and Connect Your ORCID iD</a></p>
+      </section>
+<footer>
+  <div class="foot-col">
+    <h2>What is ORCID?</h2>
+    <p class="descr">ORCID provides a unique, persistent identifier that can help make your scholarship easier to find and attribute.</p>
+    <p class="linker"><a class="actionbutton" href="https://orcid.org/">Learn more about ORCID</a></p>
+  </div>
+  <div class="foot-col">
+    <h2>ORCID@Pitt</h2>
+    <p class="descr">Find out more about the benefits of an ORCID iD and the university’s effort to encourage Pitt researchers to create an ORCID iD, use it with their scholarship, and connect their ORCID iD with Pitt.</p>
+    <p class="linker"><a class="actionbutton" href="http://www.library.pitt.edu/orcid">Discover ORCID@Pitt</a></p>
+  </div>
+  <div class="foot-col">
+    <h2>Get Help.</h2>
+    <p class="descr">If you need help with creating your ORCID iD or have further questions, please contact us.</p>
+    <p class="linker"><a class="actionbutton" href="mailto:orcidcomm@mail.pitt.edu">orcidcomm@mail.pitt.edu</a></p>
+  </div>
+</footer>
+</div><!-- /end wrapper -->
+</body>
 </html>

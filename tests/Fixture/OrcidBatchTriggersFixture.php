@@ -25,8 +25,8 @@ class OrcidBatchTriggersFixture extends TestFixture
                 'orcid_batch_id' => 1,
                 'trigger_delay' => 1.5,
                 'orcid_batch_group_id' => 1,
-                'begin_date' => '2022-04-21',
-                'repeat' => 1.5,
+                'begin_date' => '2022-04-22',
+                'repeat_value' => 1.5,
                 'maximum_repeat' => 1.5,
             ],
         ];

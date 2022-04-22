@@ -20,7 +20,7 @@
             <table>
                 <tr>
                     <th><?= __('Orcid User') ?></th>
-                    <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->id, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->id]) : '' ?></td>
+                    <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->username, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->id]) : '' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Orcid Status Type') ?></th>

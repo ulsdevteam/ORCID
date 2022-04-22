@@ -15,8 +15,7 @@ use Cake\ORM\Entity;
  * @property string $trigger_delay
  * @property int|null $orcid_batch_group_id
  * @property \Cake\I18n\FrozenDate|null $begin_date
- * @property int|null $require_batch_id
- * @property string $repeat
+ * @property string $repeat_value
  * @property string $maximum_repeat
  *
  * @property \App\Model\Entity\OrcidStatusType $orcid_status_type
@@ -41,12 +40,10 @@ class OrcidBatchTrigger extends Entity
         'trigger_delay' => true,
         'orcid_batch_group_id' => true,
         'begin_date' => true,
-        'require_batch_id' => true,
-        'repeat' => true,
+        'repeat_value' => true,
         'maximum_repeat' => true,
         'orcid_status_type' => true,
         'orcid_batch' => true,
         'orcid_batch_group' => true,
-        'require_batch' => true,
     ];
 }
