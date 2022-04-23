@@ -5,15 +5,6 @@
  */
 ?>
 <div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Orcid User'), ['action' => 'edit', $orcidUser->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Orcid User'), ['action' => 'delete', $orcidUser->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidUser->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Orcid Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Orcid User'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
     <div class="column-responsive column-80">
         <div class="orcidUsers view content">
             <h3><?= h('ORCID User') ?></h3>
@@ -23,12 +14,16 @@
                     <td><?= h($orcidUser->username) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Orcid') ?></th>
-                    <td><?= h($orcidUser->orcid) ?></td>
+                    <th><?= __('Name') ?></th>
+                    <td><?= __("Name needed") ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($orcidUser->id) ?></td>
+                    <th><?= __('ORCID') ?></th>
+                    <td><?= $this->Number->format($orcidUser->orcid) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Token') ?></th>
+                    <td><?= $this->Number->format($orcidUser->token) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Created') ?></th>
@@ -37,6 +32,18 @@
                 <tr>
                     <th><?= __('Modified') ?></th>
                     <td><?= h($orcidUser->modified) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Email') ?></th>
+                    <td><?= __("Email needed") ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Department') ?></th>
+                    <td><?= __("Department needed") ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Current Checkpoint') ?></th>
+                    <td><?= __("Current Checkpoint needed") ?></td>
                 </tr>
             </table>
             <div class="related">
@@ -88,4 +95,14 @@
             </div>
         </div>
     </div>
+</div>
+<div class="actions">
+    <h3 class="heading"><?= __('Actions') ?></h3>
+    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->id]) ?>
+    <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->id], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->username)]) ?>
+    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->id], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->username)]) ?>
+    <h3 class="heading"><?= __('Navigation') ?></h3>
+    <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
+    <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
+    <?= $this->Html->link(__('Home'), ['controller' => 'pages', 'action' => 'admin', 'prefix' => false]) ?>
 </div>

@@ -14,24 +14,16 @@
         </div>
         <div class="actions">
             <h3><?php echo __('ORCID Users'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-                <li><?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'find']); ?> </li>
-            </ul>
+                <?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
+                <?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'find']); ?> 
             <h3><?php echo __('Workflow Checkpoints'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List Workflow Checkpoints'), ['controller' => 'OrcidStatusTypes', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-            </ul>
+                <?php echo $this->Html->link(__('List Workflow Checkpoints'), ['controller' => 'OrcidStatusTypes', 'action' => 'index', 'prefix' => 'Admin']); ?> 
             <h3><?php echo __('Email Batches'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List Batch Email Templates'), ['controller' => 'orcid_batches', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-                <li><?php echo $this->Html->link(__('List Email Triggers'), ['controller' => 'orcid_batch_triggers', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-                <li><?php echo $this->Html->link(__('List Groups'), ['controller' => 'orcid_batch_groups', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-            </ul>
+                <?php echo $this->Html->link(__('List Batch Email Templates'), ['controller' => 'orcid_batches', 'action' => 'index', 'prefix' => 'Admin']); ?> 
+                <?php echo $this->Html->link(__('List Email Triggers'), ['controller' => 'orcid_batch_triggers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
+                <?php echo $this->Html->link(__('List Groups'), ['controller' => 'orcid_batch_groups', 'action' => 'index', 'prefix' => 'Admin']); ?> 
             <h3><?php echo __('Administrators'); ?></h3>
-            <ul>
-                <li><?php echo $this->Html->link(__('List Administrators'), ['controller' => 'orcid_batch_creators', 'action' => 'index', 'prefix' => 'Admin']); ?> </li>
-            </ul>
+                <?php echo $this->Html->link(__('List Administrators'), ['controller' => 'orcid_batch_creators', 'action' => 'index', 'prefix' => 'Admin']); ?> 
         </div>
     </body> 
 </html>
