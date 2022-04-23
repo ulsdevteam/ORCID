@@ -43,12 +43,13 @@
                 </tr>
                 <tr>
                     <th><?= __('Current Checkpoint') ?></th>
-                    <td><?= __("Current Checkpoint needed") ?></td>
+                    <td><?= h(end($orcidUser->orcid_statuses)->orcid_status_type->name) ?></td>
                 </tr>
             </table>
             <div class="related">
                 <h4><?= __('Workflow Checkpoint History') ?></h4>
                 <?php if (!empty($orcidUser->orcid_statuses)) : ?>
+                <?php reset($orcidUser->orcid_statuses)?>
                 <div class="table-responsive">
                     <table>
                         <tr>
