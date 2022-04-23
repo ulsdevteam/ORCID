@@ -31,6 +31,7 @@
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidUser->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->id]) ?>
                         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidUser->id)]) ?>
+                        <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->id], ['confirm' => __('Are you sure you want to optout # {0}?', $orcidUser->id)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use App\Model\Entity\OrcidStatusType;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * OrcidUsers Controller
@@ -35,7 +37,7 @@ class OrcidUsersController extends AppController
     public function view($id = null)
     {
         $orcidUser = $this->OrcidUsers->get($id, [
-            'contain' => ['OrcidBatchGroupCaches', 'OrcidEmails', 'OrcidStatuses'],
+            'contain' => ['OrcidEmails', 'OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes'],
         ]);
 
         $this->set(compact('orcidUser'));
@@ -103,5 +105,21 @@ class OrcidUsersController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function optout($id = null)
+    {
+        if (!$this->OrcidUsers->exists($id)){
+            throw new NotFoundException(__('Invalid ORCID User'));
+        }
+        if ($this->request->is(['post', 'put'])) {
+            $orcidUser = $this->OrcidUsers->get($id, ['contain' => ['OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes']]);
+            //echo(var_dump($orcidUser));
+            foreach ($orcidUser->orcid_statuses as $orcidStatuses) {
+                $orcidStatusType = $orcidStatuses->orcid_status_type;
+                echo(var_dump($orcidStatusType));
+                echo(var_dump($orcidStatuses));
+            }
+        }
     }
 }
