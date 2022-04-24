@@ -6,6 +6,9 @@ namespace App\Controller\Admin;
 use App\Controller\AppController;
 use App\Model\Entity\OrcidStatusType;
 use Cake\Http\Exception\NotFoundException;
+use Cake\I18n\FrozenTime;
+
+use function PHPUnit\Framework\equalTo;
 
 /**
  * OrcidUsers Controller
@@ -121,22 +124,35 @@ class OrcidUsersController extends AppController
         }
         if ($this->request->is(['post', 'put'])) {         
             $associated = ['OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes'];
-            $orcidStatuses = $this->fetchTable('OrcidStatuses');
-            $OrcidStatusTypes = $this->fetchTable('OrcidStatusTypes');
-            $orcidStatus = $orcidStatuses->find()->where(['orcid_user_id' => $id])->contain(['OrcidStatusTypes'])->first();
-            $orcidStatusType = $OrcidStatusTypes->find()->where(['seq' => 6])->first();
+            $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
+            $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
+            $orcidStatusType = $OrcidStatusTypesTable->find()->where(['seq' => 6])->first();
+            // $orcidStatuses = $OrcidStatusTable->find()->where(['orcid_user_id' => $id, 'orcid_status_type_id' => 6])->first();
             $orcidUsers = $this->getTableLocator()->get('OrcidUsers');
             $orcidUser = $orcidUsers->get($id, ['contain' => $associated]);
-            $data = ['oricd_status_type' => $orcidStatusType->toArray()];
-            var_dump($orcidStatus);
-            $orcidStatuses->patchEntity($orcidStatus, $data, ['associated' => 'OrcidStatusTypes']);
-            $orcidStatuses->save($orcidStatus, ['associated' => 'OrcidStatusTypes']);
-            var_dump($orcidStatus);
-            //$orcidStatuses->save($orcidStatus);
-            $orcidStatuses->patchEntity($orcidUser, $data, [
-                'associated' => ['OrcidStatusTypes'],
-            ]);
-            var_dump($orcidUser);
+            /**
+             * Possible improvement here, instead of comparing the two objects we can just check if 
+             * OrcidStatuses exists. Unsure which is more readable. The second option also allows
+             * The Orcid User, Orcid Status Type, and Orcid Status Type Table to be not needed.
+             */
+            if(end($orcidUser->orcid_statuses)->get('orcid_status_type') == $orcidStatusType){
+                var_dump("Opted out already");
+                $this->Flash->error(__('The ORCID User has already opted out.'));
+                return $this->redirect(['action' => 'index']);
+            }
+            $time = FrozenTime::now();
+            $data = [
+                'orcid_user_id' => $id,
+                'orcid_status_type_id' => $orcidStatusType->id,
+                'status_timestamp' => $time
+            ];
+            $OptOutStatus = $OrcidStatusTable->newEntity($data);
+            if ($OrcidStatusTable->save($OptOutStatus)) {
+				$this->Flash->success(__('The ORCID Opt-out has been saved.'));
+			} else {
+				$this->Flash->error(__('The ORCID Opt-out could not be saved. Please, try again.'));
+			}
+            return $this->redirect(['action' => 'index']);
         }
     }
 
@@ -150,6 +166,7 @@ class OrcidUsersController extends AppController
     {
         $orcidUsers = $this->fetchTable('OrcidUsers');
         $query = $orcidUsers->find('all');
+        var_dump($query);
     }
 
     private function _parameterize() {

@@ -40,7 +40,7 @@
                                 <td><?= h($orcidStatuses->orcid_user->username) ?></td>
                                 <td><?= h($orcidStatuses->status_timestamp) ?></td>
                                 <td class="actions">
-                                    <?= $this->Html->link(__('View'), ['controller' => 'OrcidStatuses', 'action' => 'view', $orcidStatuses->id]) ?>
+                                    <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatuses->orcid_user->id]) ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

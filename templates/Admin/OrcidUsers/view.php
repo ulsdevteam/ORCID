@@ -104,6 +104,6 @@
     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->id], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->username)]) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>
     <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
-    <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
+    <?= $this->Html->link(__('Find Orcid User'), ['action' => 'search']) ?>
     <?= $this->Html->link(__('Home'), ['controller' => 'pages', 'action' => 'admin', 'prefix' => false]) ?>
 </div>
