@@ -107,19 +107,73 @@ class OrcidUsersController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
+    /**
+     * optout method
+     *
+     * @param string|null $id Orcid User id.
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @throws \Cake\Http\Exception\NotFoundException
+     */
     public function optout($id = null)
     {
         if (!$this->OrcidUsers->exists($id)){
             throw new NotFoundException(__('Invalid ORCID User'));
         }
-        if ($this->request->is(['post', 'put'])) {
-            $orcidUser = $this->OrcidUsers->get($id, ['contain' => ['OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes']]);
-            //echo(var_dump($orcidUser));
-            foreach ($orcidUser->orcid_statuses as $orcidStatuses) {
-                $orcidStatusType = $orcidStatuses->orcid_status_type;
-                echo(var_dump($orcidStatusType));
-                echo(var_dump($orcidStatuses));
-            }
+        if ($this->request->is(['post', 'put'])) {         
+            $associated = ['OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes'];
+            $orcidStatuses = $this->fetchTable('OrcidStatuses');
+            $OrcidStatusTypes = $this->fetchTable('OrcidStatusTypes');
+            $orcidStatus = $orcidStatuses->find()->where(['orcid_user_id' => $id])->contain(['OrcidStatusTypes'])->first();
+            $orcidStatusType = $OrcidStatusTypes->find()->where(['seq' => 6])->first();
+            $orcidUsers = $this->getTableLocator()->get('OrcidUsers');
+            $orcidUser = $orcidUsers->get($id, ['contain' => $associated]);
+            $data = ['oricd_status_type' => $orcidStatusType->toArray()];
+            var_dump($orcidStatus);
+            $orcidStatuses->patchEntity($orcidStatus, $data, ['associated' => 'OrcidStatusTypes']);
+            $orcidStatuses->save($orcidStatus, ['associated' => 'OrcidStatusTypes']);
+            var_dump($orcidStatus);
+            //$orcidStatuses->save($orcidStatus);
+            $orcidStatuses->patchEntity($orcidUser, $data, [
+                'associated' => ['OrcidStatusTypes'],
+            ]);
+            var_dump($orcidUser);
         }
     }
+
+    /**
+     * find method
+     *
+     * @param string|null $id Orcid User id.
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     */
+    public function search()
+    {
+        $orcidUsers = $this->fetchTable('OrcidUsers');
+        $query = $orcidUsers->find('all');
+    }
+
+    private function _parameterize() {
+		$options = array();
+		// query by string matching
+		if ($this->request->query('q')) {
+			$options = array('OR' => array(
+				'username'.($this->request->query('s') == 3 ? '' : ' LIKE') => strtoupper($this->request->query('q')) ? ($this->request->query('s') == 2 || $this->request->query('s') == 0 ? '%' : '').strtoupper($this->request->query('q')).($this->request->query('s') == 1 || $this->request->query('s') == 0 ? '%' : '') : '',
+				'orcid'.($this->request->query('s') == 3 ? '' : ' LIKE') => $this->request->query('q') ? ($this->request->query('s') == 2 || $this->request->query('s') == 0 ? '%' : '').$this->request->query('q').($this->request->query('s') == 1 || $this->request->query('s') == 0 ? '%' : '') : ''
+				)
+			);
+		}
+		// query by group
+		if (!$this->OrcidBathGroup) {
+			$this->OrcidBatchGroup = ClassRegistry::init('OrcidBatchGroup');
+		}
+		if ($this->request->query('g')) {
+			$members = $this->OrcidBatchGroup->getAssociatedUsers( intval($this->request->query('g')), 'OrcidUser.'.$this->OrcidUser->primaryKey );
+			$options[] = $members;
+		}
+		// if no query specified, return nothing
+		if (!$options) {
+			$options = array('id' => -1);
+		}
+		return $options;
+	}
 }

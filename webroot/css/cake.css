@@ -275,3 +275,15 @@ h3 {
 .content .actions {
     flex-direction: row;
 }
+
+.actions.individual a {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin: 0% 2%;
+    padding: 0% 25%;
+}
+
+td, th {
+    white-space: nowrap;
+}
