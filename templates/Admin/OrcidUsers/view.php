@@ -105,5 +105,5 @@
     <h3 class="heading"><?= __('Navigation') ?></h3>
     <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
     <?= $this->Html->link(__('Find Orcid User'), ['action' => 'search']) ?>
-    <?= $this->Html->link(__('Home'), ['controller' => 'pages', 'action' => 'admin', 'prefix' => false]) ?>
+    <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
 </div>

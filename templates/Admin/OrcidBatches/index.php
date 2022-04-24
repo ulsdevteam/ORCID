@@ -55,5 +55,5 @@
     <h3 class="heading"><?= __('Actions') ?></h3>
     <?= $this->Html->link(__('New Orcid Batch'), ['action' => 'add']) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>
-    <?= $this->Html->link(__('Home'), ['controller' => 'pages', 'action' => 'admin', 'prefix' => false]) ?>
+    <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
 </div>

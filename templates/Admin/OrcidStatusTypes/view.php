@@ -9,7 +9,7 @@
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
             <?= $this->Html->link(__('List Orcid Status Types'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('Home'), ['controller' => 'pages', 'action' => 'admin', 'prefix' => false]) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
