@@ -22,7 +22,7 @@ class OrcidBatchGroupCachesFixture extends TestFixture
                 'id' => 1,
                 'orcid_batch_group_id' => 1,
                 'orcid_user_id' => 1,
-                'deprecated' => '2022-04-20',
+                'deprecated' => '2022-05-17',
             ],
         ];
         parent::init();

@@ -24,7 +24,7 @@ class OrcidBatchGroupsFixture extends TestFixture
                 'group_definition' => 'Lorem ipsum dolor sit amet',
                 'employee_definition' => 'Lorem ipsum dolor sit amet',
                 'student_definition' => 'Lorem ipsum dolor sit amet',
-                'cache_creation_date' => '2022-04-20',
+                'cache_creation_date' => '2022-05-17',
             ],
         ];
         parent::init();

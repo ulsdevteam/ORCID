@@ -49,6 +49,12 @@ class OrcidUsersTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->hasMany('AllOrcidStatuses', [
+            'foreignKey' => 'orcid_user_id',
+        ]);
+        $this->hasMany('CurrentOrcidStatus', [
+            'foreignKey' => 'orcid_user_id',
+        ]);
         $this->hasMany('OrcidBatchGroupCaches', [
             'foreignKey' => 'orcid_user_id',
         ]);

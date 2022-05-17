@@ -46,6 +46,12 @@ class OrcidStatusTypesTable extends Table
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
+        $this->hasMany('AllOrcidStatuses', [
+            'foreignKey' => 'orcid_status_type_id',
+        ]);
+        $this->hasMany('CurrentOrcidStatus', [
+            'foreignKey' => 'orcid_status_type_id',
+        ]);
         $this->hasMany('OrcidBatchTriggers', [
             'foreignKey' => 'orcid_status_type_id',
         ]);
