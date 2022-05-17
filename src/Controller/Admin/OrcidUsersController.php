@@ -25,7 +25,7 @@ class OrcidUsersController extends AppController
     private const ENDS_WITH = '2';
     private const EXACTLY = '3';
     private const NULL_STRING_ID = '-1';
-    private const NO_GROUP_MATCH_ID = -1;
+    private const NULL_ID = -1;
 
     /**
      * Index method
@@ -182,7 +182,7 @@ class OrcidUsersController extends AppController
             $groups[$group->id] = $group->name;
         }
 
-        $groups[$this::NO_GROUP_MATCH_ID] = 'No Matching Group';
+        $groups[$this::NULL_ID] = 'No Matching Group';
 
         $this->set('findTypes', $findTypes);
         $this->set('batchGroups', $groups);
@@ -191,11 +191,18 @@ class OrcidUsersController extends AppController
     }
 
     private function _parameterize() {
+        // User Entered Data
 		$options = $this->request->getData();
+
+        // split to easily reuse it
         $userQuery = $options['q'];
         $findType = $options['s'];
         $groupQuery = $options['g'];
+
+        // container to hold condtions
         $conditions = [];
+
+        // Starting point for query
         $orcidUsersTable = $this->fetchTable('OrcidUsers');
         $orcidUsersTable = $orcidUsersTable->find('all');
 
@@ -230,11 +237,13 @@ class OrcidUsersController extends AppController
 
 		// if no query specified, return nothing
         if (empty($userQuery) && empty($groupQuery)) {
-            $conditions = ['orcid' => $this::NULL_STRING_ID];
+            // no oricid id should be -1
+            $conditions = ['orcid' => $this::NULL_ID];
         }
         
-        $orcidUsers = $orcidUsersTable->where($conditions);
+        // this is the final query after all conditions
+        $orcidUsersQuery = $orcidUsersTable->where($conditions);
 
-        return $orcidUsers;
+        return $orcidUsersQuery;
 	}
 }
