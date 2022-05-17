@@ -232,7 +232,6 @@ class OrcidUsersController extends AppController
                     return $q->where(['OrcidBatchGroupCaches.orcid_batch_group_id' => $groupQuery]);
                 });
             }
-                var_dump($orcidUsersTable);
         }
 
 		// if no query specified, return nothing
