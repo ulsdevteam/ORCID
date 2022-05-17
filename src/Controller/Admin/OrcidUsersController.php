@@ -24,6 +24,8 @@ class OrcidUsersController extends AppController
     private const STARTS_WITH = '1';
     private const ENDS_WITH = '2';
     private const EXACTLY = '3';
+    private const NULL_STRING_ID = '-1';
+    private const NO_GROUP_MATCH_ID = -1;
 
     /**
      * Index method
@@ -171,7 +173,6 @@ class OrcidUsersController extends AppController
 
         $BatchGroups = $this->fetchTable('OrcidBatchGroups');
         $batchGroups = $BatchGroups->find('all')->all();
-        var_dump($this->request->getData());
         $orcidUsers = $this->paginate($this->_parameterize($batchGroups));
 
         $findTypes = ['Containing', 'Starting With', 'Ending With', 'Matching Exactly'];
@@ -181,13 +182,15 @@ class OrcidUsersController extends AppController
             $groups[$group->id] = $group->name;
         }
 
+        $groups[$this::NO_GROUP_MATCH_ID] = 'No Matching Group';
+
         $this->set('findTypes', $findTypes);
         $this->set('batchGroups', $groups);
         $this->set(compact('orcidUsers'));
 
     }
 
-    private function _parameterize($batchGroups = null) {
+    private function _parameterize() {
 		$options = $this->request->getData();
         $userQuery = $options['q'];
         $findType = $options['s'];
@@ -208,30 +211,30 @@ class OrcidUsersController extends AppController
                 $conditions = ['OR' => [['username LIKE' => '%'.$userQuery.'%'], ['orcid LIKE' => '%'.$userQuery.'%']]];
             }
         }
-        var_dump($conditions);
+
         // query by group
-        var_dump($batchGroups);
         if (!empty($groupQuery)) {
-            $orcidUsersTable = $orcidUsersTable->matching('Batch');
+            if ($groupQuery === $this::NULL_STRING_ID) {
+                // notMatching creates a left join
+                $orcidUsersTable = $orcidUsersTable->notMatching('OrcidBatchGroupCaches', function($q) use($groupQuery) {
+                    return $q->where(['OrcidBatchGroupCaches.orcid_batch_group_id IS NOT NULL']);
+                });
+            } else {
+                // matching creates an inner join
+                $orcidUsersTable = $orcidUsersTable->matching('OrcidBatchGroupCaches', function($q) use($groupQuery) {
+                    return $q->where(['OrcidBatchGroupCaches.orcid_batch_group_id' => $groupQuery]);
+                });
+            }
+                var_dump($orcidUsersTable);
         }
 
 		// if no query specified, return nothing
         if (empty($userQuery) && empty($groupQuery)) {
-            $condtions = ['orcid' => '-1'];
+            $conditions = ['orcid' => $this::NULL_STRING_ID];
         }
         
         $orcidUsers = $orcidUsersTable->where($conditions);
-        var_dump($orcidUsers->contain('Orcid')->all());
+
         return $orcidUsers;
-		// query by group
-		if ($this->request->query('g')) {
-			$members = $this->OrcidBatchGroup->getAssociatedUsers( intval($this->request->query('g')), 'OrcidUser.'.$this->OrcidUser->primaryKey );
-			$options[] = $members;
-		}
-		// if no query specified, return nothing
-		if (!$options) {
-			$options = array('id' => -1);
-		}
-		return $options;
 	}
 }
