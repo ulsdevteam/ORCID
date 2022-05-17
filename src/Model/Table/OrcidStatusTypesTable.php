@@ -30,6 +30,8 @@ use Cake\Validation\Validator;
  */
 class OrcidStatusTypesTable extends Table
 {
+
+    public const OPTOUT_SEQUENCE = 6;
     /**
      * Initialize method
      *

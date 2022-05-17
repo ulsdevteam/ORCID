@@ -2,11 +2,30 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidUser[]|\Cake\Collection\CollectionInterface $orcidUsers
+ * @var \App\Model\Entity\OrcidUser $orcidUser
  */
 ?>
-<div class="orcidUsers index content">
-    <h3><?= __('Orcid Users') ?></h3>
-    <div class="table-responsive">
+<div class="orcidUsers search content">
+	<h2><?= __('Find ORCID Users') ?></h2>
+	<p>Find a user by username or ORCID ID.</p>
+	<div class="table-responsive">
+		<div class="column-responsive column-80">
+			<div class="orcidUsers form content">
+				<?= $this->Form->create(null,['id' => 'search']) ?>
+				<fieldset>
+					<?php
+						echo $this->Form->select('s', $findTypes, ['div'=> false, 'id' => 's']);
+						echo $this->Form->control('q', ['div'=> false, 'label' => false]);
+					?>
+					<label for='g'>within Group</label>
+					<?php
+						echo $this->Form->select('g', $batchGroups, ['id' => 's']);
+					?>
+				</fieldset>
+				<?= $this->Form->button(__('Submit')) ?>
+				<?= $this->Form->end() ?>
+			</div>
+		</div>
         <table>
             <thead>
                 <tr>
@@ -51,6 +70,6 @@
     <h3 class="heading"><?= __('Actions') ?></h3>
     <?= $this->Html->link(__('New Orcid User'), ['action' => 'add']) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>
-    <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
+    <?= $this->Html->link(__('List Orcid Users'), ['action' => 'index']) ?>
     <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
 </div>

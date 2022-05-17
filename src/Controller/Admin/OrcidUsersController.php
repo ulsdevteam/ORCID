@@ -7,6 +7,7 @@ use App\Controller\AppController;
 use App\Model\Entity\OrcidStatusType;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenTime;
+use Cake\Collection\Collection;
 
 use function PHPUnit\Framework\equalTo;
 
@@ -18,6 +19,12 @@ use function PHPUnit\Framework\equalTo;
  */
 class OrcidUsersController extends AppController
 {
+
+    private const CONTAINS = '0';
+    private const STARTS_WITH = '1';
+    private const ENDS_WITH = '2';
+    private const EXACTLY = '3';
+
     /**
      * Index method
      *
@@ -122,20 +129,17 @@ class OrcidUsersController extends AppController
         if (!$this->OrcidUsers->exists($id)){
             throw new NotFoundException(__('Invalid ORCID User'));
         }
-        if ($this->request->is(['post', 'put'])) {         
-            $associated = ['OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes'];
+        if ($this->request->is(['post', 'put'])) {
             $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
             $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
-            $orcidStatusType = $OrcidStatusTypesTable->find()->where(['seq' => 6])->first();
-            // $orcidStatuses = $OrcidStatusTable->find()->where(['orcid_user_id' => $id, 'orcid_status_type_id' => 6])->first();
-            $orcidUsers = $this->getTableLocator()->get('OrcidUsers');
-            $orcidUser = $orcidUsers->get($id, ['contain' => $associated]);
+            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['seq' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->id;
+            $orcidStatuses = $OrcidStatusTable->find()->where(['orcid_user_id' => $id, 'orcid_status_type_id' =>  $orcidStatusTypeID])->first();
             /**
              * Possible improvement here, instead of comparing the two objects we can just check if 
              * OrcidStatuses exists. Unsure which is more readable. The second option also allows
              * The Orcid User, Orcid Status Type, and Orcid Status Type Table to be not needed.
              */
-            if(end($orcidUser->orcid_statuses)->get('orcid_status_type') == $orcidStatusType){
+            if(isset($orcidStatuses)){
                 var_dump("Opted out already");
                 $this->Flash->error(__('The ORCID User has already opted out.'));
                 return $this->redirect(['action' => 'index']);
@@ -143,7 +147,7 @@ class OrcidUsersController extends AppController
             $time = FrozenTime::now();
             $data = [
                 'orcid_user_id' => $id,
-                'orcid_status_type_id' => $orcidStatusType->id,
+                'orcid_status_type_id' => $orcidStatusTypeID,
                 'status_timestamp' => $time
             ];
             $OptOutStatus = $OrcidStatusTable->newEntity($data);
@@ -159,30 +163,67 @@ class OrcidUsersController extends AppController
     /**
      * find method
      *
-     * @param string|null $id Orcid User id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      */
-    public function search()
+    public function find()
     {
-        $orcidUsers = $this->fetchTable('OrcidUsers');
-        $query = $orcidUsers->find('all');
-        var_dump($query);
+        $orcidUsersTable = $this->fetchTable('OrcidUsers');
+
+        $BatchGroups = $this->fetchTable('OrcidBatchGroups');
+        $batchGroups = $BatchGroups->find('all')->all();
+        var_dump($this->request->getData());
+        $orcidUsers = $this->paginate($this->_parameterize($batchGroups));
+
+        $findTypes = ['Containing', 'Starting With', 'Ending With', 'Matching Exactly'];
+        $groups = [0 => ''];
+
+        foreach ($batchGroups as $group) {
+            $groups[$group->id] = $group->name;
+        }
+
+        $this->set('findTypes', $findTypes);
+        $this->set('batchGroups', $groups);
+        $this->set(compact('orcidUsers'));
+
     }
 
-    private function _parameterize() {
-		$options = array();
-		// query by string matching
-		if ($this->request->query('q')) {
-			$options = array('OR' => array(
-				'username'.($this->request->query('s') == 3 ? '' : ' LIKE') => strtoupper($this->request->query('q')) ? ($this->request->query('s') == 2 || $this->request->query('s') == 0 ? '%' : '').strtoupper($this->request->query('q')).($this->request->query('s') == 1 || $this->request->query('s') == 0 ? '%' : '') : '',
-				'orcid'.($this->request->query('s') == 3 ? '' : ' LIKE') => $this->request->query('q') ? ($this->request->query('s') == 2 || $this->request->query('s') == 0 ? '%' : '').$this->request->query('q').($this->request->query('s') == 1 || $this->request->query('s') == 0 ? '%' : '') : ''
-				)
-			);
-		}
+    private function _parameterize($batchGroups = null) {
+		$options = $this->request->getData();
+        $userQuery = $options['q'];
+        $findType = $options['s'];
+        $groupQuery = $options['g'];
+        $conditions = [];
+        $orcidUsersTable = $this->fetchTable('OrcidUsers');
+        $orcidUsersTable = $orcidUsersTable->find('all');
+
+        // query by string matching
+        if (!empty($userQuery)){
+            if ($findType === $this::EXACTLY) {
+                $conditions = ['OR' => [['username' => $userQuery], ['orcid' => $userQuery]]];
+            } else if ($findType === $this::ENDS_WITH) {
+                $conditions = ['OR' => [['username LIKE' => '%'.$userQuery], ['orcid LIKE' => '%'.$userQuery]]];
+            } else if ($findType === $this::STARTS_WITH) {
+                $conditions = ['OR' => [['username LIKE' => '%'.$userQuery], ['orcid LIKE' => '%'.$userQuery]]];
+            } else if ($findType === $this::CONTAINS) {
+                $conditions = ['OR' => [['username LIKE' => '%'.$userQuery.'%'], ['orcid LIKE' => '%'.$userQuery.'%']]];
+            }
+        }
+        var_dump($conditions);
+        // query by group
+        var_dump($batchGroups);
+        if (!empty($groupQuery)) {
+            $orcidUsersTable = $orcidUsersTable->matching('Batch');
+        }
+
+		// if no query specified, return nothing
+        if (empty($userQuery) && empty($groupQuery)) {
+            $condtions = ['orcid' => '-1'];
+        }
+        
+        $orcidUsers = $orcidUsersTable->where($conditions);
+        var_dump($orcidUsers->contain('Orcid')->all());
+        return $orcidUsers;
 		// query by group
-		if (!$this->OrcidBathGroup) {
-			$this->OrcidBatchGroup = ClassRegistry::init('OrcidBatchGroup');
-		}
 		if ($this->request->query('g')) {
 			$members = $this->OrcidBatchGroup->getAssociatedUsers( intval($this->request->query('g')), 'OrcidUser.'.$this->OrcidUser->primaryKey );
 			$options[] = $members;

@@ -15,7 +15,7 @@
         <div class="actions">
             <h3><?php echo __('ORCID Users'); ?></h3>
                 <?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
-                <?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'search', 'prefix' => 'Admin']); ?> 
+                <?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'find', 'prefix' => 'Admin']); ?> 
             <h3><?php echo __('Workflow Checkpoints'); ?></h3>
                 <?php echo $this->Html->link(__('List Workflow Checkpoints'), ['controller' => 'OrcidStatusTypes', 'action' => 'index', 'prefix' => 'Admin']); ?> 
             <h3><?php echo __('Email Batches'); ?></h3>

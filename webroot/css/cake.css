@@ -249,7 +249,7 @@ th {
     flex-direction: row-reverse;
 }
 
-.index.content {
+.content {
     flex-grow: 2;   
 }
 
