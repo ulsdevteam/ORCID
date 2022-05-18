@@ -49,7 +49,7 @@ class OrcidUsersController extends AppController
     public function view($id = null)
     {
         $orcidUser = $this->OrcidUsers->get($id, [
-            'contain' => ['OrcidEmails', 'OrcidStatuses', 'OrcidStatuses.OrcidStatusTypes'],
+            'contain' => ['OrcidEmails', 'CurrentOrcidStatus.OrcidStatusTypes', 'AllOrcidStatuses.OrcidStatusTypes'],
         ]);
 
         $this->set(compact('orcidUser'));
@@ -136,11 +136,7 @@ class OrcidUsersController extends AppController
             $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
             $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['seq' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->id;
             $orcidStatuses = $OrcidStatusTable->find()->where(['orcid_user_id' => $id, 'orcid_status_type_id' =>  $orcidStatusTypeID])->first();
-            /**
-             * Possible improvement here, instead of comparing the two objects we can just check if 
-             * OrcidStatuses exists. Unsure which is more readable. The second option also allows
-             * The Orcid User, Orcid Status Type, and Orcid Status Type Table to be not needed.
-             */
+
             if(isset($orcidStatuses)){
                 var_dump("Opted out already");
                 $this->Flash->error(__('The ORCID User has already opted out.'));

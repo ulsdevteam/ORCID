@@ -19,11 +19,19 @@
                 </tr>
                 <tr>
                     <th><?= __('ORCID') ?></th>
-                    <td><?= $this->Number->format($orcidUser->orcid) ?></td>
+                    <?php if (!empty($orcidUser->orcid)): ?>
+                        <td><?= $this->Number->format($orcidUser->orcid) ?></td>
+                    <?php else: ?>
+                        <td></td>
+                    <?php endif; ?>
                 </tr>
                 <tr>
                     <th><?= __('Token') ?></th>
-                    <td><?= $this->Number->format($orcidUser->token) ?></td>
+                    <?php if (!empty($orcidUser->token)): ?>
+                        <td><?= $this->Number->format($orcidUser->token) ?></td>
+                    <?php else: ?>
+                        <td></td>
+                    <?php endif; ?>
                 </tr>
                 <tr>
                     <th><?= __('Created') ?></th>
@@ -43,24 +51,23 @@
                 </tr>
                 <tr>
                     <th><?= __('Current Checkpoint') ?></th>
-                    <td><?= h(end($orcidUser->orcid_statuses)->orcid_status_type->name) ?></td>
+                    <td><?= h(isset($orcidUser->current_orcid_status[0]) ? $orcidUser->current_orcid_status[0]->orcid_status_type->name : '') ?></td>
                 </tr>
             </table>
             <div class="related">
                 <h4><?= __('Workflow Checkpoint History') ?></h4>
-                <?php if (!empty($orcidUser->orcid_statuses)) : ?>
-                <?php reset($orcidUser->orcid_statuses)?>
+                <?php if (!empty($orcidUser->all_orcid_statuses)) : ?>
                 <div class="table-responsive">
                     <table>
                         <tr>
-                            <th><?= __('Workflow Checkpoint') ?></th>
-                            <th><?= __('Timestamp') ?></th>
+                            <th><?= __('Orcid User') ?></th>
+                            <th><?= __('Status Timestamp') ?></th>
                         </tr>
-                        <?php foreach ($orcidUser->orcid_statuses as $orcidStatuses) : ?>
-                        <tr>
-                            <td><?= h($orcidStatuses->orcid_status_type->name) ?></td>
-                            <td><?= h($orcidStatuses->status_timestamp) ?></td>
-                        </tr>
+                        <?php foreach ($orcidUser->all_orcid_statuses as $orcidStatus) : ?>
+                            <tr>
+                                <td><?= h($orcidStatus->orcid_status_type->name) ?></td>
+                                <td><?= h($orcidStatus->status_timestamp) ?></td>
+                            </tr>
                         <?php endforeach; ?>
                     </table>
                 </div>

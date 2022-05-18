@@ -27,7 +27,7 @@
             </table>
             <div class="related">
                 <h4><?= __('Users at this Checkpoint') ?></h4>
-                <?php if (!empty($orcidStatusType->orcid_statuses)) : ?>
+                <?php if (!empty($orcidStatusType->current_orcid_status)) : ?>
                 <div class="table-responsive">
                     <table>
                         <tr>
@@ -35,12 +35,12 @@
                             <th><?= __('Status Timestamp') ?></th>
                             <th class="actions"><?= __('Actions') ?></th>
                         </tr>
-                        <?php foreach ($orcidStatusType->orcid_statuses as $orcidStatuses) : ?>
+                        <?php foreach ($orcidStatusType->current_orcid_status as $currentStatus) : ?>
                             <tr>
-                                <td><?= h($orcidStatuses->orcid_user->username) ?></td>
-                                <td><?= h($orcidStatuses->status_timestamp) ?></td>
+                                <td><?= h($currentStatus->orcid_user->username) ?></td>
+                                <td><?= h($currentStatus->status_timestamp) ?></td>
                                 <td class="actions">
-                                    <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatuses->orcid_user->id]) ?>
+                                    <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $currentStatus->orcid_user->id]) ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

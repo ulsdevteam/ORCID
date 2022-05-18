@@ -36,7 +36,7 @@ class OrcidStatusTypesController extends AppController
     public function view($id = null)
     {
         $orcidStatusType = $this->OrcidStatusTypes->get($id, [
-            'contain' => ['OrcidBatchTriggers', 'OrcidStatuses', 'OrcidStatuses.OrcidUsers'],
+            'contain' => ['OrcidBatchTriggers', 'CurrentOrcidStatus', 'CurrentOrcidStatus.OrcidUsers'],
         ]);
 
         $this->set(compact('orcidStatusType'));

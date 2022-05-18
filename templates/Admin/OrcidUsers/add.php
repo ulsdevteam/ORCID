@@ -18,8 +18,6 @@
                 <legend><?= __('Add Orcid User') ?></legend>
                 <?php
                     echo $this->Form->control('username');
-                    echo $this->Form->control('orcid');
-                    echo $this->Form->control('token');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>
