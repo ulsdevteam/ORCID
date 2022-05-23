@@ -31,6 +31,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake']) ?>
 
+    <?= $this->Html->script('jquery-3.6.0.min') ?>
+    <!-- <?= $this->Html->script('tiny_mce4/tinymce.min') ?> -->
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>

@@ -2,9 +2,10 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatch $orcidBatch
- * @var \Cake\Collection\CollectionInterface|string[] $orcidBatchCreators
+ * @var \Cake\Collecytion\CollectionInterface|string[] $orcidBatchCreators
  */
 ?>
+<?php $this->TinyMCE->editor(['theme' => 'modern', 'selector' => 'textarea', 'plugins' => 'code']); ?>
 <div class="row">
     <aside class="column">
         <div class="side-nav">
@@ -19,12 +20,12 @@
                 <legend><?= __('Add Orcid Batch') ?></legend>
                 <?php
                     echo $this->Form->control('name');
+                    echo $this->Form->control('from_name');
+                    echo $this->Form->control('from_addr', ['label' => 'From Address']);
                     echo $this->Form->control('subject');
                     echo $this->Form->control('body', ['type' => 'textarea']);
-                    echo $this->Form->control('from_name');
-                    echo $this->Form->control('from_addr');
                     echo $this->Form->control('reply_to');
-                    echo $this->Form->control('orcid_batch_creator_id', ['options' => $orcidBatchCreators]);
+                    echo $this->Form->control('orcid_batch_creator_id', ['label' => 'Template Owner', 'options' => $orcidBatchCreators]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

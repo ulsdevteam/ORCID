@@ -4,6 +4,8 @@
  * @var \App\Model\Entity\OrcidBatch $orcidBatch
  */
 ?>
+<?= $this->TinyMCE->editor(['theme' => 'modern', 'selector' => 'textarea']) ?>
+<?= $this->Html->script('jquery-x.x.x.min'); ?>
 <div class="row">
     <aside class="column">
         <div class="side-nav">
