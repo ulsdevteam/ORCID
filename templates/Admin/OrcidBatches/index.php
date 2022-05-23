@@ -10,24 +10,22 @@
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('name') ?></th>
-                    <th><?= $this->Paginator->sort('subject') ?></th>
                     <th><?= $this->Paginator->sort('from_name') ?></th>
-                    <th><?= $this->Paginator->sort('from_addr') ?></th>
+                    <th><?= $this->Paginator->sort('from_addr', 'From Address') ?></th>
+                    <th><?= $this->Paginator->sort('subject') ?></th>
                     <th><?= $this->Paginator->sort('reply_to') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_batch_creator_id') ?></th>
+                    <th><?= $this->Paginator->sort('orcid_batch_creator_id', 'Creator') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($orcidBatches as $orcidBatch): ?>
                 <tr>
-                    <td><?= $this->Number->format($orcidBatch->id) ?></td>
                     <td><?= h($orcidBatch->name) ?></td>
-                    <td><?= h($orcidBatch->subject) ?></td>
                     <td><?= h($orcidBatch->from_name) ?></td>
                     <td><?= h($orcidBatch->from_addr) ?></td>
+                    <td><?= h($orcidBatch->subject) ?></td>
                     <td><?= h($orcidBatch->reply_to) ?></td>
                     <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->name, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->id]) : '' ?></td>
                     <td class="actions individual">

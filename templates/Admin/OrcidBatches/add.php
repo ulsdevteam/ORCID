@@ -20,7 +20,7 @@
                 <?php
                     echo $this->Form->control('name');
                     echo $this->Form->control('subject');
-                    echo $this->Form->control('body');
+                    echo $this->Form->control('body', ['type' => 'textarea']);
                     echo $this->Form->control('from_name');
                     echo $this->Form->control('from_addr');
                     echo $this->Form->control('reply_to');

@@ -24,9 +24,9 @@
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchCreator->id]) ?>
                         <?php if ($orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED): ?>
-                        <?= $this->Form->postLink(__('Enable'), ['action' => 'enable', $orcidBatchCreator->id]) ?>
+                            <?= $this->Form->postLink(__('Enable'), ['action' => 'enable', $orcidBatchCreator->id]) ?>
                         <?php else: ?>
-                        <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->id]) ?>
+                            <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->id]) ?>
                         <?php endif; ?>
                         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchCreator->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->id)]) ?>
                     </td>

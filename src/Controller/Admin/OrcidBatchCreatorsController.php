@@ -22,7 +22,6 @@ class OrcidBatchCreatorsController extends AppController
     public function index()
     {
         $orcidBatchCreators = $this->paginate($this->OrcidBatchCreators);
-
         $this->set(compact('orcidBatchCreators'));
     }
 

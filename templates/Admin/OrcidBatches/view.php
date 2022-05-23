@@ -54,72 +54,27 @@
                 </blockquote>
             </div>
             <div class="related">
-                <h4><?= __('Related Orcid Batch Triggers') ?></h4>
+                <h4><?= __('Triggers Attached to this Template') ?></h4>
                 <?php if (!empty($orcidBatch->orcid_batch_triggers)) : ?>
                 <div class="table-responsive">
                     <table>
                         <tr>
-                            <th><?= __('Id') ?></th>
                             <th><?= __('Name') ?></th>
-                            <th><?= __('Orcid Status Type Id') ?></th>
-                            <th><?= __('Orcid Batch Id') ?></th>
+                            <th><?= __('Workflow Checkpoint') ?></th>
                             <th><?= __('Trigger Delay') ?></th>
-                            <th><?= __('Orcid Batch Group Id') ?></th>
-                            <th><?= __('Begin Date') ?></th>
-                            <th><?= __('Require Batch Id') ?></th>
-                            <th><?= __('Repeat') ?></th>
-                            <th><?= __('Maximum Repeat') ?></th>
+                            <th><?= __('Group') ?></th>
                             <th class="actions"><?= __('Actions') ?></th>
                         </tr>
                         <?php foreach ($orcidBatch->orcid_batch_triggers as $orcidBatchTriggers) : ?>
                         <tr>
-                            <td><?= h($orcidBatchTriggers->id) ?></td>
                             <td><?= h($orcidBatchTriggers->name) ?></td>
                             <td><?= h($orcidBatchTriggers->orcid_status_type_id) ?></td>
-                            <td><?= h($orcidBatchTriggers->orcid_batch_id) ?></td>
                             <td><?= h($orcidBatchTriggers->trigger_delay) ?></td>
                             <td><?= h($orcidBatchTriggers->orcid_batch_group_id) ?></td>
-                            <td><?= h($orcidBatchTriggers->begin_date) ?></td>
-                            <td><?= h($orcidBatchTriggers->require_batch_id) ?></td>
-                            <td><?= h($orcidBatchTriggers->repeat) ?></td>
-                            <td><?= h($orcidBatchTriggers->maximum_repeat) ?></td>
                             <td class="actions">
                                 <?= $this->Html->link(__('View'), ['controller' => 'OrcidBatchTriggers', 'action' => 'view', $orcidBatchTriggers->id]) ?>
                                 <?= $this->Html->link(__('Edit'), ['controller' => 'OrcidBatchTriggers', 'action' => 'edit', $orcidBatchTriggers->id]) ?>
                                 <?= $this->Form->postLink(__('Delete'), ['controller' => 'OrcidBatchTriggers', 'action' => 'delete', $orcidBatchTriggers->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchTriggers->id)]) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
-            <div class="related">
-                <h4><?= __('Related Orcid Emails') ?></h4>
-                <?php if (!empty($orcidBatch->orcid_emails)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Orcid User Id') ?></th>
-                            <th><?= __('Orcid Batch Id') ?></th>
-                            <th><?= __('Queued') ?></th>
-                            <th><?= __('Sent') ?></th>
-                            <th><?= __('Cancelled') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($orcidBatch->orcid_emails as $orcidEmails) : ?>
-                        <tr>
-                            <td><?= h($orcidEmails->id) ?></td>
-                            <td><?= h($orcidEmails->orcid_user_id) ?></td>
-                            <td><?= h($orcidEmails->orcid_batch_id) ?></td>
-                            <td><?= h($orcidEmails->queued) ?></td>
-                            <td><?= h($orcidEmails->sent) ?></td>
-                            <td><?= h($orcidEmails->cancelled) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'OrcidEmails', 'action' => 'view', $orcidEmails->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'OrcidEmails', 'action' => 'edit', $orcidEmails->id]) ?>
-                                <?= $this->Form->postLink(__('Delete'), ['controller' => 'OrcidEmails', 'action' => 'delete', $orcidEmails->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidEmails->id)]) ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
