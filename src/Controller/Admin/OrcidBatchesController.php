@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use Cake\Mailer\Mailer;
 
 /**
  * OrcidBatches Controller
@@ -110,5 +111,28 @@ class OrcidBatchesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function preview($id = null) {
+        $orcidBatch = $this->OrcidBatches->get($id);
+        if ($this->request->is(array('post', 'put'))) {
+            $Mailer = new Mailer();
+			if ($this->request->getData()) {
+				if ($this->Emailer->sendBatch($email, $person)) {
+					$this->Session->setFlash(__('A preview of the Batch Email Template has been sent.'), 'default', array('class' => 'success'));
+				} else {
+					$this->Session->setFlash(__('The Batch Email Template could not be previewed. Please, try again.'));
+				}
+			} else {
+				$this->Session->setFlash(__('The Batch Email Template cannot be previewed without a preview recipient. Please, try again.'));
+			}
+			return $this->redirect(array('action' => 'view', $id));
+		} else {
+			$this->viewBuilder()->setLayout('email/html/default')->setTemplate('email/html/batch');
+			$options = array('conditions' => array('OrcidBatch.' . $this->OrcidBatch->primaryKey => $id));
+			$email = $this->OrcidBatch->find('first', $options);
+			$this->set('body', $email['OrcidBatch']['body']);
+			$this->set('title', $email['OrcidBatch']['subject']);
+		}
     }
 }

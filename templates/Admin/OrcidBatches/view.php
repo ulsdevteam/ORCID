@@ -25,28 +25,20 @@
                     <td><?= h($orcidBatch->name) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Subject') ?></th>
-                    <td><?= h($orcidBatch->subject) ?></td>
+                    <th><?= __('Creator') ?></th>
+                    <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->name, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->id]) : '' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('From Name') ?></th>
                     <td><?= h($orcidBatch->from_name) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('From Addr') ?></th>
-                    <td><?= h($orcidBatch->from_addr) ?></td>
-                </tr>
-                <tr>
                     <th><?= __('Reply To') ?></th>
                     <td><?= h($orcidBatch->reply_to) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Orcid Batch Creator') ?></th>
-                    <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->name, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($orcidBatch->id) ?></td>
+                    <th><?= __('Subject') ?></th>
+                    <td><?= h($orcidBatch->subject) ?></td>
                 </tr>
             </table>
             <div class="text">
@@ -55,8 +47,13 @@
                     <?= $this->Text->autoParagraph(h($orcidBatch->body)); ?>
                 </blockquote>
             </div>
+            <div class="preview">
+                <strong><?= __('Preview') ?></strong>
+            </div>
+            
             <div class="related">
                 <h4><?= __('Triggers Attached to this Template') ?></h4>
+                <?= $this->Html->link(__('New Trigger'), ['action' => 'add'], ['class' => 'button']) ?>
                 <?php if (!empty($orcidBatch->orcid_batch_triggers)) : ?>
                 <div class="table-responsive">
                     <table>

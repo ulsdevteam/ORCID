@@ -5,7 +5,9 @@
  */
 ?>
 <div class="orcidBatches index content">
-    <h3><?= __('Orcid Batches') ?></h3>
+    <h3><?= __('Batch Email Templates') ?></h3>
+    <?= __('
+An email template will be used to send a message to a user based on one or more triggers. Each email template can be sent to any user only once, unless manually re-queued.'); ?>
     <div class="table-responsive">
         <table>
             <thead>
