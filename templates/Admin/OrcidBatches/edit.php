@@ -5,11 +5,12 @@
  * @var string[]|\Cake\Collection\CollectionInterface $orcidBatchCreators
  */
 ?>
-<?php $this->TinyMCE->editor(['theme' => 'modern', 'selector' => 'textarea', 'plugins' => 'code']); ?>
+<?php $this->TinyMCE->editor(['theme' => 'modern', 'selector' => 'textarea', 'plugins' => 'code link']); ?>
 <div class="row">
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
+            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->id]) ?>
             <?= $this->Form->postLink(
                 __('Delete'),
                 ['action' => 'delete', $orcidBatch->id],
@@ -28,7 +29,7 @@
                     echo $this->Form->control('from_name');
                     echo $this->Form->control('from_addr', ['label' => 'From Address']);
                     echo $this->Form->control('subject');
-                    echo $this->Form->control('body', ['type' => 'textarea']);
+                    echo $this->Form->control('body', ['type' => 'textarea', 'required' => false]);
                     echo $this->Form->control('reply_to');
                     echo $this->Form->control('orcid_batch_creator_id', ['label' => 'Template Owner', 'options' => $orcidBatchCreators]);
                 ?>

@@ -287,3 +287,10 @@ h3 {
 td, th {
     white-space: nowrap;
 }
+
+.emailpreview {
+    width: 100%;
+    width: -moz-available;
+    width: -webkit-fill-available;
+    width: fill-available;
+}

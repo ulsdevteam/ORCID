@@ -71,11 +71,11 @@ class OrcidBatchesTable extends Table
             ->requirePresence('name', 'create')
             ->notEmptyString('name');
 
-        $validator
+        /* $validator
             ->scalar('subject')
             ->maxLength('subject', 512)
             ->requirePresence('subject', 'create')
-            ->notEmptyString('subject');
+            ->notEmptyString('subject'); */
 
         $validator
             ->scalar('body')

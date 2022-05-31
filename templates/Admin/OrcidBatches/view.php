@@ -4,8 +4,6 @@
  * @var \App\Model\Entity\OrcidBatch $orcidBatch
  */
 ?>
-<?= $this->TinyMCE->editor(['theme' => 'modern', 'selector' => 'textarea']) ?>
-<?= $this->Html->script('jquery-x.x.x.min'); ?>
 <div class="row">
     <aside class="column">
         <div class="side-nav">
@@ -43,12 +41,17 @@
             </table>
             <div class="text">
                 <strong><?= __('Body') ?></strong>
-                <blockquote>
-                    <?= $this->Text->autoParagraph(h($orcidBatch->body)); ?>
-                </blockquote>
+                <iframe class="emailpreview" src="../preview/<?php echo $orcidBatch->id; ?>">
+			    </iframe>
             </div>
             <div class="preview">
                 <strong><?= __('Preview') ?></strong>
+                <?php
+                echo $this->Form->create($orcidBatch, ['url' => ['action' => 'preview', $orcidBatch->id]]);
+                echo $this->Form->control('recipient');
+                echo $this->Form->button(__('Preview'));
+                echo $this->Form->end();
+                ?>
             </div>
             
             <div class="related">

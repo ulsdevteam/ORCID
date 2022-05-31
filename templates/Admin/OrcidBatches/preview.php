@@ -15,6 +15,5 @@
  */
 ?>
 <?php
-	$this->assign('title', $title);
 	echo $body;
 ?>

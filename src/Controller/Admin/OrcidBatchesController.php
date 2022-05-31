@@ -55,7 +55,7 @@ class OrcidBatchesController extends AppController
     public function add()
     {
         $orcidBatch = $this->OrcidBatches->newEmptyEntity();
-        if ($this->request->is('post')) {
+        if ($this->request->is(['patch','put','post'])) {
             $orcidBatch = $this->OrcidBatches->patchEntity($orcidBatch, $this->request->getData());
             if ($this->OrcidBatches->save($orcidBatch)) {
                 $this->Flash->success(__('The orcid batch has been saved.'));
@@ -128,11 +128,12 @@ class OrcidBatchesController extends AppController
 			}
 			return $this->redirect(array('action' => 'view', $id));
 		} else {
-			$this->viewBuilder()->setLayout('email/html/default')->setTemplate('email/html/batch');
-			$options = array('conditions' => array('OrcidBatch.' . $this->OrcidBatch->primaryKey => $id));
-			$email = $this->OrcidBatch->find('first', $options);
-			$this->set('body', $email['OrcidBatch']['body']);
-			$this->set('title', $email['OrcidBatch']['subject']);
+			$this->viewBuilder()
+                ->setTemplatePath('email/html')
+                ->setTemplate('rendered')
+                ->setLayout('email/html/default');
+			$this->set('body', $orcidBatch->body);
+			$this->set('title', $orcidBatch->subject);
 		}
     }
 }
