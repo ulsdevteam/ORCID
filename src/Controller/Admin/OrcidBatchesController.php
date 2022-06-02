@@ -116,15 +116,26 @@ class OrcidBatchesController extends AppController
     public function preview($id = null) {
         $orcidBatch = $this->OrcidBatches->get($id);
         if ($this->request->is(array('post', 'put'))) {
-            $Mailer = new Mailer();
-			if ($this->request->getData()) {
-				if ($this->Emailer->sendBatch($email, $person)) {
-					$this->Session->setFlash(__('A preview of the Batch Email Template has been sent.'), 'default', array('class' => 'success'));
+            $toRecipient = $this->request->getdata('recipient');
+			if ($toRecipient) {
+                $Mailer = new Mailer();
+                $Mailer
+                    ->setFrom('noreply@orcid-dev.pitt.edu','ORCID @ Pitt')
+                    ->setTo($toRecipient)
+                    ->setSubject("Preview");
+                $Mailer
+                    ->setEmailFormat('html')
+                    ->viewBuilder()
+                    ->setTemplate('rendered')
+                    ->setLayout('default')
+                    ->setVar('body', $orcidBatch->body);
+				if ($Mailer->send()) {
+					$this->Flash->success(__('A preview of the Batch Email Template has been sent.'));
 				} else {
-					$this->Session->setFlash(__('The Batch Email Template could not be previewed. Please, try again.'));
+					$this->Flash->error(__('The Batch Email Template could not be previewed. Please, try again.'));
 				}
 			} else {
-				$this->Session->setFlash(__('The Batch Email Template cannot be previewed without a preview recipient. Please, try again.'));
+				$this->Flash->error(__('The Batch Email Template cannot be previewed without a preview recipient. Please, try again.'));
 			}
 			return $this->redirect(array('action' => 'view', $id));
 		} else {
