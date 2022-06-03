@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "938272ce71b4dec34b3c12378a96d7db",
+    "content-hash": "1439e23c330f530cd27c9c68a8eaca19",
     "packages": [
         {
             "name": "cakedc/tiny-mce",
@@ -2261,6 +2261,41 @@
                 }
             ],
             "time": "2022-01-02T09:55:41+00:00"
+        },
+        {
+            "name": "zoomrx/cakephp-ldap",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ZoomRx/cakephp-ldap.git",
+                "reference": "1a2eb19152b044ee822da6749cda6f21518a9f1f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ZoomRx/cakephp-ldap/zipball/1a2eb19152b044ee822da6749cda6f21518a9f1f",
+                "reference": "1a2eb19152b044ee822da6749cda6f21518a9f1f",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": ">=3.0",
+                "php": ">=5.4.16"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "LdapUtility\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "LdapUtility plugin for CakePHP 3.x",
+            "support": {
+                "issues": "https://github.com/ZoomRx/cakephp-ldap/issues",
+                "source": "https://github.com/ZoomRx/cakephp-ldap/tree/master"
+            },
+            "time": "2018-01-18T05:19:34+00:00"
         }
     ],
     "packages-dev": [

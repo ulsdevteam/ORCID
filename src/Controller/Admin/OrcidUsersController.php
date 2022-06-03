@@ -8,6 +8,7 @@ use App\Model\Entity\OrcidStatusType;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenTime;
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
 
 use function PHPUnit\Framework\equalTo;
 
@@ -27,6 +28,14 @@ class OrcidUsersController extends AppController
     private const NULL_STRING_ID = '-1';
     private const NULL_ID = -1;
 
+    private $ldapHandler;
+
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->ldapHandler = new \LdapUtility\Ldap(Configure::read('ldapUtility.ldap'));
+        $this->ldapHandler->bindUsingCommonCredentials();
+    }
     /**
      * Index method
      *
@@ -51,7 +60,34 @@ class OrcidUsersController extends AppController
         $orcidUser = $this->OrcidUsers->get($id, [
             'contain' => ['OrcidEmails', 'CurrentOrcidStatus.OrcidStatusTypes', 'AllOrcidStatuses.OrcidStatusTypes'],
         ]);
-
+        $ldapResult = $this->ldapHandler->find('search', [
+            'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
+            'filter' => 'cn='.$orcidUser->username,
+            'attributes' => [
+                'samaccountname', 
+                'dn',
+                'givenName',
+                'sn',
+                'mail',
+                'displayName',
+                'department',
+                'PittEmployeeRC',
+            ],
+        ]);
+        if($ldapResult['count'] > 0) {
+            $result = $ldapResult[0];
+            $orcidUser->set("name", $result['displayname'][0]);
+            $orcidUser->set("email", $result['mail'][0]);
+            if(!($result['pittemployeerc'])){
+                $orcidUser->set("department", "RC ".$result['pittemployeerc'][0]." / ".$result['department'][0]);
+            } else {
+                $orcidUser->set("department", $result['department'][0]);
+            }
+        } else {
+            $orcidUser->set("name", "");
+            $orcidUser->set("email", "");
+            $orcidUser->set("department", "");
+        }
         $this->set(compact('orcidUser'));
     }
 
@@ -182,6 +218,7 @@ class OrcidUsersController extends AppController
 
         $this->set('findTypes', $findTypes);
         $this->set('batchGroups', $groups);
+        $this->set('ldapHandler', $this->ldapHandler);
         $this->set(compact('orcidUsers'));
 
     }
@@ -200,7 +237,7 @@ class OrcidUsersController extends AppController
 
         // Starting point for query
         $orcidUsersTable = $this->fetchTable('OrcidUsers');
-        $orcidUsersTable = $orcidUsersTable->find('all');
+        $orcidUsersTable = $orcidUsersTable->find('all')->contain(['CurrentOrcidStatus', 'CurrentOrcidStatus.OrcidStatusTypes']);
 
         // query by string matching
         if (!empty($userQuery)){

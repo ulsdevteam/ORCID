@@ -12,6 +12,7 @@
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('Username') ?></th>
+                    <th><?= $this->Paginator->sort('Name') ?></th>
                     <th><?= $this->Paginator->sort('Enabled') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
@@ -19,7 +20,21 @@
             <tbody>
                 <?php foreach ($orcidBatchCreators as $orcidBatchCreator): ?>
                 <tr>
+                    <?php $ldapResult = $ldapHandler->find('search', [
+                        'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
+                        'filter' => 'cn='.$orcidBatchCreator->name,
+                        'attributes' => [
+                            'displayName',
+                        ],
+                    ]);
+                    if($ldapResult['count'] > 0) {
+                        $result = $ldapResult[0];
+                        $displayname = $result['displayname'][0];
+                    } else {
+                        $displayname = '';
+                    } ?>
                     <td><?= h($orcidBatchCreator->name) ?></td>
+                    <td><?= h($displayname) ?></td>
                     <td><?= $orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED ? __("No") : __("Yes") ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchCreator->id]) ?>

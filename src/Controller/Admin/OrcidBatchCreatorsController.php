@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use Cake\Core\Configure;
 
 /**
  * OrcidBatchCreators Controller
@@ -13,7 +14,14 @@ use App\Controller\AppController;
  */
 class OrcidBatchCreatorsController extends AppController
 {
-    
+    private $ldapHandler;
+
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->ldapHandler = new \LdapUtility\Ldap(Configure::read('ldapUtility.ldap'));
+        $this->ldapHandler->bindUsingCommonCredentials();
+    }
     /**
      * Index method
      *
@@ -22,6 +30,7 @@ class OrcidBatchCreatorsController extends AppController
     public function index()
     {
         $orcidBatchCreators = $this->paginate($this->OrcidBatchCreators);
+        $this->set('ldapHandler', $this->ldapHandler);
         $this->set(compact('orcidBatchCreators'));
     }
 
@@ -37,6 +46,21 @@ class OrcidBatchCreatorsController extends AppController
         $orcidBatchCreator = $this->OrcidBatchCreators->get($id, [
             'contain' => ['OrcidBatches'],
         ]);
+
+        $ldapResult = $this->ldapHandler->find('search', [
+            'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
+            'filter' => 'cn='.$orcidBatchCreator->name,
+            'attributes' => [
+                'displayName',
+            ],
+        ]);
+
+        if($ldapResult['count'] > 0) {
+            $result = $ldapResult[0];
+            $orcidBatchCreator->set("displayname", $result['displayname'][0]);
+        } else {
+            $orcidBatchCreator->set("displayname", '');
+        }
 
         $this->set(compact('orcidBatchCreator'));
     }

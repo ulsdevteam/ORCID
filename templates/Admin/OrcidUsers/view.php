@@ -15,7 +15,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Name') ?></th>
-                    <td><?= __("Name needed") ?></td>
+                    <td><?= h($orcidUser->name) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('ORCID') ?></th>
@@ -43,11 +43,11 @@
                 </tr>
                 <tr>
                     <th><?= __('Email') ?></th>
-                    <td><?= __("Email needed") ?></td>
+                    <td><?= h($orcidUser->email) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Department') ?></th>
-                    <td><?= __("Department needed") ?></td>
+                    <td><?= h($orcidUser->department) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Current Checkpoint') ?></th>

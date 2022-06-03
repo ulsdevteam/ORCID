@@ -10,7 +10,6 @@
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('username') ?></th>
                     <th><?= $this->Paginator->sort('orcid') ?></th>
                     <th><?= $this->Paginator->sort('created') ?></th>
@@ -20,7 +19,6 @@
             <tbody>
                 <?php foreach ($orcidUsers as $orcidUser): ?>
                 <tr>
-                    <td><?= $this->Number->format($orcidUser->id) ?></td>
                     <td><?= h($orcidUser->username) ?></td>
                     <td><?= h($orcidUser->orcid) ?></td>
                     <td><?= h($orcidUser->created) ?></td>
