@@ -15,7 +15,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Name') ?></th>
-                    <td><?= h($orcidUser->name) ?></td>
+                    <td><?= h($orcidUser->displayname) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('ORCID') ?></th>

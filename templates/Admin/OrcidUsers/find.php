@@ -41,31 +41,11 @@
             <tbody>
                 <?php foreach ($orcidUsers as $orcidUser): ?>
                 <tr>
-                    <?php $ldapResult = $ldapHandler->find('search', [
-                        'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
-                        'filter' => 'cn='.$orcidUser->username,
-                        'attributes' => [
-                            'displayName',
-                            'department',
-                            'PittEmployeeRC',
-                        ],
-                    ]);
-                    if($ldapResult['count'] > 0) {
-                        $result = $ldapResult[0];
-                        $name = $result['displayname'][0];
-                        $department = $result['department'][0];
-                        $rc = $result['pittemployeerc'][0];
-                    } else {
-                        $name = '';
-                        $department = '';
-                        $rc = '';
-                    }
-                    ?>
                     <td><?= h($orcidUser->username) ?></td>
                     <td><?= h($orcidUser->orcid) ?></td>
-                    <td><?= h($name) ?></td>
-                    <td><?= h($rc) ?></td>
-                    <td><?= h($department) ?></td>
+                    <td><?= h($orcidUser->displayname) ?></td>
+                    <td><?= h($orcidUser->rc) ?></td>
+                    <td><?= h($orcidUser->department) ?></td>
                     <td><?= h($orcidUser->current_orcid_status[0]->orcid_status_type->name) ?></td>
                     <td><?= h($orcidUser->current_orcid_status[0]->status_timestamp) ?></td>
                     <td class="actions">
