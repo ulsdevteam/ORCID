@@ -51,7 +51,7 @@ An email template will be used to send a message to a user based on one or more 
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
 </div>
-<div class="actions">
+<div class="navigation actions">
     <h3 class="heading"><?= __('Actions') ?></h3>
     <?= $this->Html->link(__('New Orcid Batch'), ['action' => 'add']) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>

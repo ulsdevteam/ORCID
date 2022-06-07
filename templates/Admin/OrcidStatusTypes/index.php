@@ -42,7 +42,7 @@
             <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
         </div>
     </div>
-    <div class="actions">
+    <div class="navigation actions">
         <h4 class="heading"><?= __('Actions') ?></h4>
         <?= $this->Html->link(__('List Orcid Status Types'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>

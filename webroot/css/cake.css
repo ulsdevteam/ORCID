@@ -253,7 +253,18 @@ th {
     flex-grow: 2;   
 }
 
+
+
 .actions {
+    white-space: nowrap;
+}
+
+td:last-child {
+    padding-right: 20%;
+}
+
+
+.navigation.actions {
     flex-shrink: 2;
     display: flex;
     flex-direction: column;
@@ -276,7 +287,7 @@ h3 {
     flex-direction: row;
 }
 
-.actions.individual a {
+.actions .individual {
     display: flex;
     text-align: center;
     justify-content: center;
@@ -285,7 +296,7 @@ h3 {
 }
 
 td, th {
-    white-space: nowrap;
+    white-space: normal;
 }
 
 .emailpreview {

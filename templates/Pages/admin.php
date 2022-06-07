@@ -12,7 +12,7 @@
         <h3>Administrators</h3>
         <p>Administer the staff allowed to create and change templates and triggers in this interface.</p>
         </div>
-        <div class="actions">
+        <div class="navigation actions">
             <h3><?php echo __('ORCID Users'); ?></h3>
                 <?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
                 <?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'find', 'prefix' => 'Admin']); ?> 

@@ -104,7 +104,7 @@
         </div>
     </div>
 </div>
-<div class="actions">
+<div class="navigation actions">
     <h3 class="heading"><?= __('Actions') ?></h3>
     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->id]) ?>
     <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->id], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->username)]) ?>

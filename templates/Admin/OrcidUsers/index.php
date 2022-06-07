@@ -45,7 +45,7 @@
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
 </div>
-<div class="actions">
+<div class="navigation actions">
     <h3 class="heading"><?= __('Actions') ?></h3>
     <?= $this->Html->link(__('New Orcid User'), ['action' => 'add']) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>
