@@ -104,4 +104,22 @@ class OrcidBatchGroupsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    /**
+     * recache method
+     *
+     * @param string|null $id Orcid Batch Group id.
+     * @return \Cake\Http\Response|null|void Redirects to view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+	public function recache($id = null) {
+		$orcidBatchGroup = $this->OrcidBatchGroups->get($id);
+		$orcidBatchGroup->set('cache_creation_date', null);
+		if ($this->OrcidBatchGroups->save($orcidBatchGroup)) {
+			$this->Flash->success(__('The Group cache has been expired.'));
+		} else {
+			$this->Flash->error(__('The Group cache could not be expired. Please, try again.'));
+		}
+		return $this->redirect(['action' => 'view', $id]);
+	}
 }

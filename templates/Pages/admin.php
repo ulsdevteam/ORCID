@@ -14,10 +14,10 @@
         </div>
         <div class="navigation actions">
             <h3><?php echo __('ORCID Users'); ?></h3>
-                <?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
+                <?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'orcid_users', 'action' => 'index', 'prefix' => 'Admin']); ?> 
                 <?php echo $this->Html->link(__('Find ORCID User'), ['controller' => 'orcid_users', 'action' => 'find', 'prefix' => 'Admin']); ?> 
             <h3><?php echo __('Workflow Checkpoints'); ?></h3>
-                <?php echo $this->Html->link(__('List Workflow Checkpoints'), ['controller' => 'OrcidStatusTypes', 'action' => 'index', 'prefix' => 'Admin']); ?> 
+                <?php echo $this->Html->link(__('List Workflow Checkpoints'), ['controller' => 'orcid_status_types', 'action' => 'index', 'prefix' => 'Admin']); ?> 
             <h3><?php echo __('Email Batches'); ?></h3>
                 <?php echo $this->Html->link(__('List Batch Email Templates'), ['controller' => 'orcid_batches', 'action' => 'index', 'prefix' => 'Admin']); ?> 
                 <?php echo $this->Html->link(__('List Email Triggers'), ['controller' => 'orcid_batch_triggers', 'action' => 'index', 'prefix' => 'Admin']); ?> 

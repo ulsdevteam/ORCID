@@ -14,8 +14,6 @@
 	            <?php
                     echo $this->Form->control('name');
                     echo $this->Form->control('group_definition', ['label' => 'Active Directory Filter']);
-                ?>
-                <?php
                     echo $this->Form->controls(['employee_definition' => 
                                                     ['label' => 'Student'], 
                                                 'student_definition' => 

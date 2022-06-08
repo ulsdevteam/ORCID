@@ -92,9 +92,6 @@ body {
     margin-bottom: 5%;
 }
 
-th {
-    white-space: nowrap;
-}
 
 /* Nav bar */
 .top-nav {
@@ -295,7 +292,7 @@ h3 {
     padding: 0% 25%;
 }
 
-td, th {
+td, th, dd, dt{
     white-space: normal;
 }
 

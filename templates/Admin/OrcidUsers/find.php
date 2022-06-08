@@ -18,9 +18,7 @@
 						echo $this->Form->control('q', ['div'=> false, 'label' => false]);
 					?>
 					<label for='g'>within Group</label>
-					<?php
-						echo $this->Form->select('g', $batchGroups, ['id' => 's']);
-					?>
+					<?= $this->Form->select('g', $batchGroups, ['id' => 'g', 'default' => $selectedGroup]); ?>
 				</fieldset>
 				<?= $this->Form->button(__('Submit')) ?>
 				<?= $this->Form->end() ?>

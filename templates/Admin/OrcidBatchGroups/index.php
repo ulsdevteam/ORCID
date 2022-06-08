@@ -28,6 +28,7 @@
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroup->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->id]) ?>
                         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->id)]) ?>
+                        <?= $this->Html->link(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->id]]); ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
