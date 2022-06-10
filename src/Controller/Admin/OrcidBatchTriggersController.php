@@ -125,16 +125,16 @@ class OrcidBatchTriggersController extends AppController
      * @return void
      */
     public function execute($id = null) {
-        $trigger = $this->OrcidBatchTriggers->get($id);
+        $trigger = $this->OrcidBatchTriggers->get($id, ['contain' => ['OrcidStatusTypes', 'OrcidBatchGroups']]);
         $this->request->allowMethod('post');
         $Mailer = new Mailer();
         xdebug_break();
         if ($trigger->begin_date && $trigger->begin_date > time()) {
-            $this->Session->setFlash(__('The Trigger has a future Begin Date.'));
+            $this->Flash->error(__('The Trigger has a future Begin Date.'));
         } else if ($this->executeTrigger($trigger)) {
-            $this->Session->setFlash(__('The Trigger has run.'), 'default', array('class' => 'success'));
+            $this->Flash->success(__('The Trigger has run.'));
         } else {
-            $this->Session->setFlash(__('The Trigger could not be run. Please, try again.'));
+            $this->Flash->error(__('The Trigger could not be run. Please, try again.'));
         }
         return $this->redirect(array('action' => 'view', $id));
     }
@@ -172,30 +172,31 @@ class OrcidBatchTriggersController extends AppController
     }
 
     public function executeTrigger($trigger) {
+        xdebug_break();
         // Abort if OrcidTrigger does not contain expected information
-		if (!isset($trigger->OrcidBatchTrigger) || !isset($trigger->OrcidStatusType)) {
+		if (!isset($trigger) || !isset($trigger->orcid_status_type)) {
 			return false;
 		}
 		// Trigger may not run prior to begin_date
-		if (isset($trigger['OrcidBatchTrigger']['begin_date']) && strtotime($trigger['OrcidBatchTrigger']['begin_date']) > time() ) {
+		if (isset($trigger->begin_date) && $trigger->begin_date > time() ) {
 			return false;
 		}
 		$failures = 0;
-		// We'll use OrcidEmail to create new emails
-		$this->OrcidEmail = ClassRegistry::init('OrcidEmail');
-		// We'll use OrcidStatus to ensure the user is at the trigger criteria
-		$this->CurrentOrcidStatus = ClassRegistry::init('CurrentOrcidStatus');
-		// We'll use OrcidBatchGroup to collect relevant users
-		$this->OrcidBatchGroup = ClassRegistry::init('OrcidBatchGroup');
+		// We'll use OrcidEmailTable to create new emails
+		$OrcidEmailTable = $this->getTableLocator()->get('OrcidEmails');
+		// We'll use OrcidStatusTable to ensure the user is at the trigger criteria
+		$CurrentOrcidStatusTable = $this->getTableLocator()->get('CurrentOrcidStatus');
+		// We'll use OrcidBatchGroupTable to collect relevant users
+		$OrcidBatchGroupTable = $this->getTableLocator()->get('OrcidBatchGroups');
 		// If sequence is 0 a group is required.  We can't initialize everyone.
-		if ($trigger['OrcidStatusType']['seq'] == 0 && !isset($trigger['OrcidBatchGroup'])) {
+		if ($trigger->orcid_status_type->seq == 0 && !isset($trigger->orcid_batch_group)) {
 			return false;
 		}
 		// Process each user at the status for the trigger_delay days
 		$options = array('conditions' => array('CurrentOrcidStatus.orcid_status_type_id' => $trigger['OrcidStatusType']['id'], 'TRUNC(CurrentOrcidStatus.status_timestamp + '.$trigger['OrcidBatchTrigger']['trigger_delay'].') <=' => date('Y-m-d')));
 		// This will be our selection of users
 		$users = array();
-		if (isset($trigger['OrcidBatchGroup']['id'])) {
+		if (isset($trigger->orcid_batch_group->id)) {
 			$users = $this->OrcidBatchGroup->getAssociatedUsers( $trigger['OrcidBatchGroup']['id'], 'CurrentOrcidStatus.orcid_user_id' );
 			$options['conditions'][] = $users;
 		}
