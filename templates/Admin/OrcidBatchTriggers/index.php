@@ -5,36 +5,32 @@
  */
 ?>
 <div class="orcidBatchTriggers index content">
-    <?= $this->Html->link(__('New Orcid Batch Trigger'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('Orcid Batch Triggers') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('name') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_status_type_id') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_batch_id') ?></th>
+                    <th><?= $this->Paginator->sort('orcid_batch_group', 'Group') ?></th>
+                    <th><?= $this->Paginator->sort('orcid_status_type_id', 'Workflow Checkpoint') ?></th>
+                    <th><?= $this->Paginator->sort('orcid_batch_id', 'Email Batch') ?></th>
                     <th><?= $this->Paginator->sort('trigger_delay') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_batch_group_id') ?></th>
+                    <th><?= $this->Paginator->sort('repeat_value', 'repeat') ?></th>
+                    <th><?= $this->Paginator->sort('maximum_repeat', 'Repeat Limit') ?></th>
                     <th><?= $this->Paginator->sort('begin_date') ?></th>
-                    <th><?= $this->Paginator->sort('repeat_value') ?></th>
-                    <th><?= $this->Paginator->sort('maximum_repeat') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($orcidBatchTriggers as $orcidBatchTrigger): ?>
                 <tr>
-                    <td><?= $this->Number->format($orcidBatchTrigger->id) ?></td>
                     <td><?= h($orcidBatchTrigger->name) ?></td>
                     <td><?= $orcidBatchTrigger->has('orcid_status_type') ? $this->Html->link($orcidBatchTrigger->orcid_status_type->name, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidBatchTrigger->orcid_status_type->id]) : '' ?></td>
                     <td><?= $orcidBatchTrigger->has('orcid_batch') ? $this->Html->link($orcidBatchTrigger->orcid_batch->name, ['controller' => 'OrcidBatches', 'action' => 'view', $orcidBatchTrigger->orcid_batch->id]) : '' ?></td>
                     <td><?= $this->Number->format($orcidBatchTrigger->trigger_delay) ?></td>
-                    <td><?= $orcidBatchTrigger->has('orcid_batch_group') ? $this->Html->link($orcidBatchTrigger->orcid_batch_group->name, ['controller' => 'OrcidBatchGroups', 'action' => 'view', $orcidBatchTrigger->orcid_batch_group->id]) : '' ?></td>
-                    <td><?= h($orcidBatchTrigger->begin_date) ?></td>
                     <td><?= $this->Number->format($orcidBatchTrigger->repeat_value) ?></td>
                     <td><?= $this->Number->format($orcidBatchTrigger->maximum_repeat) ?></td>
+                    <td><?= h($orcidBatchTrigger->begin_date) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchTrigger->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchTrigger->id]) ?>
@@ -55,4 +51,13 @@
         </ul>
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
+</div>
+<div class="navigation actions">
+    <h3 class="heading"><?= __('Actions') ?></h3>
+        <?= $this->Html->link(__('New Orcid Batch Trigger'), ['action' => 'add']) ?>
+        <?= $this->Form->postLink(__('Execute All Triggers'), ['action' => 'executeAll'], ['confirm' => __('Are you sure you want to execute all triggers?')]) ?>
+        <?= $this->Form->postLink(__('Send All Emails'), ['controller' => 'OrcidEmails', 'action' => 'sendAll'], ['confirm' => __('Are you sure you want to send all Triggered Emails?')]) ?>
+    <h3 class="heading"><?= __('Navigation') ?></h3>
+        <?= $this->Html->link(__('List Groups'), ['controller' => 'OrcidBatchGroups', 'action' => 'index']) ?>
+        <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
 </div>
