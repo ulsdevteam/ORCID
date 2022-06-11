@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\ORM\TableRegistry;
 
 /**
  * OrcidBatchGroups Model
@@ -30,6 +31,151 @@ use Cake\Validation\Validator;
  */
 class OrcidBatchGroupsTable extends Table
 {
+
+    public function getAssociatedUsers($groupId, $key) {
+        $this->updateCache($groupId);
+		$db = $this->OrcidBatchGroupCache->getDataSource();
+		$subQuery = $db->buildStatement(
+			array(
+				'fields'     => array('cache.orcid_user_id'),
+				'table'      => $db->fullTableName($this->OrcidBatchGroupCache),
+				'alias'      => 'cache',
+				'limit'      => null,
+				'offset'     => null,
+				'joins'      => array(),
+				'conditions' => $groupId == -1 ? null :array('cache.orcid_batch_group_id' => $groupId),
+				'order'      => null,
+				'group'      => null
+			),
+			$this->OrcidBatchGroupCache
+		);
+		$subQuery = ' '.$key.' '.($groupId == -1 ? 'NOT ' : '').'IN (' . $subQuery . ') ';
+		return $db->expression($subQuery);
+    }
+
+    /**
+     * Ensure the OrcidBatchGroup.id has an updated cache, creating the OrcidUser(s) if necessary
+     *
+     * @param int
+     * @return boolean
+     */
+	public function updateCache( $groupId ) {
+		// Does this group exist?
+        xdebug_break();
+		$group = $this->find()
+            ->where(['id' => $groupId])
+            ->first();
+		if (!$group) {
+			$this->OrcidBatchGroupCache->deleteAll(['orcid_batch_group_id' => $groupId], false);
+			return true;
+		}
+		// No action needed if the cache was updated in the last 30 minutes
+		if ($group->cache_creation_date && $group->cache_creation_date->wasWithinLast('30 minutes')) {
+			return true;
+		}
+		// Indicate that this cache update is in-progress (blocks simultaneous cache refreshes)
+		//$this->save($group);
+		// mark all current cache entries as needing validation or removal
+		// quoting the value separately (only when conditions are used) is some sort of ridiculous backwards compatibility thing with DboSource's update() implementation
+		// $db = $this->getDataSource();
+		/* $deprecated = $db->value(date('Y-m-d H:i:s'), 'date');
+		$this->OrcidBatchGroupCache->updateAll(array('deprecated' => $deprecated), array('orcid_batch_group_id' => $groupId));
+		if ($group['OrcidBatchGroup']['group_definition']) {
+			$this->Person = ClassRegistry::init('Person');
+		} */
+
+		$groupMembers = array();
+		if ($group->student_definition || $group->employee_definition) {
+			// CDS defintion(s) is (are) the base query
+			if ($group->student_definition) {
+				$this->OrcidStudent = TableRegistry::getTableLocator()->get('OrcidUsers');
+				$options = array('recursive' => -1, 'conditions' => $group->student_definition);
+				$students = $this->OrcidStudent->find('all', $options);
+				if (!$students) {
+					$students = array();
+				}
+				foreach ($students as $student) {
+					// skip if a group defintion is provided and the user does not match the definition
+					if ($group->group_definition) {
+						// TODO: warning: hardcoded foreign key relationship
+						$options = array('conditions' => '(&(cn='.$student->username.')'.$group->group_definition.')');
+						if (!$this->Person->find('first', $options)) {
+							continue;
+						}
+					}
+					$groupMembers[$student->username] = $student->username;
+				}
+			}
+			if ($group->employee_definition) {
+				$this->OrcidEmployee = TableRegistry::getTableLocator()->get('OrcidUsers');
+				$options = array('recursive' => -1, 'conditions' => $group->employee_definition);
+				$employees = $this->OrcidEmployee->find('all', $options);
+				if (!$employees) {
+					$employees = array();
+				}
+				foreach ($employees as $employee) {
+					// skip if a group defintion is provided and the user does not match the definition
+					if ($group->group_definition) {
+						// TODO: warning: hardcoded foreign key relationship
+						$options = array('conditions' => '(&(cn='.$employee->username.')'.$group->group_definition.')');
+						if (!$this->Person->find('first', $options)) {
+							continue;
+						}
+					}
+					$groupMembers[$employee->username] = $employee->username;
+				}
+			}
+		} else if ($group->group_definition) {
+			// group_defintion is the base query
+			// TODO: risky because Person is LDAP and may not support paging
+			$options = array('recurisve' => -1, 'conditions' => $group->group_definition);
+			$people = $this->Person->find('all', $options);
+			if (!$people) {
+				$people = array();
+			}
+			$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
+			foreach ($people as $person) {
+				$groupMembers[$person['Person']['cn']] = $person['Person']['cn'];
+			}
+		}
+
+		$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
+		// Refresh the cache
+		foreach ($groupMembers as $groupMember) {
+			$options = array('recursive' => -1, 'conditions' => array('OrcidUser.username' => $groupMember));
+			$user = $this->OrcidUser->find('first', $options);
+			if (!$user) {
+				$this->OrcidUser->create();
+				$user = array('username' => $groupMember);
+				if (!$this->OrcidUser->save($user)) {
+					continue;
+				} else {
+					$user = $this->OrcidUser->find('first', $options);
+				}
+			}
+			// create or update the user in the cache
+			if ($user->id) {
+				$options = array('conditions' => array('orcid_user_id' => $user->id, 'orcid_batch_group_id' => $groupId));
+				$cache = $this->OrcidBatchGroupCache->find('first', $options);
+				if (!$cache) {
+					$this->OrcidBatchGroupCache->create();
+					$cache->orcid_user_id = $user->id;
+					$cache->orcid_batch_group_id = $groupId;
+				} else {
+					$cache->deprecated = NULL;
+				}
+				$this->OrcidBatchGroupCache->save($cache);
+			}
+		}
+		// If the cache entry wasn't updated, delete it
+		$this->OrcidBatchGroupCache->deleteAll(array('orcid_batch_group_id' => $groupId, 'NOT' => array('deprecated' => NULL)));
+		// Indicate that this cache update is complete
+		$group->cache_creation_date = date('Y-m-d H:i:s');
+		$this->save($group);
+
+		return true;
+	}
+
     /**
      * Initialize method
      *

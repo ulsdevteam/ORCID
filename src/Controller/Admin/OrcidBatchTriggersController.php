@@ -193,11 +193,11 @@ class OrcidBatchTriggersController extends AppController
 			return false;
 		}
 		// Process each user at the status for the trigger_delay days
-		$options = array('conditions' => array('CurrentOrcidStatus.orcid_status_type_id' => $trigger['OrcidStatusType']['id'], 'TRUNC(CurrentOrcidStatus.status_timestamp + '.$trigger['OrcidBatchTrigger']['trigger_delay'].') <=' => date('Y-m-d')));
+		$options = ['conditions' => ['CurrentOrcidStatus.orcid_status_type_id' => $trigger->orcid_status_type_id]];
 		// This will be our selection of users
 		$users = array();
 		if (isset($trigger->orcid_batch_group->id)) {
-			$users = $this->OrcidBatchGroup->getAssociatedUsers( $trigger['OrcidBatchGroup']['id'], 'CurrentOrcidStatus.orcid_user_id' );
+			$users = $OrcidBatchGroupTable->getAssociatedUsers($trigger->orcid_batch_group_id, 'CurrentOrcidStatus.orcid_user_id');
 			$options['conditions'][] = $users;
 		}
 		$userStatuses = $this->CurrentOrcidStatus->find('all', $options);
