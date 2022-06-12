@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
-use Cake\Mailer\Mailer;
 
 /**
  * OrcidBatchTriggers Controller
@@ -127,7 +126,6 @@ class OrcidBatchTriggersController extends AppController
     public function execute($id = null) {
         $trigger = $this->OrcidBatchTriggers->get($id, ['contain' => ['OrcidStatusTypes', 'OrcidBatchGroups']]);
         $this->request->allowMethod('post');
-        $Mailer = new Mailer();
         xdebug_break();
         if ($trigger->begin_date && $trigger->begin_date > time()) {
             $this->Flash->error(__('The Trigger has a future Begin Date.'));
@@ -136,7 +134,7 @@ class OrcidBatchTriggersController extends AppController
         } else {
             $this->Flash->error(__('The Trigger could not be run. Please, try again.'));
         }
-        return $this->redirect(array('action' => 'view', $id));
+        return $this->redirect(['action' => 'view', $id]);
     }
 
     /**
@@ -146,9 +144,8 @@ class OrcidBatchTriggersController extends AppController
     */
     public function executeAll() {
         $this->request->allowMethod('post');
-        $Mailer = new Mailer();
         // must not be already sent or cancelled
-        $triggers = $this->OrcidBatchTrigger->find('all', array('conditions' => array('or' => array(array('begin_date <=' => 'today'), array('begin_date' => NULL))), 'order' => array('require_batch_id DESC')));
+        $triggers = $this->OrcidBatchTrigger->find('all', ['conditions' => ['or' => [['begin_date <=' => 'today'], ['begin_date' => NULL]], 'order' => ['require_batch_id DESC']]]);
         $success = 0;
         $failed = 0;
         xdebug_break();
@@ -160,15 +157,15 @@ class OrcidBatchTriggersController extends AppController
             }
         }
         if ($success) {
-            $this->Session->setFlash(__('Successfully ran '.$success.' trigger'.($success > 1 ? 's' : '')), 'default', array('class' => 'success'));
+            $this->Flash->success(__('Successfully ran '.$success.' trigger'.($success > 1 ? 's' : '')), 'default', ['class' => 'success']);
         }
         if ($failed) {
-            $this->Session->setFlash(__('Failed '.$failed.' trigger run'.($failed > 1 ? 's' : '')));
+            $this->Flash->error(__('Failed '.$failed.' trigger run'.($failed > 1 ? 's' : '')));
         }
         if (!$success && !$failed) {
-            $this->Session->setFlash(__('No triggers to run.'));
+            $this->Flash->error(__('No triggers to run.'));
         }
-        return $this->redirect(array('action' => 'index'));
+        return $this->redirect(['action' => 'index']);
     }
 
     public function executeTrigger($trigger) {
@@ -195,7 +192,7 @@ class OrcidBatchTriggersController extends AppController
 		// Process each user at the status for the trigger_delay days
 		$options = ['conditions' => ['CurrentOrcidStatus.orcid_status_type_id' => $trigger->orcid_status_type_id]];
 		// This will be our selection of users
-		$users = array();
+		$users = [];
 		if (isset($trigger->orcid_batch_group->id)) {
 			$users = $OrcidBatchGroupTable->getAssociatedUsers($trigger->orcid_batch_group_id, 'CurrentOrcidStatus.orcid_user_id');
 			$options['conditions'][] = $users;
@@ -203,10 +200,10 @@ class OrcidBatchTriggersController extends AppController
 		$userStatuses = $this->CurrentOrcidStatus->find('all', $options);
 		foreach ($userStatuses as $userStatus) {
 			// If a prior email is required, check for it
-			if ($trigger['OrcidBatchTrigger']['require_batch_id']) {
-				$options = array('recursive' => -1, 'conditions' => array('OrcidEmail.orcid_user_id' => $userStatus['CurrentOrcidStatus']['orcid_user_id']));
-				if ($trigger['OrcidBatchTrigger']['require_batch_id'] !== -1) {
-					$options['conditions']['OrcidEmail.orcid_batch_id'] = $trigger['OrcidBatchTrigger']['require_batch_id'];
+			if ($trigger->require_batch_id) {
+				$options = ['conditions' => ['OrcidEmail.orcid_user_id' => $userStatus->orcid_user_id]];
+				if ($trigger->require_batch_id !== -1) {
+					$options['conditions']['OrcidEmail.orcid_batch_id'] = $trigger->require_batch_id;
 				}
 				if (!$this->OrcidEmail->find('first', $options)) {
 					// if the prior email was not found, skip
@@ -214,21 +211,21 @@ class OrcidBatchTriggersController extends AppController
 				}
 			}
 			// Create unless the email already exists
-			$options = array('recursive' => -1, 'conditions' => array('OrcidEmail.orcid_user_id' => $userStatus['CurrentOrcidStatus']['orcid_user_id'], 'OrcidEmail.orcid_batch_id' => $trigger['OrcidBatch']['id']));
+			$options = ['conditions' => ['OrcidEmail.orcid_user_id' => $userStatus->orcid_user_id, 'OrcidEmail.orcid_batch_id' => $trigger->OrcidBatch->id]];
 			// If a maximum repeat is set, count the number of times sent
-			if ($trigger['OrcidBatchTrigger']['maximum_repeat']) {
-				if ($this->OrcidEmail->find('count', $options) >= $trigger['OrcidBatchTrigger']['maximum_repeat']) {
+			if ($trigger->maximum_repeat) {
+				if ($this->OrcidEmail->find('count', $options) >= $trigger->maximum_repeat) {
 					// if already at or past the limit, skip
 					continue;
 				}
 			}
 			// If this email is repeating, also check the last sent date
-			if ($trigger['OrcidBatchTrigger']['repeat']) {
-				$options['conditions']['TRUNC(NVL(OrcidEmail.sent, SYSDATE) + '.$trigger['OrcidBatchTrigger']['repeat'].') >'] = date('Y-m-d');
+			if ($trigger->repeat) {
+				$options['conditions']['TRUNC(NVL(OrcidEmail.sent, SYSDATE) + '.$trigger->repeat.') >'] = date('Y-m-d');
 			}
 			if (!$this->OrcidEmail->find('first', $options)) {
 				$this->OrcidEmail->create();
-				$newEmail['OrcidEmail'] = array('orcid_user_id' => $userStatus['CurrentOrcidStatus']['orcid_user_id'], 'orcid_batch_id' => $trigger['OrcidBatch']['id'], 'queued' => date('Y-m-d H:i:s'));
+				$newEmail = ['orcid_user_id' => $userStatus->orcid_user_id, 'orcid_batch_id' => $trigger->OrcidBatch->id, 'queued' => date('Y-m-d H:i:s')];
 				if (!$this->OrcidEmail->save($newEmail)) {
 					$failures++;
 				}

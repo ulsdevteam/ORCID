@@ -34,19 +34,21 @@ class OrcidBatchGroupsTable extends Table
 
     public function getAssociatedUsers($groupId, $key) {
         $this->updateCache($groupId);
+        // Everything below has not been touched yet.
+        // Won't work for sure.
 		$db = $this->OrcidBatchGroupCache->getDataSource();
 		$subQuery = $db->buildStatement(
-			array(
-				'fields'     => array('cache.orcid_user_id'),
+			[
+				'fields'     => ['cache.orcid_user_id'],
 				'table'      => $db->fullTableName($this->OrcidBatchGroupCache),
 				'alias'      => 'cache',
 				'limit'      => null,
 				'offset'     => null,
-				'joins'      => array(),
-				'conditions' => $groupId == -1 ? null :array('cache.orcid_batch_group_id' => $groupId),
+				'joins'      => [],
+				'conditions' => $groupId == -1 ? null :['cache.orcid_batch_group_id' => $groupId],
 				'order'      => null,
 				'group'      => null
-			),
+            ],
 			$this->OrcidBatchGroupCache
 		);
 		$subQuery = ' '.$key.' '.($groupId == -1 ? 'NOT ' : '').'IN (' . $subQuery . ') ';
@@ -65,6 +67,7 @@ class OrcidBatchGroupsTable extends Table
 		$group = $this->find()
             ->where(['id' => $groupId])
             ->first();
+        // Have not touched GroupCache
 		if (!$group) {
 			$this->OrcidBatchGroupCache->deleteAll(['orcid_batch_group_id' => $groupId], false);
 			return true;
@@ -79,26 +82,26 @@ class OrcidBatchGroupsTable extends Table
 		// quoting the value separately (only when conditions are used) is some sort of ridiculous backwards compatibility thing with DboSource's update() implementation
 		// $db = $this->getDataSource();
 		/* $deprecated = $db->value(date('Y-m-d H:i:s'), 'date');
-		$this->OrcidBatchGroupCache->updateAll(array('deprecated' => $deprecated), array('orcid_batch_group_id' => $groupId));
+		$this->OrcidBatchGroupCache->updateAll(['deprecated' => $deprecated), ['orcid_batch_group_id' => $groupId));
 		if ($group['OrcidBatchGroup']['group_definition']) {
 			$this->Person = ClassRegistry::init('Person');
 		} */
 
-		$groupMembers = array();
+		$groupMembers = [];
 		if ($group->student_definition || $group->employee_definition) {
 			// CDS defintion(s) is (are) the base query
 			if ($group->student_definition) {
 				$this->OrcidStudent = TableRegistry::getTableLocator()->get('OrcidUsers');
-				$options = array('recursive' => -1, 'conditions' => $group->student_definition);
-				$students = $this->OrcidStudent->find('all', $options);
+				$options = ['conditions' => $group->student_definition];
+				$students = $this->OrcidStudent->find('all', $options)->all();
 				if (!$students) {
-					$students = array();
+					$students = [];
 				}
 				foreach ($students as $student) {
 					// skip if a group defintion is provided and the user does not match the definition
 					if ($group->group_definition) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = array('conditions' => '(&(cn='.$student->username.')'.$group->group_definition.')');
+						$options = ['conditions' => '(&(cn='.$student->username.')'.$group->group_definition.')'];
 						if (!$this->Person->find('first', $options)) {
 							continue;
 						}
@@ -108,16 +111,16 @@ class OrcidBatchGroupsTable extends Table
 			}
 			if ($group->employee_definition) {
 				$this->OrcidEmployee = TableRegistry::getTableLocator()->get('OrcidUsers');
-				$options = array('recursive' => -1, 'conditions' => $group->employee_definition);
+				$options = ['conditions' => $group->employee_definition];
 				$employees = $this->OrcidEmployee->find('all', $options);
 				if (!$employees) {
-					$employees = array();
+					$employees = [];
 				}
 				foreach ($employees as $employee) {
 					// skip if a group defintion is provided and the user does not match the definition
 					if ($group->group_definition) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = array('conditions' => '(&(cn='.$employee->username.')'.$group->group_definition.')');
+						$options = ['conditions' => '(&(cn='.$employee->username.')'.$group->group_definition.')'];
 						if (!$this->Person->find('first', $options)) {
 							continue;
 						}
@@ -128,10 +131,10 @@ class OrcidBatchGroupsTable extends Table
 		} else if ($group->group_definition) {
 			// group_defintion is the base query
 			// TODO: risky because Person is LDAP and may not support paging
-			$options = array('recurisve' => -1, 'conditions' => $group->group_definition);
+			$options = ['recurisve' => -1, 'conditions' => $group->group_definition];
 			$people = $this->Person->find('all', $options);
 			if (!$people) {
-				$people = array();
+				$people = [];
 			}
 			$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
 			foreach ($people as $person) {
@@ -142,11 +145,11 @@ class OrcidBatchGroupsTable extends Table
 		$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
 		// Refresh the cache
 		foreach ($groupMembers as $groupMember) {
-			$options = array('recursive' => -1, 'conditions' => array('OrcidUser.username' => $groupMember));
+			$options = ['conditions' => ['OrcidUser.username' => $groupMember]];
 			$user = $this->OrcidUser->find('first', $options);
 			if (!$user) {
 				$this->OrcidUser->create();
-				$user = array('username' => $groupMember);
+				$user = ['username' => $groupMember];
 				if (!$this->OrcidUser->save($user)) {
 					continue;
 				} else {
@@ -155,7 +158,7 @@ class OrcidBatchGroupsTable extends Table
 			}
 			// create or update the user in the cache
 			if ($user->id) {
-				$options = array('conditions' => array('orcid_user_id' => $user->id, 'orcid_batch_group_id' => $groupId));
+				$options = ['conditions' => ['orcid_user_id' => $user->id, 'orcid_batch_group_id' => $groupId]];
 				$cache = $this->OrcidBatchGroupCache->find('first', $options);
 				if (!$cache) {
 					$this->OrcidBatchGroupCache->create();
@@ -168,7 +171,7 @@ class OrcidBatchGroupsTable extends Table
 			}
 		}
 		// If the cache entry wasn't updated, delete it
-		$this->OrcidBatchGroupCache->deleteAll(array('orcid_batch_group_id' => $groupId, 'NOT' => array('deprecated' => NULL)));
+		$this->OrcidBatchGroupCache->deleteAll(['orcid_batch_group_id' => $groupId, 'NOT' => ['deprecated' => NULL]]);
 		// Indicate that this cache update is complete
 		$group->cache_creation_date = date('Y-m-d H:i:s');
 		$this->save($group);
