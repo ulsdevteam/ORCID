@@ -11,11 +11,11 @@
 	<div class="table-responsive">
 		<div class="column-responsive column-80">
 			<div class="orcidUsers form content">
-				<?= $this->Form->create(null,['id' => 'search']) ?>
+				<?= $this->Form->create(null,['type' => 'get', 'id' => 'search']) ?>
 				<fieldset>
 					<?php
-						echo $this->Form->select('s', $findTypes, ['div'=> false, 'id' => 's']);
-						echo $this->Form->control('q', ['div'=> false, 'label' => false]);
+						echo $this->Form->select('s', $findTypes, ['div'=> false, 'id' => 's', 'default' => $selectedType]);
+						echo $this->Form->control('q', ['div'=> false, 'label' => false, 'default' => $userQuery]);
 					?>
 					<label for='g'>within Group</label>
 					<?= $this->Form->select('g', $batchGroups, ['id' => 'g', 'default' => $selectedGroup]); ?>

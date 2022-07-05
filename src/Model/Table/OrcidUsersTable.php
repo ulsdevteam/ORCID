@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * OrcidUsers Model
@@ -33,6 +34,11 @@ use Cake\Validation\Validator;
  */
 class OrcidUsersTable extends Table
 {
+
+
+    public $ldapHandler;
+    private $ldapResult;
+
     /**
      * Initialize method
      *
@@ -64,6 +70,9 @@ class OrcidUsersTable extends Table
         $this->hasMany('OrcidStatuses', [
             'foreignKey' => 'orcid_user_id',
         ]);
+
+        $this->ldapHandler = new \LdapUtility\Ldap(Configure::read('ldapUtility.ldap'));
+        $this->ldapHandler->bindUsingCommonCredentials();
     }
 
     /**
@@ -105,5 +114,9 @@ class OrcidUsersTable extends Table
         $rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
 
         return $rules;
+    }
+
+    public function unknownFind() {
+        
     }
 }

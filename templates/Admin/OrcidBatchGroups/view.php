@@ -44,7 +44,7 @@
     <h3 class="heading"><?= __('Actions') ?></h3>
         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->id]) ?>
         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->id), 'class' => 'side-nav-item']) ?>
-        <?= $this->Html->link(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->id]]); ?>
+        <?= $this->Form->postLink(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin'], ['data' => ['g' => $orcidBatchGroup->id]]); ?>
         <?= $this->Form->postLink(__('Expire Cache '), ['action' => 'recache', $orcidBatchGroup->id]) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>
         <?= $this->Html->link(__('List Groups'), ['action' => 'index']) ?>

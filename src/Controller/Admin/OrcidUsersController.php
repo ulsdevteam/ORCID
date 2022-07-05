@@ -164,52 +164,42 @@ class OrcidUsersController extends AppController
      */
     public function find()
     {
-        $groupQuery = $this->request->getParam("?");
-        $groupSelector = '0';
-        if ($groupQuery) {
-            $groupSelector = $groupQuery['g'];
-        }
         $orcidUsersTable = $this->fetchTable('OrcidUsers');
+        $options = $this->request->getQueryParams();
+
+        if ($options) {
+            $userQuery = $options['q']??'';
+            $findType = $options['s']??'';
+            $groupQuery = $options['g']??'';
+        } else {
+            $userQuery = '';
+            $findType = '';
+            $groupQuery = '';
+        }
 
         $BatchGroups = $this->fetchTable('OrcidBatchGroups');
         $batchGroups = $BatchGroups->find('all')->all();
-        $orcidUsers = $this->paginate($this->_parameterize($groupSelector));
+        $orcidUsers = $this->paginate($this->_parameterize($userQuery, $findType, $groupQuery));
 
         $findTypes = ['Containing', 'Starting With', 'Ending With', 'Matching Exactly'];
         $groups = [0 => ''];
 
-        foreach ($batchGroups as $group) {
+        foreach ($batchGroups as $group) { 
             $groups[$group->id] = $group->name;
         }
 
         $groups[$this::NULL_ID] = 'No Matching Group';
 
         $this->set('findTypes', $findTypes);
-        $this->set('selectedGroup', $groupSelector);
+        $this->set('userQuery', $userQuery);
+        $this->set('selectedType', $findType);
+        $this->set('selectedGroup', $groupQuery);
         $this->set('batchGroups', $groups);
         $this->set(compact('orcidUsers'));
 
     }
 
-    private function _parameterize($group = null) {
-        // User Entered Data
-		$options = $this->request->getData();
-
-
-        $userQuery = null;
-        $findType = null;
-        $groupQuery = null;
-
-        if ($group) {
-            $groupQuery = $group;
-        }
-
-        // split to easily reuse it
-        if ($options) {
-            $userQuery = $options['q'];
-            $findType = $options['s'];
-            $groupQuery = $options['g'];
-        }
+    private function _parameterize($userQuery, $findType, $groupQuery) {
 
         // container to hold condtions
         $conditions = [];
@@ -225,7 +215,7 @@ class OrcidUsersController extends AppController
             } else if ($findType === $this::ENDS_WITH) {
                 $conditions = ['OR' => [['username LIKE' => '%'.$userQuery], ['orcid LIKE' => '%'.$userQuery]]];
             } else if ($findType === $this::STARTS_WITH) {
-                $conditions = ['OR' => [['username LIKE' => '%'.$userQuery], ['orcid LIKE' => '%'.$userQuery]]];
+                $conditions = ['OR' => [['username LIKE' => $userQuery.'%'], ['orcid LIKE' => $userQuery.'%']]];
             } else if ($findType === $this::CONTAINS) {
                 $conditions = ['OR' => [['username LIKE' => '%'.$userQuery.'%'], ['orcid LIKE' => '%'.$userQuery.'%']]];
             }

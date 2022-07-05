@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use App\Utility\Emailer;
 
 /**
  * OrcidBatchTriggers Controller
@@ -129,7 +130,7 @@ class OrcidBatchTriggersController extends AppController
         xdebug_break();
         if ($trigger->begin_date && $trigger->begin_date > time()) {
             $this->Flash->error(__('The Trigger has a future Begin Date.'));
-        } else if ($this->executeTrigger($trigger)) {
+        } else if (Emailer::executeTrigger($trigger)) {
             $this->Flash->success(__('The Trigger has run.'));
         } else {
             $this->Flash->error(__('The Trigger could not be run. Please, try again.'));
@@ -150,7 +151,7 @@ class OrcidBatchTriggersController extends AppController
         $failed = 0;
         xdebug_break();
         foreach ($triggers as $trigger) {
-            if ($this->executeTrigger($trigger)) {
+            if (Emailer::executeTrigger($trigger)) {
                 $success++;
             } else {
                 $failed++;
@@ -166,72 +167,6 @@ class OrcidBatchTriggersController extends AppController
             $this->Flash->error(__('No triggers to run.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
-
-    public function executeTrigger($trigger) {
-        xdebug_break();
-        // Abort if OrcidTrigger does not contain expected information
-		if (!isset($trigger) || !isset($trigger->orcid_status_type)) {
-			return false;
-		}
-		// Trigger may not run prior to begin_date
-		if (isset($trigger->begin_date) && $trigger->begin_date > time() ) {
-			return false;
-		}
-		$failures = 0;
-		// We'll use OrcidEmailTable to create new emails
-		$OrcidEmailTable = $this->getTableLocator()->get('OrcidEmails');
-		// We'll use OrcidStatusTable to ensure the user is at the trigger criteria
-		$CurrentOrcidStatusTable = $this->getTableLocator()->get('CurrentOrcidStatus');
-		// We'll use OrcidBatchGroupTable to collect relevant users
-		$OrcidBatchGroupTable = $this->getTableLocator()->get('OrcidBatchGroups');
-		// If sequence is 0 a group is required.  We can't initialize everyone.
-		if ($trigger->orcid_status_type->seq == 0 && !isset($trigger->orcid_batch_group)) {
-			return false;
-		}
-		// Process each user at the status for the trigger_delay days
-		$options = ['conditions' => ['CurrentOrcidStatus.orcid_status_type_id' => $trigger->orcid_status_type_id]];
-		// This will be our selection of users
-		$users = [];
-		if (isset($trigger->orcid_batch_group->id)) {
-			$users = $OrcidBatchGroupTable->getAssociatedUsers($trigger->orcid_batch_group_id, 'CurrentOrcidStatus.orcid_user_id');
-			$options['conditions'][] = $users;
-		}
-		$userStatuses = $this->CurrentOrcidStatus->find('all', $options);
-		foreach ($userStatuses as $userStatus) {
-			// If a prior email is required, check for it
-			if ($trigger->require_batch_id) {
-				$options = ['conditions' => ['OrcidEmail.orcid_user_id' => $userStatus->orcid_user_id]];
-				if ($trigger->require_batch_id !== -1) {
-					$options['conditions']['OrcidEmail.orcid_batch_id'] = $trigger->require_batch_id;
-				}
-				if (!$this->OrcidEmail->find('first', $options)) {
-					// if the prior email was not found, skip
-					continue;
-				}
-			}
-			// Create unless the email already exists
-			$options = ['conditions' => ['OrcidEmail.orcid_user_id' => $userStatus->orcid_user_id, 'OrcidEmail.orcid_batch_id' => $trigger->OrcidBatch->id]];
-			// If a maximum repeat is set, count the number of times sent
-			if ($trigger->maximum_repeat) {
-				if ($this->OrcidEmail->find('count', $options) >= $trigger->maximum_repeat) {
-					// if already at or past the limit, skip
-					continue;
-				}
-			}
-			// If this email is repeating, also check the last sent date
-			if ($trigger->repeat) {
-				$options['conditions']['TRUNC(NVL(OrcidEmail.sent, SYSDATE) + '.$trigger->repeat.') >'] = date('Y-m-d');
-			}
-			if (!$this->OrcidEmail->find('first', $options)) {
-				$this->OrcidEmail->create();
-				$newEmail = ['orcid_user_id' => $userStatus->orcid_user_id, 'orcid_batch_id' => $trigger->OrcidBatch->id, 'queued' => date('Y-m-d H:i:s')];
-				if (!$this->OrcidEmail->save($newEmail)) {
-					$failures++;
-				}
-			}
-		}
-		return !$failures;
     }
 
 }

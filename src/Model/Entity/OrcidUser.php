@@ -5,7 +5,7 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 use Cake\Core\Configure;
-
+use Cake\ORM\Locator\LocatorAwareTrait;
 /**
  * OrcidUser Entity
  *
@@ -24,17 +24,19 @@ class OrcidUser extends Entity
 {
 
 
-
-    
-    private $ldapHandler;
     private $ldapResult;
+
+    private $ldapHandler;
+
+    use LocatorAwareTrait;
     
     public function  &__get(string $field) {
         if ($this->has($field)) {
             return parent::__get($field);
         } else if (!(isset($this->ldapResult))) {
-            $this->ldapHandler = new \LdapUtility\Ldap(Configure::read('ldapUtility.ldap'));
-            $this->ldapHandler->bindUsingCommonCredentials();
+            $OrcidUsersTable = $this->getTableLocator()->get('OrcidUsers');
+
+            $this->ldapHandler = $OrcidUsersTable->ldapHandler;
 
             $this->ldapResult = $this->ldapHandler->find('search', [
                 'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',

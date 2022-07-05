@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
-use Cake\Mailer\Mailer;
+use App\Utility\Emailer;
 
 /**
  * OrcidBatches Controller
@@ -14,7 +14,6 @@ use Cake\Mailer\Mailer;
  */
 class OrcidBatchesController extends AppController
 {
-
 
     /**
      * Index method
@@ -118,18 +117,8 @@ class OrcidBatchesController extends AppController
         if ($this->request->is(array('post', 'put'))) {
             $toRecipient = $this->request->getdata('recipient');
 			if ($toRecipient) {
-                $Mailer = new Mailer();
-                $Mailer
-                    ->setFrom('noreply@orcid-dev.pitt.edu','ORCID @ Pitt')
-                    ->setTo($toRecipient)
-                    ->setSubject("Preview");
-                $Mailer
-                    ->setEmailFormat('html')
-                    ->viewBuilder()
-                    ->setTemplate('rendered')
-                    ->setLayout('default')
-                    ->setVar('body', $orcidBatch->body);
-				if ($Mailer->send()) {
+                $Emailer = new Emailer();
+				if ($Emailer->sendBatch($toRecipient, $orcidBatch)) {
 					$this->Flash->success(__('A preview of the Batch Email Template has been sent.'));
 				} else {
 					$this->Flash->error(__('The Batch Email Template could not be previewed. Please, try again.'));

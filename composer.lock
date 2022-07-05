@@ -4,8 +4,67 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1439e23c330f530cd27c9c68a8eaca19",
+    "content-hash": "8557cdf2a32bb181659cde571da76b1e",
     "packages": [
+        {
+            "name": "cakedc/cakephp-oracle-driver",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CakeDC/cakephp-oracle-driver.git",
+                "reference": "89a4dd5b93c3912a3b6224182ae17a341bc06775"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CakeDC/cakephp-oracle-driver/zipball/89a4dd5b93c3912a3b6224182ae17a341bc06775",
+                "reference": "89a4dd5b93c3912a3b6224182ae17a341bc06775",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/chronos": "*",
+                "ext-pdo": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "cakephp/cakephp": "4.0.*",
+                "cakephp/cakephp-codesniffer": "^4.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "CakeDC\\OracleDriver\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CakeDC",
+                    "homepage": "http://www.cakedc.com",
+                    "role": "Author"
+                },
+                {
+                    "name": "Others",
+                    "homepage": "https://github.com/cakedc/cakephp-oracle-driver/graphs/contributors"
+                }
+            ],
+            "description": "CakePHP 3 Driver for Oracle Database",
+            "homepage": "https://github.com/cakedc/cakephp-oracle-driver",
+            "keywords": [
+                "cakephp",
+                "database",
+                "driver",
+                "oracle"
+            ],
+            "support": {
+                "issues": "https://github.com/cakedc/cakephp-oracle-driver/issues",
+                "source": "https://github.com/cakedc/cakephp-oracle-driver"
+            },
+            "time": "2020-03-19T12:06:31+00:00"
+        },
         {
             "name": "cakedc/tiny-mce",
             "version": "3.0.0",
