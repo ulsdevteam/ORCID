@@ -114,11 +114,11 @@ class Emailer
 		}
 		$failures = 0;
 		// We'll use OrcidEmailTable to create new emails
-		$OrcidEmailTable = $this->getTableLocator()->get('OrcidEmails');
+		$OrcidEmailTable = $this->fetchTable('OrcidEmails');
 		// We'll use OrcidStatusTable to ensure the user is at the trigger criteria
-		$CurrentOrcidStatusTable = $this->getTableLocator()->get('CurrentOrcidStatus');
+		$CurrentOrcidStatusTable = $this->fetchTable('CurrentOrcidStatus');
 		// We'll use OrcidBatchGroupTable to collect relevant users
-		$OrcidBatchGroupTable = $this->getTableLocator()->get('OrcidBatchGroups');
+		$OrcidBatchGroupTable = $this->fetchTable('OrcidBatchGroups');
 		// If sequence is 0 a group is required.  We can't initialize everyone.
 		if ($trigger->orcid_status_type->seq == 0 && !isset($trigger->orcid_batch_group)) {
 			return false;

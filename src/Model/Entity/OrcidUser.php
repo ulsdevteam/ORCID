@@ -34,7 +34,7 @@ class OrcidUser extends Entity
         if ($this->has($field)) {
             return parent::__get($field);
         } else if (!(isset($this->ldapResult))) {
-            $OrcidUsersTable = $this->getTableLocator()->get('OrcidUsers');
+            $OrcidUsersTable = $this->fetchTable('OrcidUsers');
 
             $this->ldapHandler = $OrcidUsersTable->ldapHandler;
 
