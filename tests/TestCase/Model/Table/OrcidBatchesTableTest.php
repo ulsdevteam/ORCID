@@ -25,9 +25,6 @@ class OrcidBatchesTableTest extends TestCase
      */
     protected $fixtures = [
         'app.OrcidBatches',
-        'app.OrcidBatchCreators',
-        'app.OrcidBatchTriggers',
-        'app.OrcidEmails',
     ];
 
     /**

@@ -3,20 +3,20 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\OrcidBatchTriggersTable;
+use App\Model\Table\OrcidEmployeesTable;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\OrcidBatchTriggersTable Test Case
+ * App\Model\Table\OrcidEmployeesTable Test Case
  */
-class OrcidBatchTriggersTableTest extends TestCase
+class OrcidEmployeesTableTest extends TestCase
 {
     /**
      * Test subject
      *
-     * @var \App\Model\Table\OrcidBatchTriggersTable
+     * @var \App\Model\Table\OrcidEmployeesTable
      */
-    protected $OrcidBatchTriggers;
+    protected $OrcidEmployees;
 
     /**
      * Fixtures
@@ -24,10 +24,7 @@ class OrcidBatchTriggersTableTest extends TestCase
      * @var array<string>
      */
     protected $fixtures = [
-        'app.OrcidBatchTriggers',
-        'app.OrcidStatusTypes',
-        'app.ORCIDBATCHES',
-        'app.OrcidBatchGroups',
+        'app.OrcidEmployees',
     ];
 
     /**
@@ -38,8 +35,8 @@ class OrcidBatchTriggersTableTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $config = $this->getTableLocator()->exists('OrcidBatchTriggers') ? [] : ['className' => OrcidBatchTriggersTable::class];
-        $this->OrcidBatchTriggers = $this->getTableLocator()->get('OrcidBatchTriggers', $config);
+        $config = $this->getTableLocator()->exists('OrcidEmployees') ? [] : ['className' => OrcidEmployeesTable::class];
+        $this->OrcidEmployees = $this->getTableLocator()->get('OrcidEmployees', $config);
     }
 
     /**
@@ -49,7 +46,7 @@ class OrcidBatchTriggersTableTest extends TestCase
      */
     protected function tearDown(): void
     {
-        unset($this->OrcidBatchTriggers);
+        unset($this->OrcidEmployees);
 
         parent::tearDown();
     }
@@ -58,7 +55,7 @@ class OrcidBatchTriggersTableTest extends TestCase
      * Test validationDefault method
      *
      * @return void
-     * @uses \App\Model\Table\OrcidBatchTriggersTable::validationDefault()
+     * @uses \App\Model\Table\OrcidEmployeesTable::validationDefault()
      */
     public function testValidationDefault(): void
     {
@@ -66,12 +63,12 @@ class OrcidBatchTriggersTableTest extends TestCase
     }
 
     /**
-     * Test buildRules method
+     * Test defaultConnectionName method
      *
      * @return void
-     * @uses \App\Model\Table\OrcidBatchTriggersTable::buildRules()
+     * @uses \App\Model\Table\OrcidEmployeesTable::defaultConnectionName()
      */
-    public function testBuildRules(): void
+    public function testDefaultConnectionName(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

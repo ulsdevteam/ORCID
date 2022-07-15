@@ -25,7 +25,7 @@ class OrcidBatchCreatorsTableTest extends TestCase
      */
     protected $fixtures = [
         'app.OrcidBatchCreators',
-        'app.OrcidBatches',
+        'app.ORCIDBATCHES',
     ];
 
     /**
@@ -59,6 +59,17 @@ class OrcidBatchCreatorsTableTest extends TestCase
      * @uses \App\Model\Table\OrcidBatchCreatorsTable::validationDefault()
      */
     public function testValidationDefault(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test buildRules method
+     *
+     * @return void
+     * @uses \App\Model\Table\OrcidBatchCreatorsTable::buildRules()
+     */
+    public function testBuildRules(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

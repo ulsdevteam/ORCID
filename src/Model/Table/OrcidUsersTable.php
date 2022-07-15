@@ -29,7 +29,7 @@ use Cake\Core\Configure;
  * @method \App\Model\Entity\OrcidUser[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\OrcidUser[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\OrcidUser[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
+ * 
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class OrcidUsersTable extends Table
@@ -49,7 +49,7 @@ class OrcidUsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_users');
+        $this->setTable('ULS.ORCID_USERS');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
@@ -84,20 +84,35 @@ class OrcidUsersTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('username')
-            ->maxLength('username', 8)
-            ->requirePresence('username', 'create')
-            ->notEmptyString('username');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->scalar('orcid')
-            ->maxLength('orcid', 19)
-            ->allowEmptyString('orcid');
+            ->scalar('USERNAME')
+            ->maxLength('USERNAME', 8)
+            ->requirePresence('USERNAME', 'create')
+            ->notEmptyString('USERNAME')
+            ->add('USERNAME', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->scalar('token')
-            ->maxLength('token', 255)
-            ->allowEmptyString('token');
+            ->scalar('ORCID')
+            ->maxLength('ORCID', 19)
+            ->allowEmptyString('ORCID')
+            ->add('ORCID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+
+        $validator
+            ->scalar('TOKEN')
+            ->maxLength('TOKEN', 255)
+            ->allowEmptyString('TOKEN');
+
+        $validator
+            ->dateTime('CREATED')
+            ->allowEmptyDateTime('CREATED');
+
+        $validator
+            ->dateTime('MODIFIED')
+            ->allowEmptyDateTime('MODIFIED');
 
         return $validator;
     }
@@ -111,7 +126,9 @@ class OrcidUsersTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+        $rules->add($rules->isUnique(['USERNAME']), ['errorField' => 'USERNAME']);
+        $rules->add($rules->isUnique(['ORCID'], ['allowMultipleNulls' => true]), ['errorField' => 'ORCID']);
 
         return $rules;
     }

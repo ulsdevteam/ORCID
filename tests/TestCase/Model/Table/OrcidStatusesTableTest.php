@@ -25,7 +25,7 @@ class OrcidStatusesTableTest extends TestCase
      */
     protected $fixtures = [
         'app.OrcidStatuses',
-        'app.OrcidUsers',
+        'app.ORCIDUSERS',
         'app.OrcidStatusTypes',
     ];
 

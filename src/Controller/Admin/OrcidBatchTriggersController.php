@@ -127,7 +127,6 @@ class OrcidBatchTriggersController extends AppController
     public function execute($id = null) {
         $trigger = $this->OrcidBatchTriggers->get($id, ['contain' => ['OrcidStatusTypes', 'OrcidBatchGroups']]);
         $this->request->allowMethod('post');
-        xdebug_break();
         if ($trigger->begin_date && $trigger->begin_date > time()) {
             $this->Flash->error(__('The Trigger has a future Begin Date.'));
         } else if (Emailer::executeTrigger($trigger)) {
@@ -149,7 +148,6 @@ class OrcidBatchTriggersController extends AppController
         $triggers = $this->OrcidBatchTrigger->find('all', ['conditions' => ['or' => [['begin_date <=' => 'today'], ['begin_date' => NULL]], 'order' => ['require_batch_id DESC']]]);
         $success = 0;
         $failed = 0;
-        xdebug_break();
         foreach ($triggers as $trigger) {
             if (Emailer::executeTrigger($trigger)) {
                 $success++;

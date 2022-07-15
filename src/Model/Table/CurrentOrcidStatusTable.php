@@ -40,14 +40,14 @@ class CurrentOrcidStatusTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('current_orcid_status');
+        $this->setTable('ULS.CURRENT_ORCID_STATUS');
 
         $this->belongsTo('OrcidUsers', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidStatusTypes', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
             'joinType' => 'INNER',
         ]);
     }
@@ -61,14 +61,14 @@ class CurrentOrcidStatusTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->notEmptyString('orcid_user_id');
+            ->notEmptyString('ORCID_USER_ID');
 
         $validator
-            ->notEmptyString('orcid_status_type_id');
+            ->notEmptyString('ORCID_STATUS_TYPE_ID');
 
         $validator
-            ->date('status_timestamp')
-            ->allowEmptyDate('status_timestamp');
+            ->date('STATUS_TIMESTAMP')
+            ->allowEmptyDate('STATUS_TIMESTAMP');
 
         return $validator;
     }
@@ -82,8 +82,8 @@ class CurrentOrcidStatusTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_user_id', 'OrcidUsers'), ['errorField' => 'orcid_user_id']);
-        $rules->add($rules->existsIn('orcid_status_type_id', 'OrcidStatusTypes'), ['errorField' => 'orcid_status_type_id']);
+        $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
 
         return $rules;
     }

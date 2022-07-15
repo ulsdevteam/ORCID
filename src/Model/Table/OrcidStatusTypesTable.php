@@ -42,21 +42,21 @@ class OrcidStatusTypesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_status_types');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
+        $this->setTable('ULS.ORCID_STATUS_TYPES');
+        $this->setDisplayField('NAME');
+        $this->setPrimaryKey('ID');
 
         $this->hasMany('AllOrcidStatuses', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
         ]);
         $this->hasMany('CurrentOrcidStatus', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
         ]);
         $this->hasMany('OrcidBatchTriggers', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
         ]);
         $this->hasMany('OrcidStatuses', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
         ]);
     }
 
@@ -69,15 +69,36 @@ class OrcidStatusTypesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('name')
-            ->maxLength('name', 512)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->decimal('seq')
-            ->allowEmptyString('seq');
+            ->scalar('NAME')
+            ->maxLength('NAME', 512)
+            ->requirePresence('NAME', 'create')
+            ->notEmptyString('NAME');
+
+        $validator
+            ->integer('SEQ')
+            ->allowEmptyString('SEQ')
+            ->add('SEQ', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->isUnique(['SEQ'], ['allowMultipleNulls' => true]), ['errorField' => 'SEQ']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+
+        return $rules;
     }
 }

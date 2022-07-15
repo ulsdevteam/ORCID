@@ -11,6 +11,12 @@ use Cake\TestSuite\Fixture\TestFixture;
 class OrcidStatusTypesFixture extends TestFixture
 {
     /**
+     * Table name
+     *
+     * @var string
+     */
+    public $table = 'ULS.ORCID_STATUS_TYPES';
+    /**
      * Init method
      *
      * @return void
@@ -19,9 +25,9 @@ class OrcidStatusTypesFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'name' => 'Lorem ipsum dolor sit amet',
-                'seq' => 1.5,
+                'ID' => 1,
+                'NAME' => 'Lorem ipsum dolor sit amet',
+                'SEQ' => 1,
             ],
         ];
         parent::init();

@@ -19,12 +19,12 @@ class OrcidEmailsFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'orcid_user_id' => 1,
-                'orcid_batch_id' => 1,
-                'queued' => '2022-05-17',
-                'sent' => '2022-05-17',
-                'cancelled' => '2022-05-17',
+                'ID' => 1,
+                'ORCID_USER_ID' => 1,
+                'ORCID_BATCH_ID' => 1,
+                'QUEUED' => '2022-07-15 14:56:02',
+                'SENT' => '2022-07-15 14:56:02',
+                'CANCELLED' => '2022-07-15 14:56:02',
             ],
         ];
         parent::init();

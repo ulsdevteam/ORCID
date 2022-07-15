@@ -10,9 +10,9 @@ use Cake\Validation\Validator;
 
 /**
  * OrcidBatchCreators Model
- *
- * @property \App\Model\Table\OrcidBatchesTable&\Cake\ORM\Association\HasMany $OrcidBatches
- *
+ * 
+ *@property \App\Model\Table\OrcidBatchesTable&\Cake\ORM\Association\HasMany $ORCIDBATCHES
+ * 
  * @method \App\Model\Entity\OrcidBatchCreator newEmptyEntity()
  * @method \App\Model\Entity\OrcidBatchCreator newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\OrcidBatchCreator[] newEntities(array $data, array $options = [])
@@ -29,6 +29,7 @@ use Cake\Validation\Validator;
  */
 class OrcidBatchCreatorsTable extends Table
 {
+    
     /**
      * Initialize method
      *
@@ -38,13 +39,15 @@ class OrcidBatchCreatorsTable extends Table
     public function initialize(array $config): void
     {
         parent::initialize($config);
+        $config["alias"] = strtoupper($config["alias"]);
+        $this->setAlias($config["alias"]);
 
-        $this->setTable('orcid_batch_creators');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
+        $this->setTable('ULS.ORCID_BATCH_CREATORS');
+        $this->setDisplayField('NAME');
+        $this->setPrimaryKey('ID');
 
         $this->hasMany('OrcidBatches', [
-            'foreignKey' => 'orcid_batch_creator_id',
+            'foreignKey' => 'ORCID_BATCH_CREATOR_ID',
         ]);
     }
 
@@ -57,14 +60,38 @@ class OrcidBatchCreatorsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('name')
-            ->maxLength('name', 8)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->notEmptyString('flags');
+            ->scalar('NAME')
+            ->maxLength('NAME', 8)
+            ->requirePresence('NAME', 'create')
+            ->notEmptyString('NAME')
+            ->add('NAME', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+
+        $validator
+            ->integer('FLAGS')
+            ->notEmptyString('FLAGS')
+            ->add('FLAGS', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+        $rules->add($rules->isUnique(['FLAGS']), ['errorField' => 'FLAGS']);
+        $rules->add($rules->isUnique(['NAME']), ['errorField' => 'NAME']);
+
+        return $rules;
     }
 }

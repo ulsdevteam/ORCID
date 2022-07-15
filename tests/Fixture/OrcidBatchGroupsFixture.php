@@ -19,12 +19,12 @@ class OrcidBatchGroupsFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'name' => 'Lorem ipsum dolor sit amet',
-                'group_definition' => 'Lorem ipsum dolor sit amet',
-                'employee_definition' => 'Lorem ipsum dolor sit amet',
-                'student_definition' => 'Lorem ipsum dolor sit amet',
-                'cache_creation_date' => '2022-05-17',
+                'ID' => 1,
+                'NAME' => 'Lorem ipsum dolor sit amet',
+                'GROUP_DEFINITION' => 'Lorem ipsum dolor sit amet',
+                'EMPLOYEE_DEFINITION' => 'Lorem ipsum dolor sit amet',
+                'STUDENT_DEFINITION' => 'Lorem ipsum dolor sit amet',
+                'CACHE_CREATION_DATE' => '2022-07-15 14:44:24',
             ],
         ];
         parent::init();

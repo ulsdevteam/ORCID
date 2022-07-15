@@ -87,7 +87,7 @@ class Emailer
 			->viewBuilder()
 			->setTemplate('rendered')
 			->setLayout('default')
-			->setVar('body', $orcidBatch->body);
+			->setVar('body', $orcidBatch->BODY);
 		try {
 			$Mailer->send();
 			return true;
@@ -103,7 +103,6 @@ class Emailer
 	 * @return boolean
 	 */
     public function executeTrigger($trigger) {
-        xdebug_break();
         // Abort if OrcidTrigger does not contain expected information
 		if (!isset($trigger) || !isset($trigger->orcid_status_type)) {
 			return false;

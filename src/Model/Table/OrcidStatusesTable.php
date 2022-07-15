@@ -40,16 +40,16 @@ class OrcidStatusesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_statuses');
+        $this->setTable('ORCID_STATUSES');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
         $this->belongsTo('OrcidUsers', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidStatusTypes', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
             'joinType' => 'INNER',
         ]);
     }
@@ -63,17 +63,26 @@ class OrcidStatusesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->requirePresence('orcid_user_id', 'create')
-            ->notEmptyString('orcid_user_id');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->requirePresence('orcid_status_type_id', 'create')
-            ->notEmptyString('orcid_status_type_id');
+            ->integer('ORCID_USER_ID')
+            ->requirePresence('ORCID_USER_ID', 'create')
+            ->notEmptyString('ORCID_USER_ID')
+            ->add('ORCID_USER_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->date('status_timestamp')
-            ->requirePresence('status_timestamp', 'create')
-            ->notEmptyDate('status_timestamp');
+            ->integer('ORCID_STATUS_TYPE_ID')
+            ->requirePresence('ORCID_STATUS_TYPE_ID', 'create')
+            ->notEmptyString('ORCID_STATUS_TYPE_ID')
+            ->add('ORCID_STATUS_TYPE_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+
+        $validator
+            ->dateTime('STATUS_TIMESTAMP')
+            ->requirePresence('STATUS_TIMESTAMP', 'create')
+            ->notEmptyDateTime('STATUS_TIMESTAMP');
 
         return $validator;
     }
@@ -87,8 +96,11 @@ class OrcidStatusesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_user_id', 'OrcidUsers'), ['errorField' => 'orcid_user_id']);
-        $rules->add($rules->existsIn('orcid_status_type_id', 'OrcidStatusTypes'), ['errorField' => 'orcid_status_type_id']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+        $rules->add($rules->isUnique(['ORCID_USER_ID', 'ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->isUnique(['ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
+        $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
 
         return $rules;
     }

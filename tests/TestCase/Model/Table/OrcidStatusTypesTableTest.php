@@ -25,8 +25,6 @@ class OrcidStatusTypesTableTest extends TestCase
      */
     protected $fixtures = [
         'app.OrcidStatusTypes',
-        'app.OrcidBatchTriggers',
-        'app.OrcidStatuses',
     ];
 
     /**
@@ -60,6 +58,17 @@ class OrcidStatusTypesTableTest extends TestCase
      * @uses \App\Model\Table\OrcidStatusTypesTable::validationDefault()
      */
     public function testValidationDefault(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test buildRules method
+     *
+     * @return void
+     * @uses \App\Model\Table\OrcidStatusTypesTable::buildRules()
+     */
+    public function testBuildRules(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

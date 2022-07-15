@@ -54,6 +54,28 @@ class OrcidBatchGroupsTableTest extends TestCase
     }
 
     /**
+     * Test getAssociatedUsers method
+     *
+     * @return void
+     * @uses \App\Model\Table\OrcidBatchGroupsTable::getAssociatedUsers()
+     */
+    public function testGetAssociatedUsers(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test updateCache method
+     *
+     * @return void
+     * @uses \App\Model\Table\OrcidBatchGroupsTable::updateCache()
+     */
+    public function testUpdateCache(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
      * Test validationDefault method
      *
      * @return void

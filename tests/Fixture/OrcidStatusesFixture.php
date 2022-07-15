@@ -19,10 +19,10 @@ class OrcidStatusesFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'orcid_user_id' => 1,
-                'orcid_status_type_id' => 1,
-                'status_timestamp' => '2022-05-17',
+                'ID' => 1,
+                'ORCID_USER_ID' => 1,
+                'ORCID_STATUS_TYPE_ID' => 1,
+                'STATUS_TIMESTAMP' => '2022-07-15 19:15:26',
             ],
         ];
         parent::init();

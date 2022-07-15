@@ -55,7 +55,7 @@ class OrcidBatchGroupsTable extends Table
 		return $db->expression($subQuery);
     }
 
-    /**
+/**
      * Ensure the OrcidBatchGroup.id has an updated cache, creating the OrcidUser(s) if necessary
      *
      * @param int
@@ -189,15 +189,15 @@ class OrcidBatchGroupsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_batch_groups');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
+        $this->setTable('ULS.ORCID_BATCH_GROUPS');
+        $this->setDisplayField('NAME');
+        $this->setPrimaryKey('ID');
 
         $this->hasMany('OrcidBatchGroupCaches', [
-            'foreignKey' => 'orcid_batch_group_id',
+            'foreignKey' => 'ORCID_BATCH_GROUP_ID',
         ]);
         $this->hasMany('OrcidBatchTriggers', [
-            'foreignKey' => 'orcid_batch_group_id',
+            'foreignKey' => 'ORCID_BATCH_GROUP_ID',
         ]);
     }
 
@@ -210,30 +210,49 @@ class OrcidBatchGroupsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+
+        $validator
             ->scalar('name')
             ->maxLength('name', 512)
             ->requirePresence('name', 'create')
             ->notEmptyString('name');
 
         $validator
-            ->scalar('group_definition')
-            ->maxLength('group_definition', 2048)
-            ->allowEmptyString('group_definition');
+            ->scalar('GROUP_DEFINITION')
+            ->maxLength('GROUP_DEFINITION', 2048)
+            ->allowEmptyString('GROUP_DEFINITION');
 
         $validator
-            ->scalar('employee_definition')
-            ->maxLength('employee_definition', 2048)
-            ->allowEmptyString('employee_definition');
+            ->scalar('EMPLOYEE_DEFINITION')
+            ->maxLength('EMPLOYEE_DEFINITION', 2048)
+            ->allowEmptyString('EMPLOYEE_DEFINITION');
 
         $validator
-            ->scalar('student_definition')
-            ->maxLength('student_definition', 2048)
-            ->allowEmptyString('student_definition');
+            ->scalar('STUDENT_DEFINITION')
+            ->maxLength('STUDENT_DEFINITION', 2048)
+            ->allowEmptyString('STUDENT_DEFINITION');
 
         $validator
-            ->date('cache_creation_date')
-            ->allowEmptyDate('cache_creation_date');
+            ->dateTime('CACHE_CREATION_DATE')
+            ->allowEmptyDateTime('CACHE_CREATION_DATE');
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+
+        return $rules;
     }
 }

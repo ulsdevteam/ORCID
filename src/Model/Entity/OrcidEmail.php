@@ -8,15 +8,15 @@ use Cake\ORM\Entity;
 /**
  * OrcidEmail Entity
  *
- * @property int $id
- * @property int $orcid_user_id
- * @property int $orcid_batch_id
- * @property \Cake\I18n\FrozenDate|null $queued
- * @property \Cake\I18n\FrozenDate|null $sent
- * @property \Cake\I18n\FrozenDate|null $cancelled
+ * @property int $ID
+ * @property int $ORCID_USER_ID
+ * @property int $ORCID_BATCH_ID
+ * @property \Cake\I18n\FrozenTime|null $QUEUED
+ * @property \Cake\I18n\FrozenTime|null $SENT
+ * @property \Cake\I18n\FrozenTime|null $CANCELLED
  *
  * @property \App\Model\Entity\OrcidUser $orcid_user
- * @property \App\Model\Entity\OrcidBatch $orcid_batch
+ * @property \App\Model\Entity\ORCIDBATCH $orcid_batch
  */
 class OrcidEmail extends Entity
 {
@@ -30,11 +30,12 @@ class OrcidEmail extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'orcid_user_id' => true,
-        'orcid_batch_id' => true,
-        'queued' => true,
-        'sent' => true,
-        'cancelled' => true,
+        'ID' => true,
+        'ORCID_USER_ID' => true,
+        'ORCID_BATCH_ID' => true,
+        'QUEUED' => true,
+        'SENT' => true,
+        'CANCELLED' => true,
         'orcid_user' => true,
         'orcid_batch' => true,
     ];

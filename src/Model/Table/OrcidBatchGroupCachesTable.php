@@ -13,7 +13,7 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\OrcidBatchGroupsTable&\Cake\ORM\Association\BelongsTo $OrcidBatchGroups
  * @property \App\Model\Table\OrcidUsersTable&\Cake\ORM\Association\BelongsTo $OrcidUsers
- *
+ * 
  * @method \App\Model\Entity\OrcidBatchGroupCache newEmptyEntity()
  * @method \App\Model\Entity\OrcidBatchGroupCache newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\OrcidBatchGroupCache[] newEntities(array $data, array $options = [])
@@ -40,16 +40,16 @@ class OrcidBatchGroupCachesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_batch_group_caches');
+        $this->setTable('ULS.ORCID_BATCH_GROUP_CACHES');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
         $this->belongsTo('OrcidBatchGroups', [
-            'foreignKey' => 'orcid_batch_group_id',
+            'foreignKey' => 'ORCID_BATCH_GROUP_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidUsers', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
             'joinType' => 'INNER',
         ]);
     }
@@ -63,16 +63,25 @@ class OrcidBatchGroupCachesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->requirePresence('orcid_batch_group_id', 'create')
-            ->notEmptyString('orcid_batch_group_id');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->requirePresence('orcid_user_id', 'create')
-            ->notEmptyString('orcid_user_id');
+            ->integer('ORCID_BATCH_GROUP_ID')
+            ->requirePresence('ORCID_BATCH_GROUP_ID', 'create')
+            ->notEmptyString('ORCID_BATCH_GROUP_ID')
+            ->add('ORCID_BATCH_GROUP_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->date('deprecated')
-            ->allowEmptyDate('deprecated');
+            ->integer('ORCID_USER_ID')
+            ->requirePresence('ORCID_USER_ID', 'create')
+            ->notEmptyString('ORCID_USER_ID')
+            ->add('ORCID_USER_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+
+        $validator
+            ->dateTime('DEPRECATED')
+            ->allowEmptyDateTime('DEPRECATED');
 
         return $validator;
     }
@@ -86,8 +95,11 @@ class OrcidBatchGroupCachesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_batch_group_id', 'OrcidBatchGroups'), ['errorField' => 'orcid_batch_group_id']);
-        $rules->add($rules->existsIn('orcid_user_id', 'OrcidUsers'), ['errorField' => 'orcid_user_id']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+        $rules->add($rules->isUnique(['ORCID_USER_ID']), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->isUnique(['ORCID_BATCH_GROUP_ID']), ['errorField' => 'ORCID_BATCH_GROUP_ID']);
+        $rules->add($rules->existsIn('ORCID_BATCH_GROUP_ID', 'OrcidBatchGroups'), ['errorField' => 'ORCID_BATCH_GROUP_ID']);
+        $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
 
         return $rules;
     }

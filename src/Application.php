@@ -60,11 +60,12 @@ class Application extends BaseApplication
          * Debug Kit should not be installed on a production system
          */
         if (Configure::read('debug')) {
+            Configure::write('DebugKit.panels', ['CakeDC/OracleDriver.MethodLog']);
             $this->addPlugin('DebugKit');
+            Configure::write('DebugKit.forceEnable', true);
         }
 
         // Load more plugins here
-        $this->addPlugin('DebugKit');
         $this->addPlugin('LdapUtility');
         $this->addPlugin(\CakeDC\OracleDriver\Plugin::class, ['bootstrap' => true]);
     }

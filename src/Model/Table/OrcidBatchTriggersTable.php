@@ -41,20 +41,20 @@ class OrcidBatchTriggersTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_batch_triggers');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
+        $this->setTable('ULS.ORCID_BATCH_TRIGGERS');
+        $this->setDisplayField('NAME');
+        $this->setPrimaryKey('ID');
 
         $this->belongsTo('OrcidStatusTypes', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidBatches', [
-            'foreignKey' => 'orcid_batch_id',
+            'foreignKey' => 'ORCID_BATCH_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidBatchGroups', [
-            'foreignKey' => 'orcid_batch_group_id',
+            'foreignKey' => 'ORCID_BATCH_GROUP_ID',
         ]);
     }
 
@@ -67,38 +67,53 @@ class OrcidBatchTriggersTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('name')
-            ->maxLength('name', 512)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->requirePresence('orcid_status_type_id', 'create')
-            ->notEmptyString('orcid_status_type_id');
+            ->scalar('NAME')
+            ->maxLength('NAME', 512)
+            ->requirePresence('NAME', 'create')
+            ->notEmptyString('NAME');
 
         $validator
-            ->requirePresence('orcid_batch_id', 'create')
-            ->notEmptyString('orcid_batch_id');
+            ->integer('ORCID_STATUS_TYPE_ID')
+            ->requirePresence('ORCID_STATUS_TYPE_ID', 'create')
+            ->notEmptyString('ORCID_STATUS_TYPE_ID')
+            ->add('ORCID_STATUS_TYPE_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->decimal('trigger_delay')
-            ->requirePresence('trigger_delay', 'create')
-            ->notEmptyString('trigger_delay');
+            ->integer('ORCID_BATCH_ID')
+            ->requirePresence('ORCID_BATCH_ID', 'create')
+            ->notEmptyString('ORCID_BATCH_ID')
+            ->add('ORCID_BATCH_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->allowEmptyString('orcid_batch_group_id');
+            ->integer('TRIGGER_DELAY')
+            ->requirePresence('TRIGGER_DELAY', 'create')
+            ->notEmptyString('TRIGGER_DELAY');
 
         $validator
-            ->date('begin_date')
-            ->allowEmptyDate('begin_date');
+            ->integer('ORCID_BATCH_GROUP_ID')
+            ->allowEmptyString('ORCID_BATCH_GROUP_ID')
+            ->add('ORCID_BATCH_GROUP_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->decimal('repeat_value')
-            ->notEmptyString('repeat_value');
+            ->dateTime('BEGIN_DATE')
+            ->allowEmptyDateTime('BEGIN_DATE');
 
         $validator
-            ->decimal('maximum_repeat')
-            ->notEmptyString('maximum_repeat');
+            ->integer('REQUIRE_BATCH_ID')
+            ->allowEmptyString('REQUIRE_BATCH_ID');
+
+        $validator
+            ->integer('REPEAT')
+            ->notEmptyString('REPEAT');
+
+        $validator
+            ->integer('MAXIMUM_REPEAT')
+            ->notEmptyString('MAXIMUM_REPEAT');
 
         return $validator;
     }
@@ -112,9 +127,14 @@ class OrcidBatchTriggersTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_status_type_id', 'OrcidStatusTypes'), ['errorField' => 'orcid_status_type_id']);
-        $rules->add($rules->existsIn('orcid_batch_id', 'OrcidBatches'), ['errorField' => 'orcid_batch_id']);
-        $rules->add($rules->existsIn('orcid_batch_group_id', 'OrcidBatchGroups'), ['errorField' => 'orcid_batch_group_id']);
+        $rules->add($rules->isUnique(['ORCID_BATCH_GROUP_ID'], ['allowMultipleNulls' => true]), ['errorField' => 'ORCID_BATCH_GROUP_ID']);
+        $rules->add($rules->isUnique(['BEGIN_DATE'], ['allowMultipleNulls' => true]), ['errorField' => 'BEGIN_DATE']);
+        $rules->add($rules->isUnique(['ORCID_BATCH_ID']), ['errorField' => 'ORCID_BATCH_ID']);
+        $rules->add($rules->isUnique(['ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+        $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
+        $rules->add($rules->existsIn('ORCID_BATCH_ID', 'OrcidBatches'), ['errorField' => 'ORCID_BATCH_ID']);
+        $rules->add($rules->existsIn('ORCID_BATCH_GROUP_ID', 'OrcidBatchGroups'), ['errorField' => 'ORCID_BATCH_GROUP_ID']);
 
         return $rules;
     }

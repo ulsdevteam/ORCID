@@ -8,15 +8,15 @@ use Cake\ORM\Entity;
 /**
  * OrcidBatch Entity
  *
- * @property int $id
- * @property string $name
- * @property string $subject
- * @property string $body
- * @property string $from_name
- * @property string $from_addr
- * @property string|null $reply_to
- * @property int $orcid_batch_creator_id
- *
+ * @property int $ID
+ * @property string $NAME
+ * @property string $SUBJECT
+ * @property string $BODY
+ * @property string $FROM_NAME
+ * @property string $FROM_ADDR
+ * @property string|null $REPLY_TO
+ * @property int $ORCID_BATCH_CREATOR_ID
+ * 
  * @property \App\Model\Entity\OrcidBatchCreator $orcid_batch_creator
  * @property \App\Model\Entity\OrcidBatchTrigger[] $orcid_batch_triggers
  * @property \App\Model\Entity\OrcidEmail[] $orcid_emails
@@ -33,15 +33,16 @@ class OrcidBatch extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'name' => true,
-        'subject' => true,
-        'body' => true,
-        'from_name' => true,
-        'from_addr' => true,
-        'reply_to' => true,
-        'orcid_batch_creator_id' => true,
-        'orcid_batch_creator' => true,
-        'orcid_batch_triggers' => true,
-        'orcid_emails' => true,
+        'ID' => true,
+        'NAME' => true,
+        'SUBJECT' => true,
+        'BODY' => true,
+        'FROM_NAME' => true,
+        'FROM_ADDR' => true,
+        'REPLY_TO' => true,
+        'ORCID_BATCH_CREATOR_ID' => true,
+        'ORCID_BATCH_CREATOR' => true,
+        'ORCID_BATCH_TRIGGERS' => true,
+        'ORCID_EMAILS' => true,
     ];
 }

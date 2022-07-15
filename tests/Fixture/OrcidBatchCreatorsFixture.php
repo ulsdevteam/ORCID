@@ -11,6 +11,12 @@ use Cake\TestSuite\Fixture\TestFixture;
 class OrcidBatchCreatorsFixture extends TestFixture
 {
     /**
+     * Table name
+     *
+     * @var string
+     */
+    public $table = 'ORCID_BATCH_CREATORS';
+    /**
      * Init method
      *
      * @return void
@@ -19,9 +25,9 @@ class OrcidBatchCreatorsFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'name' => 'Lorem ',
-                'flags' => 1,
+                'ID' => 1,
+                'NAME' => 'Lorem ',
+                'FLAGS' => 1,
             ],
         ];
         parent::init();

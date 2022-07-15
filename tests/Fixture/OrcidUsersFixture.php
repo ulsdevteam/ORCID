@@ -11,6 +11,12 @@ use Cake\TestSuite\Fixture\TestFixture;
 class OrcidUsersFixture extends TestFixture
 {
     /**
+     * Table name
+     *
+     * @var string
+     */
+    public $table = 'ORCID_USERS';
+    /**
      * Init method
      *
      * @return void
@@ -19,12 +25,12 @@ class OrcidUsersFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'username' => 'Lorem ',
-                'orcid' => 'Lorem ipsum dolor',
-                'token' => 'Lorem ipsum dolor sit amet',
-                'created' => '2022-05-17',
-                'modified' => '2022-05-17',
+                'ID' => 1,
+                'USERNAME' => 'Lorem ',
+                'ORCID' => 'Lorem ipsum dolor',
+                'TOKEN' => 'Lorem ipsum dolor sit amet',
+                'CREATED' => '2022-07-11 19:50:09',
+                'MODIFIED' => '2022-07-11 19:50:09',
             ],
         ];
         parent::init();

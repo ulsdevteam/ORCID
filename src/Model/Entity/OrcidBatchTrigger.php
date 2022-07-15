@@ -8,18 +8,19 @@ use Cake\ORM\Entity;
 /**
  * OrcidBatchTrigger Entity
  *
- * @property int $id
- * @property string $name
- * @property int $orcid_status_type_id
- * @property int $orcid_batch_id
- * @property string $trigger_delay
- * @property int|null $orcid_batch_group_id
- * @property \Cake\I18n\FrozenDate|null $begin_date
- * @property string $repeat_value
- * @property string $maximum_repeat
+ * @property int $ID
+ * @property string $NAME
+ * @property int $ORCID_STATUS_TYPE_ID
+ * @property int $ORCID_BATCH_ID
+ * @property int $TRIGGER_DELAY
+ * @property int|null $ORCID_BATCH_GROUP_ID
+ * @property \Cake\I18n\FrozenTime|null $BEGIN_DATE
+ * @property int|null $REQUIRE_BATCH_ID
+ * @property int $REPEAT
+ * @property int $MAXIMUM_REPEAT
  *
  * @property \App\Model\Entity\OrcidStatusType $orcid_status_type
- * @property \App\Model\Entity\OrcidBatch $orcid_batch
+ * @property \App\Model\Entity\ORCIDBATCH $orcid_batch
  * @property \App\Model\Entity\OrcidBatchGroup $orcid_batch_group
  */
 class OrcidBatchTrigger extends Entity
@@ -34,14 +35,16 @@ class OrcidBatchTrigger extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'name' => true,
-        'orcid_status_type_id' => true,
-        'orcid_batch_id' => true,
-        'trigger_delay' => true,
-        'orcid_batch_group_id' => true,
-        'begin_date' => true,
-        'repeat_value' => true,
-        'maximum_repeat' => true,
+        'ID' => true,
+        'NAME' => true,
+        'ORCID_STATUS_TYPE_ID' => true,
+        'ORCID_BATCH_ID' => true,
+        'TRIGGER_DELAY' => true,
+        'ORCID_BATCH_GROUP_ID' => true,
+        'BEGIN_DATE' => true,
+        'REQUIRE_BATCH_ID' => true,
+        'REPEAT' => true,
+        'MAXIMUM_REPEAT' => true,
         'orcid_status_type' => true,
         'orcid_batch' => true,
         'orcid_batch_group' => true,

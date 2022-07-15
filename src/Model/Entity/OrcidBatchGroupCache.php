@@ -8,10 +8,10 @@ use Cake\ORM\Entity;
 /**
  * OrcidBatchGroupCache Entity
  *
- * @property int $id
- * @property int $orcid_batch_group_id
- * @property int $orcid_user_id
- * @property \Cake\I18n\FrozenDate|null $deprecated
+ * @property int $ID
+ * @property int $ORCID_BATCH_GROUP_ID
+ * @property int $ORCID_USER_ID
+ * @property \Cake\I18n\FrozenTime|null $DEPRECATED
  *
  * @property \App\Model\Entity\OrcidBatchGroup $orcid_batch_group
  * @property \App\Model\Entity\OrcidUser $orcid_user
@@ -28,9 +28,10 @@ class OrcidBatchGroupCache extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'orcid_batch_group_id' => true,
-        'orcid_user_id' => true,
-        'deprecated' => true,
+        'ID' => true,
+        'ORCID_BATCH_GROUP_ID' => true,
+        'ORCID_USER_ID' => true,
+        'DEPRECATED' => true,
         'orcid_batch_group' => true,
         'orcid_user' => true,
     ];

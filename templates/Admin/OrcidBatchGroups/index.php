@@ -20,15 +20,15 @@
             <tbody>
                 <?php foreach ($orcidBatchGroups as $orcidBatchGroup): ?>
                 <tr>
-                    <td><?= h($orcidBatchGroup->name) ?></td>
-                    <td><?= h($orcidBatchGroup->group_definition ? "Yes" : '') ?></td>
-                    <td><?= h($orcidBatchGroup->employee_definition ? "Yes" : '') ?></td>
-                    <td><?= h($orcidBatchGroup->student_definition ? "Yes" : '') ?></td>
+                    <td><?= h($orcidBatchGroup->NAME) ?></td>
+                    <td><?= h($orcidBatchGroup->GROUP_DEFINITION ? "Yes" : '') ?></td>
+                    <td><?= h($orcidBatchGroup->EMPLOYEE_DEFINITION ? "Yes" : '') ?></td>
+                    <td><?= h($orcidBatchGroup->STUDENT_DEFINITION ? "Yes" : '') ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroup->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->id)]) ?>
-                        <?= $this->Html->link(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->id]]); ?>
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroup->ID]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->ID]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->ID)]) ?>
+                        <?= $this->Html->link(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->ID]]); ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

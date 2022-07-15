@@ -9,13 +9,15 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 /**
  * OrcidUser Entity
  *
- * @property int $id
- * @property string $username
- * @property string|null $orcid
- * @property string|null $token
- * @property \Cake\I18n\FrozenDate|null $created
- * @property \Cake\I18n\FrozenDate|null $modified
+ * @property int $ID
+ * @property string $USERNAME
+ * @property string|null $ORCID
+ * @property string|null $TOKEN
+ * @property \Cake\I18n\FrozenTime|null $CREATED
+ * @property \Cake\I18n\FrozenTime|null $MODIFIED
  *
+ * @property \App\Model\Entity\AllOrcidStatus[] $all_orcid_statuses
+ * @property \App\Model\Entity\CurrentOrcidStatus[] $current_orcid_status
  * @property \App\Model\Entity\OrcidBatchGroupCache[] $orcid_batch_group_caches
  * @property \App\Model\Entity\OrcidEmail[] $orcid_emails
  * @property \App\Model\Entity\OrcidStatus[] $orcid_statuses
@@ -40,7 +42,7 @@ class OrcidUser extends Entity
 
             $this->ldapResult = $this->ldapHandler->find('search', [
                 'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
-                'filter' => 'cn='.$this->username,
+                'filter' => 'cn='.$this->USERNAME,
                 'attributes' => [
                     'mail',
                     'displayName',
@@ -54,9 +56,16 @@ class OrcidUser extends Entity
                 $result = $this->ldapResult[0];
                 $this->set("displayname", $result['displayname'][0]);
                 $this->set("email", $result['mail'][0]);
-                $this->set("department", $result['department'][0]);
+                if (!isset($result['department'])) {
+                    $this->set("department", "");
+                } else {
+                    $this->set("department", $result['department'][0]);
+                }
 
-                if(($result['pittemployeerc']['count'] > 0)){
+                if (!isset($result['pittemployeerc'])) {
+                    $this->set("department", "");
+                    $this->set("rc", "");
+                } elseif (($result['pittemployeerc']['count'] > 0)) {
                     $this->set("rc", $result['pittemployeerc'][0]);
                     $this->set("rcdepartment", "RC ".$result['pittemployeerc'][0]." / ".$result['department'][0]);
                 } else {
@@ -74,6 +83,7 @@ class OrcidUser extends Entity
         }
         return parent::__get($field);
     }
+    
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -84,24 +94,16 @@ class OrcidUser extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'username' => true,
-        'orcid' => true,
-        'token' => true,
-        'created' => true,
-        'modified' => true,
+        'ID' => true,
+        'USERNAME' => true,
+        'ORCID' => true,
+        'TOKEN' => true,
+        'CREATED' => true,
+        'MODIFIED' => true,
+        'all_orcid_statuses' => true,
+        'current_orcid_status' => true,
         'orcid_batch_group_caches' => true,
         'orcid_emails' => true,
         'orcid_statuses' => true,
-    ];
-
-    
-
-    /**
-     * Fields that are excluded from JSON versions of the entity.
-     *
-     * @var array<string>
-     */
-    protected $_hidden = [
-        'token',
     ];
 }

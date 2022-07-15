@@ -17,7 +17,7 @@
             <fieldset>
                 <legend><?= __('Enter the University Computer Account name to create an new administrative user.') ?></legend>
                 <?php
-                    echo $this->Form->control('name', ['label'=>'Username']);
+                    echo $this->Form->control('Name', ['label'=>'Username']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

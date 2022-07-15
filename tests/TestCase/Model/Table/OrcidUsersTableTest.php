@@ -25,6 +25,8 @@ class OrcidUsersTableTest extends TestCase
      */
     protected $fixtures = [
         'app.OrcidUsers',
+        'app.AllOrcidStatuses',
+        'app.CurrentOrcidStatus',
         'app.OrcidBatchGroupCaches',
         'app.OrcidEmails',
         'app.OrcidStatuses',
@@ -72,6 +74,17 @@ class OrcidUsersTableTest extends TestCase
      * @uses \App\Model\Table\OrcidUsersTable::buildRules()
      */
     public function testBuildRules(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test unknownFind method
+     *
+     * @return void
+     * @uses \App\Model\Table\OrcidUsersTable::unknownFind()
+     */
+    public function testUnknownFind(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

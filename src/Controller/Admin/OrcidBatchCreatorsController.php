@@ -14,7 +14,6 @@ use Cake\Core\Configure;
  */
 class OrcidBatchCreatorsController extends AppController
 {
-    private $ldapHandler;
 
     public function initialize(): void
     {
@@ -30,7 +29,6 @@ class OrcidBatchCreatorsController extends AppController
     public function index()
     {
         $orcidBatchCreators = $this->paginate($this->OrcidBatchCreators);
-        $this->set('ldapHandler', $this->ldapHandler);
         $this->set(compact('orcidBatchCreators'));
     }
 
@@ -46,21 +44,6 @@ class OrcidBatchCreatorsController extends AppController
         $orcidBatchCreator = $this->OrcidBatchCreators->get($id, [
             'contain' => ['OrcidBatches'],
         ]);
-
-        $ldapResult = $this->ldapHandler->find('search', [
-            'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
-            'filter' => 'cn='.$orcidBatchCreator->name,
-            'attributes' => [
-                'displayName',
-            ],
-        ]);
-
-        if($ldapResult['count'] > 0) {
-            $result = $ldapResult[0];
-            $orcidBatchCreator->set("displayname", $result['displayname'][0]);
-        } else {
-            $orcidBatchCreator->set("displayname", '');
-        }
 
         $this->set(compact('orcidBatchCreator'));
     }
@@ -99,7 +82,7 @@ class OrcidBatchCreatorsController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
-            $orcidBatchCreator-> flags = $orcidBatchCreator->flags & ~ 1;
+            $orcidBatchCreator->FLAGS = $orcidBatchCreator->FLAGS & ~ 1;
             if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
                 $this->Flash->success(__('The orcid batch creator has been saved.'));
 
@@ -117,7 +100,7 @@ class OrcidBatchCreatorsController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
-            $orcidBatchCreator->flags = $orcidBatchCreator->flags | 1;
+            $orcidBatchCreator->FLAGS = $orcidBatchCreator->FLAGS | 1;
             if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
                 $this->Flash->success(__('The orcid batch creator has been saved.'));
 

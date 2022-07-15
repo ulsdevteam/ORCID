@@ -24,16 +24,16 @@ An email template will be used to send a message to a user based on one or more 
             <tbody>
                 <?php foreach ($orcidBatches as $orcidBatch): ?>
                 <tr>
-                    <td><?= h($orcidBatch->name) ?></td>
-                    <td><?= h($orcidBatch->from_name) ?></td>
-                    <td><?= h($orcidBatch->from_addr) ?></td>
-                    <td><?= h($orcidBatch->subject) ?></td>
-                    <td><?= h($orcidBatch->reply_to) ?></td>
-                    <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->name, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->id]) : '' ?></td>
+                    <td><?= h($orcidBatch->NAME) ?></td>
+                    <td><?= h($orcidBatch->FROM_NAME) ?></td>
+                    <td><?= h($orcidBatch->FROM_ADDR) ?></td>
+                    <td><?= h($orcidBatch->SUBJECT) ?></td>
+                    <td><?= h($orcidBatch->REPLY_TO) ?></td>
+                    <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->NAME, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->ID]) : '' ?></td>
                     <td class="actions individual">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatch->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatch->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->id)]) ?>
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->ID]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatch->ID]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatch->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

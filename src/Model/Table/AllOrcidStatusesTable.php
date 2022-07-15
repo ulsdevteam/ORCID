@@ -40,7 +40,7 @@ class AllOrcidStatusesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('all_orcid_statuses');
+        $this->setTable('ULS.all_orcid_statuses');
 
         $this->belongsTo('OrcidUsers', [
             'foreignKey' => 'orcid_user_id',

@@ -8,12 +8,9 @@ use Cake\ORM\Entity;
 /**
  * OrcidStatusType Entity
  *
- * @property int $id
- * @property string $name
- * @property string|null $seq
- *
- * @property \App\Model\Entity\OrcidBatchTrigger[] $orcid_batch_triggers
- * @property \App\Model\Entity\OrcidStatus[] $orcid_statuses
+ * @property int $ID
+ * @property string $NAME
+ * @property int|null $SEQ
  */
 class OrcidStatusType extends Entity
 {
@@ -27,9 +24,8 @@ class OrcidStatusType extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'name' => true,
-        'seq' => true,
-        'orcid_batch_triggers' => true,
-        'orcid_statuses' => true,
+        'ID' => true,
+        'NAME' => true,
+        'SEQ' => true,
     ];
 }

@@ -8,19 +8,18 @@ use Cake\ORM\Entity;
 /**
  * OrcidBatchGroup Entity
  *
- * @property int $id
- * @property string $name
- * @property string|null $group_definition
- * @property string|null $employee_definition
- * @property string|null $student_definition
- * @property \Cake\I18n\FrozenDate|null $cache_creation_date
+ * @property int $ID
+ * @property string $NAME
+ * @property string|null $GROUP_DEFINITION
+ * @property string|null $EMPLOYEE_DEFINITION
+ * @property string|null $STUDENT_DEFINITION
+ * @property \Cake\I18n\FrozenTime|null $CACHE_CREATION_DATE
  *
  * @property \App\Model\Entity\OrcidBatchGroupCache[] $orcid_batch_group_caches
  * @property \App\Model\Entity\OrcidBatchTrigger[] $orcid_batch_triggers
  */
 class OrcidBatchGroup extends Entity
 {
-
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -31,11 +30,12 @@ class OrcidBatchGroup extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'name' => true,
-        'group_definition' => true,
-        'employee_definition' => true,
-        'student_definition' => true,
-        'cache_creation_date' => true,
+        'ID' => true,
+        'NAME' => true,
+        'GROUP_DEFINITION' => true,
+        'EMPLOYEE_DEFINITION' => true,
+        'STUDENT_DEFINITION' => true,
+        'CACHE_CREATION_DATE' => true,
         'orcid_batch_group_caches' => true,
         'orcid_batch_triggers' => true,
     ];

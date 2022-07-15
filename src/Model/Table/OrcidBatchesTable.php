@@ -14,7 +14,7 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\OrcidBatchCreatorsTable&\Cake\ORM\Association\BelongsTo $OrcidBatchCreators
  * @property \App\Model\Table\OrcidBatchTriggersTable&\Cake\ORM\Association\HasMany $OrcidBatchTriggers
  * @property \App\Model\Table\OrcidEmailsTable&\Cake\ORM\Association\HasMany $OrcidEmails
- *
+ * 
  * @method \App\Model\Entity\OrcidBatch newEmptyEntity()
  * @method \App\Model\Entity\OrcidBatch newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\OrcidBatch[] newEntities(array $data, array $options = [])
@@ -39,21 +39,24 @@ class OrcidBatchesTable extends Table
      */
     public function initialize(array $config): void
     {
+        $config["alias"] = strtoupper($config["alias"]);
         parent::initialize($config);
 
-        $this->setTable('orcid_batches');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
+        $this->setAlias($config["alias"]);
 
+        $this->setTable('ULS.ORCID_BATCHES');
+        $this->setDisplayField('NAME');
+        $this->setPrimaryKey('ID');
+        
         $this->belongsTo('OrcidBatchCreators', [
-            'foreignKey' => 'orcid_batch_creator_id',
+            'foreignKey' => 'ORCID_BATCH_CREATOR_ID',
             'joinType' => 'INNER',
         ]);
         $this->hasMany('OrcidBatchTriggers', [
-            'foreignKey' => 'orcid_batch_id',
+            'foreignKey' => 'ORCID_BATCH_ID',
         ]);
         $this->hasMany('OrcidEmails', [
-            'foreignKey' => 'orcid_batch_id',
+            'foreignKey' => 'ORCID_BATCH_ID',
         ]);
     }
 
@@ -66,43 +69,50 @@ class OrcidBatchesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('name')
-            ->maxLength('name', 512)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
-
-        /* $validator
-            ->scalar('subject')
-            ->maxLength('subject', 512)
-            ->requirePresence('subject', 'create')
-            ->notEmptyString('subject'); */
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->scalar('body')
-            ->maxLength('body', 4294967295)
-            ->requirePresence('body', 'create')
-            ->notEmptyString('body');
+            ->scalar('NAME')
+            ->maxLength('NAME', 512)
+            ->requirePresence('NAME', 'create')
+            ->notEmptyString('NAME');
 
         $validator
-            ->scalar('from_name')
-            ->maxLength('from_name', 64)
-            ->requirePresence('from_name', 'create')
-            ->notEmptyString('from_name');
+            ->scalar('SUBJECT')
+            ->maxLength('SUBJECT', 512)
+            ->requirePresence('SUBJECT', 'create')
+            ->notEmptyString('SUBJECT');
 
         $validator
-            ->scalar('from_addr')
-            ->maxLength('from_addr', 64)
-            ->requirePresence('from_addr', 'create')
-            ->notEmptyString('from_addr');
+            ->scalar('BODY')
+            ->maxLength('BODY', 4000)
+            ->requirePresence('BODY', 'create')
+            ->notEmptyString('BODY');
 
         $validator
-            ->scalar('reply_to')
-            ->maxLength('reply_to', 64)
-            ->allowEmptyString('reply_to');
+            ->scalar('FROM_NAME')
+            ->maxLength('FROM_NAME', 64)
+            ->requirePresence('FROM_NAME', 'create')
+            ->notEmptyString('FROM_NAME');
 
         $validator
-            ->requirePresence('orcid_batch_creator_id', 'create')
-            ->notEmptyString('orcid_batch_creator_id');
+            ->scalar('FROM_ADDR')
+            ->maxLength('FROM_ADDR', 64)
+            ->requirePresence('FROM_ADDR', 'create')
+            ->notEmptyString('FROM_ADDR');
+
+        $validator
+            ->scalar('REPLY_TO')
+            ->maxLength('REPLY_TO', 64)
+            ->allowEmptyString('REPLY_TO');
+
+        $validator
+            ->integer('ORCID_BATCH_CREATOR_ID')
+            ->requirePresence('ORCID_BATCH_CREATOR_ID', 'create')
+            ->notEmptyString('ORCID_BATCH_CREATOR_ID')
+            ->add('ORCID_BATCH_CREATOR_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         return $validator;
     }
@@ -116,7 +126,9 @@ class OrcidBatchesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_batch_creator_id', 'OrcidBatchCreators'), ['errorField' => 'orcid_batch_creator_id']);
+        $rules->add($rules->existsIn('ORCID_BATCH_CREATOR_ID', 'ORCIDBATCHCREATORS'), ['errorField' => 'ORCID_BATCH_CREATOR_ID']);
+        $rules->add($rules->isUnique(['ORCID_BATCH_CREATOR_ID']), ['errorField' => 'ORCID_BATCH_CREATOR_ID']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
 
         return $rules;
     }

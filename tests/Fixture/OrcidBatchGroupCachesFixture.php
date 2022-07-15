@@ -19,10 +19,10 @@ class OrcidBatchGroupCachesFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1,
-                'orcid_batch_group_id' => 1,
-                'orcid_user_id' => 1,
-                'deprecated' => '2022-05-17',
+                'ID' => 1,
+                'ORCID_BATCH_GROUP_ID' => 1,
+                'ORCID_USER_ID' => 1,
+                'DEPRECATED' => '2022-07-15 15:08:42',
             ],
         ];
         parent::init();

@@ -24,17 +24,18 @@
             <tbody>
                 <?php foreach ($orcidBatchTriggers as $orcidBatchTrigger): ?>
                 <tr>
-                    <td><?= h($orcidBatchTrigger->name) ?></td>
-                    <td><?= $orcidBatchTrigger->has('orcid_status_type') ? $this->Html->link($orcidBatchTrigger->orcid_status_type->name, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidBatchTrigger->orcid_status_type->id]) : '' ?></td>
-                    <td><?= $orcidBatchTrigger->has('orcid_batch') ? $this->Html->link($orcidBatchTrigger->orcid_batch->name, ['controller' => 'OrcidBatches', 'action' => 'view', $orcidBatchTrigger->orcid_batch->id]) : '' ?></td>
-                    <td><?= $this->Number->format($orcidBatchTrigger->trigger_delay) ?></td>
-                    <td><?= $this->Number->format($orcidBatchTrigger->repeat_value) ?></td>
-                    <td><?= $this->Number->format($orcidBatchTrigger->maximum_repeat) ?></td>
-                    <td><?= h($orcidBatchTrigger->begin_date) ?></td>
+                    <td><?= h($orcidBatchTrigger->NAME) ?></td>
+                    <td><?= $orcidBatchTrigger->has('orcid_batch_group') ? $this->Html->link($orcidBatchTrigger->orcid_batch_group->NAME, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidBatchTrigger->orcid_batch_group->ID]) : '' ?></td>
+                    <td><?= $orcidBatchTrigger->has('orcid_status_type') ? $this->Html->link($orcidBatchTrigger->orcid_status_type->NAME, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidBatchTrigger->orcid_status_type->ID]) : '' ?></td>
+                    <td><?= $orcidBatchTrigger->has('orcid_batch') ? $this->Html->link($orcidBatchTrigger->orcid_batch->NAME, ['controller' => 'OrcidBatches', 'action' => 'view', $orcidBatchTrigger->orcid_batch->ID]) : '' ?></td>
+                    <td><?= $this->Number->format($orcidBatchTrigger->TRIGGER_DELAY) ?></td>
+                    <td><?= $this->Number->format($orcidBatchTrigger->REPEAT) ?></td>
+                    <td><?= $this->Number->format($orcidBatchTrigger->MAXIMUM_REPEAT) ?></td>
+                    <td><?= h($orcidBatchTrigger->BEGIN_DATE) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchTrigger->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchTrigger->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchTrigger->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchTrigger->id)]) ?>
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchTrigger->ID]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchTrigger->ID]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchTrigger->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchTrigger->ID)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

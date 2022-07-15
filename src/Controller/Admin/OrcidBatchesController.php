@@ -132,8 +132,8 @@ class OrcidBatchesController extends AppController
                 ->setTemplatePath('email/html')
                 ->setTemplate('rendered')
                 ->setLayout('email/html/default');
-			$this->set('body', $orcidBatch->body);
-			$this->set('title', $orcidBatch->subject);
+			$this->set('body', $orcidBatch->BODY);
+			$this->set('title', $orcidBatch->SUBJECT);
 		}
     }
 }

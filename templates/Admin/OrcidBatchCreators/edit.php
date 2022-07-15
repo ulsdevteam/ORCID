@@ -10,8 +10,8 @@
             <h4 class="heading"><?= __('Actions') ?></h4>
             <?= $this->Form->postLink(
                 __('Delete'),
-                ['action' => 'delete', $orcidBatchCreator->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->id), 'class' => 'side-nav-item']
+                ['action' => 'delete', $orcidBatchCreator->ID],
+                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->ID), 'class' => 'side-nav-item']
             ) ?>
             <?= $this->Html->link(__('List Orcid Batch Creators'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
@@ -22,8 +22,8 @@
             <fieldset>
                 <legend><?= __('Edit Orcid Batch Creator') ?></legend>
                 <?php
-                    echo $this->Form->control('name');
-                    echo $this->Form->control('flags');
+                    echo $this->Form->control('NAME', ['label' => 'Name']);
+                    echo $this->Form->control('FLAGS', ['label' => 'Flags']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

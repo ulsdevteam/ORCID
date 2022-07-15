@@ -40,16 +40,16 @@ class OrcidEmailsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('orcid_emails');
+        $this->setTable('ULS.ORCID_EMAILS');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
-
+        
         $this->belongsTo('OrcidUsers', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidBatches', [
-            'foreignKey' => 'orcid_batch_id',
+            'foreignKey' => 'ORCID_BATCH_ID',
             'joinType' => 'INNER',
         ]);
     }
@@ -63,24 +63,33 @@ class OrcidEmailsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->requirePresence('orcid_user_id', 'create')
-            ->notEmptyString('orcid_user_id');
+            ->integer('ID')
+            ->notEmptyString('ID')
+            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->requirePresence('orcid_batch_id', 'create')
-            ->notEmptyString('orcid_batch_id');
+            ->integer('ORCID_USER_ID')
+            ->requirePresence('ORCID_USER_ID', 'create')
+            ->notEmptyString('ORCID_USER_ID')
+            ->add('ORCID_USER_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->date('queued')
-            ->allowEmptyDate('queued');
+            ->integer('ORCID_BATCH_ID')
+            ->requirePresence('ORCID_BATCH_ID', 'create')
+            ->notEmptyString('ORCID_BATCH_ID')
+            ->add('ORCID_BATCH_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
-            ->date('sent')
-            ->allowEmptyDate('sent');
+            ->dateTime('QUEUED')
+            ->allowEmptyDateTime('QUEUED');
 
         $validator
-            ->date('cancelled')
-            ->allowEmptyDate('cancelled');
+            ->dateTime('SENT')
+            ->allowEmptyDateTime('SENT');
+
+        $validator
+            ->dateTime('CANCELLED')
+            ->allowEmptyDateTime('CANCELLED');
 
         return $validator;
     }
@@ -94,8 +103,14 @@ class OrcidEmailsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_user_id', 'OrcidUsers'), ['errorField' => 'orcid_user_id']);
-        $rules->add($rules->existsIn('orcid_batch_id', 'OrcidBatches'), ['errorField' => 'orcid_batch_id']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+        $rules->add($rules->isUnique(['ORCID_USER_ID']), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->isUnique(['CANCELLED'], ['allowMultipleNulls' => true]), ['errorField' => 'CANCELLED']);
+        $rules->add($rules->isUnique(['QUEUED'], ['allowMultipleNulls' => true]), ['errorField' => 'QUEUED']);
+        $rules->add($rules->isUnique(['SENT'], ['allowMultipleNulls' => true]), ['errorField' => 'SENT']);
+        $rules->add($rules->isUnique(['ORCID_BATCH_ID']), ['errorField' => 'ORCID_BATCH_ID']);
+        $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->existsIn('ORCID_BATCH_ID', 'OrcidBatches'), ['errorField' => 'ORCID_BATCH_ID']);
 
         return $rules;
     }

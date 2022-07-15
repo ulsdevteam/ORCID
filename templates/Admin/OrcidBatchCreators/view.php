@@ -19,19 +19,19 @@
     </aside>
     <div class="column-responsive column-80">
         <div class="orcidBatchCreators view content">
-            <h3><?= h($orcidBatchCreator->name) ?></h3>
+            <h3><?= h($orcidBatchCreator->NAME) ?></h3>
             <table>
                 <tr>
                     <th><?= __('Username') ?></th>
-                    <td><?= h($orcidBatchCreator->name) ?></td>
+                    <td><?= h($orcidBatchCreator->NAME) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Name') ?></th>
-                    <td><?= h($orcidBatchCreator->displayname) ?></td>
+                    <td><?= h($orcidBatchCreator->DISPLAYNAME) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Disabled') ?></th>
-                    <td><?= $orcidBatchCreator->flags & $orcidBatchCreator::FLAG_DISABLED ? __("Yes") : __("No") ?></td>
+                    <td><?= $orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED ? __("Yes") : __("No") ?></td>
                 </tr>
             </table>
         </div>
