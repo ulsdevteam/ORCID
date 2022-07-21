@@ -12,19 +12,19 @@
             <table>
                 <thead>
                     <tr>
-                        <th><?= $this->Paginator->sort('name') ?></th>
-                        <th><?= $this->Paginator->sort('seq') ?></th>
+                        <th><?= $this->Paginator->sort('NAME','Name') ?></th>
+                        <th><?= $this->Paginator->sort('SEQ', 'Seq') ?></th>
                         <th class="actions"><?= __('Actions') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($orcidStatusTypes as $orcidStatusType): ?>
                     <tr>
-                        <td><?= h($orcidStatusType->name) ?></td>
-                        <td><?= $orcidStatusType->seq === null ? '' : $this->Number->format($orcidStatusType->seq) ?></td>
+                        <td><?= h($orcidStatusType->NAME) ?></td>
+                        <td><?= $orcidStatusType->SEQ === null ? '' : $this->Number->format($orcidStatusType->SEQ) ?></td>
                         <td class="actions">
-                            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidStatusType->id]) ?>
-                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidStatusType->id]) ?>
+                            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidStatusType->ID]) ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidStatusType->ID]) ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

@@ -21,14 +21,14 @@
             <tbody>
                 <?php foreach ($orcidBatchGroupCaches as $orcidBatchGroupCache): ?>
                 <tr>
-                    <td><?= $this->Number->format($orcidBatchGroupCache->id) ?></td>
-                    <td><?= $orcidBatchGroupCache->has('orcid_batch_group') ? $this->Html->link($orcidBatchGroupCache->orcid_batch_group->name, ['controller' => 'OrcidBatchGroups', 'action' => 'view', $orcidBatchGroupCache->orcid_batch_group->id]) : '' ?></td>
-                    <td><?= $orcidBatchGroupCache->has('orcid_user') ? $this->Html->link($orcidBatchGroupCache->orcid_user->id, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidBatchGroupCache->orcid_user->id]) : '' ?></td>
+                    <td><?= $this->Number->format($orcidBatchGroupCache->ID) ?></td>
+                    <td><?= $orcidBatchGroupCache->has('orcid_batch_group') ? $this->Html->link($orcidBatchGroupCache->orcid_batch_group->NAME, ['controller' => 'OrcidBatchGroups', 'action' => 'view', $orcidBatchGroupCache->orcid_batch_group->ID]) : '' ?></td>
+                    <td><?= $orcidBatchGroupCache->has('orcid_user') ? $this->Html->link($orcidBatchGroupCache->orcid_user->ID, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidBatchGroupCache->orcid_user->ID]) : '' ?></td>
                     <td><?= h($orcidBatchGroupCache->deprecated) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroupCache->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroupCache->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroupCache->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroupCache->id)]) ?>
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroupCache->ID]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroupCache->ID]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroupCache->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroupCache->ID)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

@@ -41,6 +41,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <nav class="top-nav">
         <div class="top-nav-title">
             <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
+            <?= $this->Paginator->limitControl([20 => 20, 25 => 25, 50 => 50, 100 => 100]); ?>
         </div>
     </nav>
     <main class="main">

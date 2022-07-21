@@ -6,14 +6,24 @@
 ?>
 <div class="orcidBatchGroups index content">
     <h3><?= __('Orcid Batch Groups') ?></h3>
+    <div class="paginator">
+        <ul class="pagination">
+            <?= $this->Paginator->first('<< ' . __('first')) ?>
+            <?= $this->Paginator->prev('< ' . __('previous')) ?>
+            <?= $this->Paginator->numbers() ?>
+            <?= $this->Paginator->next(__('next') . ' >') ?>
+            <?= $this->Paginator->last(__('last') . ' >>') ?>
+        </ul>
+        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+    </div>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('name') ?></th>
-                    <th><?= $this->Paginator->sort('group_definition', 'Active Directory') ?></th>
-                    <th><?= $this->Paginator->sort('employee_definition', 'CDS Employee') ?></th>
-                    <th><?= $this->Paginator->sort('student_definition', "CDS Student") ?></th>
+                    <th><?= $this->Paginator->sort('NAME', 'Name') ?></th>
+                    <th><?= $this->Paginator->sort('GROUP_DEFINITION', 'Active Directory') ?></th>
+                    <th><?= $this->Paginator->sort('EMPLOYEE_DEFINITION', 'CDS Employee') ?></th>
+                    <th><?= $this->Paginator->sort('STUDENT_DEFINITION', "CDS Student") ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>

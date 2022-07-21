@@ -11,6 +11,12 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AllOrcidStatusesFixture extends TestFixture
 {
     /**
+     * Table name
+     *
+     * @var string
+     */
+    public $table = 'ULS.all_orcid_statuses';
+    /**
      * Init method
      *
      * @return void
@@ -19,9 +25,9 @@ class AllOrcidStatusesFixture extends TestFixture
     {
         $this->records = [
             [
-                'orcid_user_id' => 1,
-                'orcid_status_type_id' => 1,
-                'status_timestamp' => '2022-05-17',
+                'ORCID_USER_ID' => 1,
+                'ORCID_STATUS_TYPE_ID' => 1,
+                'STATUS_TIMESTAMP' => '2022-07-18 14:51:17',
             ],
         ];
         parent::init();

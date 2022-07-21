@@ -13,7 +13,7 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\OrcidUsersTable&\Cake\ORM\Association\BelongsTo $OrcidUsers
  * @property \App\Model\Table\OrcidStatusTypesTable&\Cake\ORM\Association\BelongsTo $OrcidStatusTypes
- *
+ * 
  * @method \App\Model\Entity\AllOrcidStatus newEmptyEntity()
  * @method \App\Model\Entity\AllOrcidStatus newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\AllOrcidStatus[] newEntities(array $data, array $options = [])
@@ -40,14 +40,14 @@ class AllOrcidStatusesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('ULS.all_orcid_statuses');
+        $this->setTable('ULS.ALL_ORCID_STATUSES');
 
         $this->belongsTo('OrcidUsers', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('OrcidStatusTypes', [
-            'foreignKey' => 'orcid_status_type_id',
+            'foreignKey' => 'ORCID_STATUS_TYPE_ID',
             'joinType' => 'INNER',
         ]);
     }
@@ -61,14 +61,16 @@ class AllOrcidStatusesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->notEmptyString('orcid_user_id');
+            ->integer('ORCID_USER_ID')
+            ->allowEmptyString('ORCID_USER_ID');
 
         $validator
-            ->notEmptyString('orcid_status_type_id');
+            ->integer('ORCID_STATUS_TYPE_ID')
+            ->allowEmptyString('ORCID_STATUS_TYPE_ID');
 
         $validator
-            ->date('status_timestamp')
-            ->allowEmptyDate('status_timestamp');
+            ->dateTime('STATUS_TIMESTAMP')
+            ->allowEmptyDateTime('STATUS_TIMESTAMP');
 
         return $validator;
     }
@@ -82,8 +84,8 @@ class AllOrcidStatusesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('orcid_user_id', 'OrcidUsers'), ['errorField' => 'orcid_user_id']);
-        $rules->add($rules->existsIn('orcid_status_type_id', 'OrcidStatusTypes'), ['errorField' => 'orcid_status_type_id']);
+        $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
+        $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
 
         return $rules;
     }

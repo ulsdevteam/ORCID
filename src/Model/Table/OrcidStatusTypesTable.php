@@ -49,7 +49,7 @@ class OrcidStatusTypesTable extends Table
         $this->hasMany('AllOrcidStatuses', [
             'foreignKey' => 'ORCID_STATUS_TYPE_ID',
         ]);
-        $this->hasMany('CurrentOrcidStatus', [
+        $this->hasMany('CurrentOrcidStatuses', [
             'foreignKey' => 'ORCID_STATUS_TYPE_ID',
         ]);
         $this->hasMany('OrcidBatchTriggers', [

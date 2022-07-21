@@ -6,16 +6,16 @@ namespace App\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * OrcidBatchGroupCachesFixture
+ * CurrentOrcidStatusesFixture
  */
-class OrcidBatchGroupCachesFixture extends TestFixture
+class CurrentOrcidStatusesFixture extends TestFixture
 {
     /**
      * Table name
      *
      * @var string
      */
-    public $table = 'ULS.ORCID_BATCH_GROUP_CACHES';
+    public $table = 'CURRENT_ORCID_STATUSES';
     /**
      * Init method
      *
@@ -25,10 +25,9 @@ class OrcidBatchGroupCachesFixture extends TestFixture
     {
         $this->records = [
             [
-                'ID' => 1,
-                'ORCID_BATCH_GROUP_ID' => 1,
                 'ORCID_USER_ID' => 1,
-                'DEPRECATED' => '2022-07-21 19:49:28',
+                'ORCID_STATUS_TYPE_ID' => 1,
+                'STATUS_TIMESTAMP' => '2022-07-18 20:47:51',
             ],
         ];
         parent::init();

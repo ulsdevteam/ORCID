@@ -10,8 +10,8 @@
             <h4 class="heading"><?= __('Actions') ?></h4>
             <?= $this->Form->postLink(
                 __('Delete'),
-                ['action' => 'delete', $orcidUser->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidUser->id), 'class' => 'side-nav-item']
+                ['action' => 'delete', $orcidUser->ID],
+                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidUser->ID), 'class' => 'side-nav-item']
             ) ?>
             <?= $this->Html->link(__('List Orcid Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
@@ -22,9 +22,9 @@
             <fieldset>
                 <legend><?= __('Edit Orcid User') ?></legend>
                 <?php
-                    echo $this->Form->control('username');
-                    echo $this->Form->control('orcid');
-                    echo $this->Form->control('token');
+                    echo $this->Form->control('USERNAME');
+                    echo $this->Form->control('ORCID');
+                    echo $this->Form->control('TOKEN');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

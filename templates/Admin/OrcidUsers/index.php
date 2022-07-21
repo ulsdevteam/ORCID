@@ -10,17 +10,17 @@
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('USERNAME') ?></th>
-                    <th><?= $this->Paginator->sort('ORCID') ?></th>
-                    <th><?= $this->Paginator->sort('TOKEN') ?></th>
-                    <th><?= $this->Paginator->sort('CREATED') ?></th>
-                    <th><?= $this->Paginator->sort('MODIFIED') ?></th
+                    <th><?= $this->Paginator->sort('USERNAME', 'Username') ?></th>
+                    <th><?= $this->Paginator->sort('ORCID', 'Orcid') ?></th>
+                    <th><?= $this->Paginator->sort('TOKEN', 'Token') ?></th>
+                    <th><?= $this->Paginator->sort('CREATED', 'Created') ?></th>
+                    <th><?= $this->Paginator->sort('MODIFIED', 'Modified') ?></th
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($orcidUsers as $orcidUser): ?>
                 <tr>
-                    <td><?= h(($orcidUser->USERNAME)) ?></td>
+                    <td><?= h($orcidUser->USERNAME) ?></td>
                     <td><?= h($orcidUser->ORCID) ?></td>
                     <td><?= h($orcidUser->TOKEN) ?></td>
                     <td><?= h($orcidUser->CREATED) ?></td>

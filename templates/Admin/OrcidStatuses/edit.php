@@ -12,8 +12,8 @@
             <h4 class="heading"><?= __('Actions') ?></h4>
             <?= $this->Form->postLink(
                 __('Delete'),
-                ['action' => 'delete', $orcidStatus->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidStatus->id), 'class' => 'side-nav-item']
+                ['action' => 'delete', $orcidStatus->ID],
+                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidStatus->ID), 'class' => 'side-nav-item']
             ) ?>
             <?= $this->Html->link(__('List Orcid Statuses'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>

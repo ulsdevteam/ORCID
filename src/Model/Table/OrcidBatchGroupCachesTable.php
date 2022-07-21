@@ -42,7 +42,7 @@ class OrcidBatchGroupCachesTable extends Table
 
         $this->setTable('ULS.ORCID_BATCH_GROUP_CACHES');
         $this->setDisplayField('id');
-        $this->setPrimaryKey('id');
+        $this->setPrimaryKey('ID');
 
         $this->belongsTo('OrcidBatchGroups', [
             'foreignKey' => 'ORCID_BATCH_GROUP_ID',

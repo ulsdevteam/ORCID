@@ -30,7 +30,7 @@
                         <?php else: ?>
                             <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->ID]) ?>
                         <?php endif; ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchCreator->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->id)]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchCreator->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->ID)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

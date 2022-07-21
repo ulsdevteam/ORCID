@@ -11,7 +11,7 @@
             <fieldset>
                 <legend><?= __('Add Orcid User') ?></legend>
                 <?php
-                    echo $this->Form->control('username');
+                    echo $this->Form->control('USERNAME');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

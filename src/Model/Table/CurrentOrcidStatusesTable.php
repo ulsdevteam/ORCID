@@ -28,7 +28,7 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\CurrentOrcidStatus[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\CurrentOrcidStatus[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  */
-class CurrentOrcidStatusTable extends Table
+class CurrentOrcidStatusesTable extends Table
 {
     /**
      * Initialize method
@@ -40,7 +40,7 @@ class CurrentOrcidStatusTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('ULS.CURRENT_ORCID_STATUS');
+        $this->setTable('ULS.CURRENT_ORCID_STATUSES');
 
         $this->belongsTo('OrcidUsers', [
             'foreignKey' => 'ORCID_USER_ID',

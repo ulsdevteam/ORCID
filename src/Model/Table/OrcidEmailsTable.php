@@ -42,7 +42,7 @@ class OrcidEmailsTable extends Table
 
         $this->setTable('ULS.ORCID_EMAILS');
         $this->setDisplayField('id');
-        $this->setPrimaryKey('id');
+        $this->setPrimaryKey('ID');
         
         $this->belongsTo('OrcidUsers', [
             'foreignKey' => 'ORCID_USER_ID',

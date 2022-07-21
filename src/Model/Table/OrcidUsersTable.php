@@ -51,24 +51,24 @@ class OrcidUsersTable extends Table
 
         $this->setTable('ULS.ORCID_USERS');
         $this->setDisplayField('id');
-        $this->setPrimaryKey('id');
+        $this->setPrimaryKey('ID');
 
         $this->addBehavior('Timestamp');
 
         $this->hasMany('AllOrcidStatuses', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
         ]);
-        $this->hasMany('CurrentOrcidStatus', [
-            'foreignKey' => 'orcid_user_id',
+        $this->hasMany('CurrentOrcidStatuses', [
+            'foreignKey' => 'ORCID_USER_ID',
         ]);
         $this->hasMany('OrcidBatchGroupCaches', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
         ]);
         $this->hasMany('OrcidEmails', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
         ]);
         $this->hasMany('OrcidStatuses', [
-            'foreignKey' => 'orcid_user_id',
+            'foreignKey' => 'ORCID_USER_ID',
         ]);
 
         $this->ldapHandler = new \LdapUtility\Ldap(Configure::read('ldapUtility.ldap'));

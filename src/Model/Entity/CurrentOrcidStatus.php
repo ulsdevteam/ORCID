@@ -8,12 +8,12 @@ use Cake\ORM\Entity;
 /**
  * CurrentOrcidStatus Entity
  *
- * @property int $orcid_user_id
- * @property int $orcid_status_type_id
- * @property \Cake\I18n\FrozenDate|null $status_timestamp
+ * @property int|null $ORCID_USER_ID
+ * @property int|null $ORCID_STATUS_TYPE_ID
+ * @property \Cake\I18n\FrozenTime|null $STATUS_TIMESTAMP
  *
- * @property \App\Model\Entity\OrcidUser $orcid_user
- * @property \App\Model\Entity\OrcidStatusType $orcid_status_type
+ * @property \App\Model\Entity\OrcidUser $ORCID_USER
+ * @property \App\Model\Entity\OrcidStatusType $ORCID_STATUS_TYPE
  */
 class CurrentOrcidStatus extends Entity
 {
@@ -27,10 +27,10 @@ class CurrentOrcidStatus extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'orcid_user_id' => true,
-        'orcid_status_type_id' => true,
-        'status_timestamp' => true,
-        'orcid_user' => true,
-        'orcid_status_type' => true,
+        'ORCID_USER_ID' => true,
+        'ORCID_STATUS_TYPE_ID' => true,
+        'STATUS_TIMESTAMP' => true,
+        'ORCID_USER' => true,
+        'ORCID_STATUS_TYPE' => true,
     ];
 }

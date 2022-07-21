@@ -28,11 +28,11 @@
 </div>
 <div class="navigation actions">
     <h3 class="heading"><?= __('Actions') ?></h3>
-        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroup->id]) ?>
+        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchGroup->ID]) ?>
         <?= $this->Form->postLink(
             __('Delete'),
-            ['action' => 'delete', $orcidBatchGroup->id],
-            ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->id), 'class' => 'side-nav-item']
+            ['action' => 'delete', $orcidBatchGroup->ID],
+            ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->ID), 'class' => 'side-nav-item']
         ) ?>
     <h3 class="heading"><?= __('Navigation') ?></h3>
         <?= $this->Html->link(__('List Groups'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>

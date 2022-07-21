@@ -39,18 +39,18 @@
             <tbody>
                 <?php foreach ($orcidUsers as $orcidUser): ?>
                 <tr>
-                    <td><?= h($orcidUser->username) ?></td>
-                    <td><?= h($orcidUser->orcid) ?></td>
+                    <td><?= h($orcidUser->USERNAME) ?></td>
+                    <td><?= h($orcidUser->ORCID) ?></td>
                     <td><?= h($orcidUser->displayname) ?></td>
                     <td><?= h($orcidUser->rc) ?></td>
                     <td><?= h($orcidUser->department) ?></td>
-                    <td><?= h($orcidUser->current_orcid_status[0]->orcid_status_type->name) ?></td>
-                    <td><?= h($orcidUser->current_orcid_status[0]->status_timestamp) ?></td>
+                    <td><?= h($orcidUser->current_orcid_statuses[0]->orcid_status_type->NAME) ?></td>
+                    <td><?= h($orcidUser->current_orcid_statuses[0]->STATUS_TIMESTAMP) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidUser->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->id]) ?>
-                        <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->id], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->username)]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->id], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->username)]) ?>
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidUser->ID]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->ID]) ?>
+                        <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->ID], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->username)]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->ID], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->username)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

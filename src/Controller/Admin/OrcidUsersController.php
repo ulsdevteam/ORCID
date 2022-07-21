@@ -49,7 +49,7 @@ class OrcidUsersController extends AppController
     public function view($id = null)
     {
         $orcidUser = $this->OrcidUsers->get($id, [
-            'contain' => ['OrcidEmails', 'CurrentOrcidStatus.OrcidStatusTypes', 'AllOrcidStatuses.OrcidStatusTypes'],
+            'contain' => ['OrcidEmails','CurrentOrcidStatuses', 'CurrentOrcidStatuses.OrcidStatusTypes', 'AllOrcidStatuses.OrcidStatusTypes'],
         ]);
         $this->set(compact('orcidUser'));
     }
@@ -133,8 +133,8 @@ class OrcidUsersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
             $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
-            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['seq' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->id;
-            $orcidStatuses = $OrcidStatusTable->find()->where(['orcid_user_id' => $id, 'orcid_status_type_id' =>  $orcidStatusTypeID])->first();
+            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->id;
+            $orcidStatuses = $OrcidStatusTable->find()->where(['ORCID_USER_ID' => $id, 'ORCID_STATUS_TYPE_ID' =>  $orcidStatusTypeID])->first();
 
             if(isset($orcidStatuses)){
                 var_dump("Opted out already");
@@ -143,9 +143,9 @@ class OrcidUsersController extends AppController
             }
             $time = FrozenTime::now();
             $data = [
-                'orcid_user_id' => $id,
-                'orcid_status_type_id' => $orcidStatusTypeID,
-                'status_timestamp' => $time
+                'ORCID_USER_ID' => $id,
+                'ORCID_STATUS_TYPE_ID' => $orcidStatusTypeID,
+                'STATUS_TIMESTAMP' => $time
             ];
             $OptOutStatus = $OrcidStatusTable->newEntity($data);
             if ($OrcidStatusTable->save($OptOutStatus)) {
@@ -185,7 +185,7 @@ class OrcidUsersController extends AppController
         $groups = [0 => ''];
 
         foreach ($batchGroups as $group) { 
-            $groups[$group->id] = $group->name;
+            $groups[$group->ID] = $group->NAME;
         }
 
         $groups[$this::NULL_ID] = 'No Matching Group';
@@ -206,18 +206,18 @@ class OrcidUsersController extends AppController
 
         // Starting point for query
         $orcidUsersTable = $this->fetchTable('OrcidUsers');
-        $orcidUsersTable = $orcidUsersTable->find('all')->contain(['CurrentOrcidStatus', 'CurrentOrcidStatus.OrcidStatusTypes']);
+        $orcidUsersTable = $orcidUsersTable->find('all')->contain(['CurrentOrcidStatuses', 'CurrentOrcidStatuses.OrcidStatusTypes']);
 
         // query by string matching
         if (!empty($userQuery)){
             if ($findType === $this::EXACTLY) {
-                $conditions = ['OR' => [['username' => $userQuery], ['orcid' => $userQuery]]];
+                $conditions = ['OR' => [['USERNAME' => strtoupper($userQuery)], ['ORCID' => $userQuery]]];
             } else if ($findType === $this::ENDS_WITH) {
-                $conditions = ['OR' => [['username LIKE' => '%'.$userQuery], ['orcid LIKE' => '%'.$userQuery]]];
+                $conditions = ['OR' => [['USERNAME LIKE' => '%'.strtoupper($userQuery)], ['ORCID LIKE' => '%'.$userQuery]]];
             } else if ($findType === $this::STARTS_WITH) {
-                $conditions = ['OR' => [['username LIKE' => $userQuery.'%'], ['orcid LIKE' => $userQuery.'%']]];
+                $conditions = ['OR' => [['USERNAME LIKE' => strtoupper($userQuery).'%'], ['ORCID LIKE' => $userQuery.'%']]];
             } else if ($findType === $this::CONTAINS) {
-                $conditions = ['OR' => [['username LIKE' => '%'.$userQuery.'%'], ['orcid LIKE' => '%'.$userQuery.'%']]];
+                $conditions = ['OR' => [['USERNAME LIKE' => '%'.strtoupper($userQuery).'%'], ['ORCID LIKE' => '%'.$userQuery.'%']]];
             }
         }
 
@@ -226,12 +226,12 @@ class OrcidUsersController extends AppController
             if ($groupQuery === $this::NULL_STRING_ID) {
                 // notMatching creates a left join
                 $orcidUsersTable = $orcidUsersTable->notMatching('OrcidBatchGroupCaches', function($q) use($groupQuery) {
-                    return $q->where(['OrcidBatchGroupCaches.orcid_batch_group_id IS NOT NULL']);
+                    return $q->where(['OrcidBatchGroupCaches.ORCID_BATCH_GROUP_ID IS NOT NULL']);
                 });
             } else {
                 // matching creates an inner join
                 $orcidUsersTable = $orcidUsersTable->matching('OrcidBatchGroupCaches', function($q) use($groupQuery) {
-                    return $q->where(['OrcidBatchGroupCaches.orcid_batch_group_id' => $groupQuery]);
+                    return $q->where(['OrcidBatchGroupCaches.ORCID_BATCH_GROUP_ID' => $groupQuery]);
                 });
             }
         }
@@ -239,7 +239,7 @@ class OrcidUsersController extends AppController
 		// if no query specified, return nothing
         if (empty($userQuery) && empty($groupQuery)) {
             // no oricid id should be -1
-            $conditions = ['orcid' => $this::NULL_ID];
+            $conditions = ['ORCID' => $this::NULL_ID];
         }
         
         // this is the final query after all conditions

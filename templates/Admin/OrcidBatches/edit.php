@@ -10,11 +10,11 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->id]) ?>
+            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->ID]) ?>
             <?= $this->Form->postLink(
                 __('Delete'),
-                ['action' => 'delete', $orcidBatch->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->id), 'class' => 'side-nav-item']
+                ['action' => 'delete', $orcidBatch->ID],
+                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID), 'class' => 'side-nav-item']
             ) ?>
             <?= $this->Html->link(__('List Orcid Batches'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>

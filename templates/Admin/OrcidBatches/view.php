@@ -76,7 +76,7 @@
                             <td class="actions">
                                 <?= $this->Html->link(__('View'), ['controller' => 'OrcidBatchTriggers', 'action' => 'view', $orcidBatchTriggers->ID]) ?>
                                 <?= $this->Html->link(__('Edit'), ['controller' => 'OrcidBatchTriggers', 'action' => 'edit', $orcidBatchTriggers->ID]) ?>
-                                <?= $this->Form->postLink(__('Delete'), ['controller' => 'OrcidBatchTriggers', 'action' => 'delete', $orcidBatchTriggers->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchTriggers->ID)]) ?>
+                                <?= $this->Form->postLink(__('Delete'), ['controller' => 'OrcidBatchTriggers', 'action' => 'delete', $orcidBatchTriggers->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchTriggers->ID)]) ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

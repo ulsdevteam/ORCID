@@ -12,8 +12,8 @@
             <h4 class="heading"><?= __('Actions') ?></h4>
             <?= $this->Form->postLink(
                 __('Delete'),
-                ['action' => 'delete', $orcidBatchGroupCache->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroupCache->id), 'class' => 'side-nav-item']
+                ['action' => 'delete', $orcidBatchGroupCache->ID],
+                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroupCache->ID), 'class' => 'side-nav-item']
             ) ?>
             <?= $this->Html->link(__('List Orcid Batch Group Caches'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
