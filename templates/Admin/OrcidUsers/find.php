@@ -27,7 +27,7 @@
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('Username') ?></th>
+                    <th><?= $this->Paginator->sort('USERNAME', 'Username') ?></th>
                     <th><?= $this->Paginator->sort('ORCID') ?></th>
                     <th><?= $this->Paginator->sort('Name') ?></th>
                     <th><?= $this->Paginator->sort('RC') ?></th>

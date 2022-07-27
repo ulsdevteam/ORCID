@@ -12,12 +12,12 @@ An email template will be used to send a message to a user based on one or more 
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('name') ?></th>
-                    <th><?= $this->Paginator->sort('from_name') ?></th>
-                    <th><?= $this->Paginator->sort('from_addr', 'From Address') ?></th>
-                    <th><?= $this->Paginator->sort('subject') ?></th>
-                    <th><?= $this->Paginator->sort('reply_to') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_batch_creator_id', 'Creator') ?></th>
+                    <th><?= $this->Paginator->sort('NAME','Name') ?></th>
+                    <th><?= $this->Paginator->sort('FROM_NAME', 'From Name') ?></th>
+                    <th><?= $this->Paginator->sort('FROM_ADDR', 'From Addr') ?></th>
+                    <th><?= $this->Paginator->sort('SUBJECT', 'Subject') ?></th>
+                    <th><?= $this->Paginator->sort('REPLY_TO', 'Reply To') ?></th>
+                    <th><?= $this->Paginator->sort('ORCID_BATCH_CREATOR_ID', 'Creator') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>

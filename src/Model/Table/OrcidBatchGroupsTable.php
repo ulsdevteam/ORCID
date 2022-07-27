@@ -34,6 +34,7 @@ class OrcidBatchGroupsTable extends Table
 
     public function getAssociatedUsers($groupId, $key) {
         $this->updateCache($groupId);
+		$OrcidBatchGroupCaches = TableRegistry::getTableLocator()->get('OrcidBatchGroupCaches');
         // Everything below has not been touched yet.
         // Won't work for sure.
 		$db = $this->OrcidBatchGroupCache->getDataSource();
