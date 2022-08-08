@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchGroupCache $orcidBatchGroupCache
@@ -19,9 +20,9 @@
             <fieldset>
                 <legend><?= __('Add Orcid Batch Group Cache') ?></legend>
                 <?php
-                    echo $this->Form->control('orcid_batch_group_id', ['options' => $orcidBatchGroups]);
-                    echo $this->Form->control('orcid_user_id', ['options' => $orcidUsers]);
-                    echo $this->Form->control('deprecated', ['empty' => true]);
+                echo $this->Form->control('orcid_batch_group_id', ['options' => $orcidBatchGroups]);
+                echo $this->Form->control('orcid_user_id', ['options' => $orcidUsers]);
+                echo $this->Form->control('deprecated', ['empty' => true]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

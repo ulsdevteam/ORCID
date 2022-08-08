@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Entity;
@@ -6,6 +7,7 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 use Cake\Core\Configure;
 use Cake\ORM\Locator\LocatorAwareTrait;
+
 /**
  * OrcidUser Entity
  *
@@ -31,8 +33,9 @@ class OrcidUser extends Entity
     private $ldapHandler;
 
     use LocatorAwareTrait;
-    
-    public function  &__get(string $field) {
+
+    public function  &__get(string $field)
+    {
         if ($this->has($field)) {
             return parent::__get($field);
         } else if (!(isset($this->ldapResult))) {
@@ -42,7 +45,7 @@ class OrcidUser extends Entity
 
             $this->ldapResult = $this->ldapHandler->find('search', [
                 'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
-                'filter' => 'cn='.$this->USERNAME,
+                'filter' => 'cn=' . $this->USERNAME,
                 'attributes' => [
                     'mail',
                     'displayName',
@@ -51,7 +54,7 @@ class OrcidUser extends Entity
                 ],
             ]);
 
-            if($this->ldapResult['count'] > 0) {
+            if ($this->ldapResult['count'] > 0) {
 
                 $result = $this->ldapResult[0];
                 $this->set("displayname", $result['displayname'][0]);
@@ -67,23 +70,21 @@ class OrcidUser extends Entity
                     $this->set("rc", "");
                 } elseif (($result['pittemployeerc']['count'] > 0)) {
                     $this->set("rc", $result['pittemployeerc'][0]);
-                    $this->set("rcdepartment", "RC ".$result['pittemployeerc'][0]." / ".$result['department'][0]);
+                    $this->set("rcdepartment", "RC " . $result['pittemployeerc'][0] . " / " . $result['department'][0]);
                 } else {
                     $this->set("rcdepartment", $result['department'][0]);
                 }
-
             } else {
 
                 $this->set("name", "");
                 $this->set("email", "");
                 $this->set("department", "");
                 $this->set("rc", "");
-
             }
         }
         return parent::__get($field);
     }
-    
+
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *

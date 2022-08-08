@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidStatusType $orcidStatusType
@@ -22,8 +23,8 @@
             <fieldset>
                 <legend><?= __('Edit Orcid Status Type') ?></legend>
                 <?php
-                    echo $this->Form->control('name');
-                    echo $this->Form->control('seq');
+                echo $this->Form->control('name');
+                echo $this->Form->control('seq');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

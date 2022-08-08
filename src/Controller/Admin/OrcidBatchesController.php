@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Admin;
@@ -54,7 +55,7 @@ class OrcidBatchesController extends AppController
     public function add()
     {
         $orcidBatch = $this->OrcidBatches->newEmptyEntity();
-        if ($this->request->is(['patch','put','post'])) {
+        if ($this->request->is(['patch', 'put', 'post'])) {
             $orcidBatch = $this->OrcidBatches->patchEntity($orcidBatch, $this->request->getData());
             if ($this->OrcidBatches->save($orcidBatch)) {
                 $this->Flash->success(__('The orcid batch has been saved.'));
@@ -112,28 +113,29 @@ class OrcidBatchesController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
-    public function preview($id = null) {
+    public function preview($id = null)
+    {
         $orcidBatch = $this->OrcidBatches->get($id);
         if ($this->request->is(array('post', 'put'))) {
             $toRecipient = $this->request->getdata('recipient');
-			if ($toRecipient) {
+            if ($toRecipient) {
                 $Emailer = new Emailer();
-				if ($Emailer->sendBatch($toRecipient, $orcidBatch)) {
-					$this->Flash->success(__('A preview of the Batch Email Template has been sent.'));
-				} else {
-					$this->Flash->error(__('The Batch Email Template could not be previewed. Please, try again.'));
-				}
-			} else {
-				$this->Flash->error(__('The Batch Email Template cannot be previewed without a preview recipient. Please, try again.'));
-			}
-			return $this->redirect(array('action' => 'view', $id));
-		} else {
-			$this->viewBuilder()
+                if ($Emailer->sendBatch($toRecipient, $orcidBatch)) {
+                    $this->Flash->success(__('A preview of the Batch Email Template has been sent.'));
+                } else {
+                    $this->Flash->error(__('The Batch Email Template could not be previewed. Please, try again.'));
+                }
+            } else {
+                $this->Flash->error(__('The Batch Email Template cannot be previewed without a preview recipient. Please, try again.'));
+            }
+            return $this->redirect(array('action' => 'view', $id));
+        } else {
+            $this->viewBuilder()
                 ->setTemplatePath('email/html')
                 ->setTemplate('rendered')
                 ->setLayout('email/html/default');
-			$this->set('body', $orcidBatch->BODY);
-			$this->set('title', $orcidBatch->SUBJECT);
-		}
+            $this->set('body', $orcidBatch->BODY);
+            $this->set('title', $orcidBatch->SUBJECT);
+        }
     }
 }

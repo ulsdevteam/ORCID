@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidUser $orcidUser
@@ -19,17 +20,17 @@
                 </tr>
                 <tr>
                     <th><?= __('ORCID') ?></th>
-                    <?php if (!empty($orcidUser->ORCID)): ?>
+                    <?php if (!empty($orcidUser->ORCID)) : ?>
                         <td><?= $orcidUser->ORCID ?></td>
-                    <?php else: ?>
+                    <?php else : ?>
                         <td></td>
                     <?php endif; ?>
                 </tr>
                 <tr>
                     <th><?= __('Token') ?></th>
-                    <?php if (!empty($orcidUser->TOKEN)): ?>
+                    <?php if (!empty($orcidUser->TOKEN)) : ?>
                         <td><?= $orcidUser->TOKEN ?></td>
-                    <?php else: ?>
+                    <?php else : ?>
                         <td></td>
                     <?php endif; ?>
                 </tr>
@@ -51,66 +52,71 @@
                 </tr>
                 <tr>
                     <th><?= __('Current Checkpoint') ?></th>
-                    <td><?= h(isset($orcidUser->current_orcid_statuses[0]) ? $orcidUser->current_orcid_statuses[0]->orcid_status_type->NAME : '') ?></td>
+                    <td><?= h(isset($orcidUser->current_orcid_statuses[0]) ? $orcidUser->current_orcid_statuses[0]->orcid_status_type->NAME : '') ?>
+                    </td>
                 </tr>
             </table>
             <div class="related">
                 <h4><?= __('Workflow Checkpoint History') ?></h4>
                 <?php if (!empty($orcidUser->all_orcid_statuses)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Workflow Checkpoint') ?></th>
-                            <th><?= __('Timestamp') ?></th>
-                        </tr>
-                        <?php foreach ($orcidUser->all_orcid_statuses as $orcidStatus) : ?>
+                    <div class="table-responsive">
+                        <table>
                             <tr>
-                                <td><?= h($orcidStatus->orcid_status_type->NAME) ?></td>
-                                <td><?= h($orcidStatus->STATUS_TIMESTAMP) ?></td>
+                                <th><?= __('Workflow Checkpoint') ?></th>
+                                <th><?= __('Timestamp') ?></th>
                             </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
+                            <?php foreach ($orcidUser->all_orcid_statuses as $orcidStatus) : ?>
+                                <tr>
+                                    <td><?= h($orcidStatus->orcid_status_type->NAME) ?></td>
+                                    <td><?= h($orcidStatus->STATUS_TIMESTAMP) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
             <div class="related">
                 <h4><?= __('Scheduled Emails') ?></h4>
                 <?php if (!empty($orcidUser->orcid_emails)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Orcid Batch Id') ?></th>
-                            <th><?= __('Queued') ?></th>
-                            <th><?= __('Sent') ?></th>
-                            <th><?= __('Cancelled') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($orcidUser->orcid_emails as $orcidEmails) : ?>
-                        <tr>
-                            <td><?= h($orcidEmails->ORCID_BATCH_ID) ?></td>
-                            <td><?= h($orcidEmails->QUEUED) ?></td>
-                            <td><?= h($orcidEmails->SENT) ?></td>
-                            <td><?= h($orcidEmails->CANCELLED) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'OrcidEmails', 'action' => 'view', $orcidEmails->ID]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'OrcidEmails', 'action' => 'edit', $orcidEmails->ID]) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table>
+                            <tr>
+                                <th><?= __('Orcid Batch Id') ?></th>
+                                <th><?= __('Queued') ?></th>
+                                <th><?= __('Sent') ?></th>
+                                <th><?= __('Cancelled') ?></th>
+                                <th class="actions"><?= __('Actions') ?></th>
+                            </tr>
+                            <?php foreach ($orcidUser->orcid_emails as $orcidEmails) : ?>
+                                <tr>
+                                    <td><?= h($orcidEmails->ORCID_BATCH_ID) ?></td>
+                                    <td><?= h($orcidEmails->QUEUED) ?></td>
+                                    <td><?= h($orcidEmails->SENT) ?></td>
+                                    <td><?= h($orcidEmails->CANCELLED) ?></td>
+                                    <td class="actions">
+                                        <?= $this->Html->link(__('View'), ['controller' => 'OrcidEmails', 'action' => 'view', $orcidEmails->ID]) ?>
+                                        <?= $this->Html->link(__('Edit'), ['controller' => 'OrcidEmails', 'action' => 'edit', $orcidEmails->ID]) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
-<div class="navigation actions">
-    <h3 class="heading"><?= __('Actions') ?></h3>
-    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->ID]) ?>
-    <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->ID], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->USERNAME)]) ?>
-    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->ID], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->USERNAME)]) ?>
-    <h3 class="heading"><?= __('Navigation') ?></h3>
-    <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?> 
-    <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
-    <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-</div>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->ID]) ?>
+            <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->ID], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->USERNAME)]) ?>
+            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->ID], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->USERNAME)]) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?>
+            <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>

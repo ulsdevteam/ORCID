@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -13,6 +14,7 @@ declare(strict_types=1);
  * @since         2.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace App\Utility;
 
 use ArrayAccess;
@@ -27,14 +29,15 @@ use Cake\Core\Configure;
 class Emailer
 {
 
-    use LocatorAwareTrait;
+	use LocatorAwareTrait;
 
 	/**
 	 * Verify that all connections are available
 	 * 
 	 * @return boolean Success on all connections
 	 */
-	public function connected() {
+	public function connected()
+	{
 		$manager = new ConnectionManager();
 		foreach ($manager->configured() as $name => $object) {
 			$connection = $manager->get($name);
@@ -52,7 +55,8 @@ class Emailer
 	 * 
 	 * @return array Names of failed connections
 	 */
-	public function getFailedConnections() {
+	public function getFailedConnections()
+	{
 		$manager = new ConnectionManager();
 		$problems = array();
 		foreach ($manager->configured() as $name => $object) {
@@ -73,13 +77,14 @@ class Emailer
 	 * @param \App\Model\Entity\OrcidBatch $orcidBatch The batch to send, may contain an OrcidEmail to mark sent
 	 * @return boolean Successful send
 	 */
-	public function sendBatch($toRecipient, $orcidBatch) {
+	public function sendBatch($toRecipient, $orcidBatch)
+	{
 		$Mailer = new Mailer();
 		if (Configure::read('debug')) {
-			$toRecipient = str_replace('@', '.', $toRecipient).'@mailinator.com';
+			$toRecipient = str_replace('@', '.', $toRecipient) . '@mailinator.com';
 		}
 		$Mailer
-			->setFrom('noreply@orcid-dev.pitt.edu','ORCID @ Pitt')
+			->setFrom('noreply@orcid-dev.pitt.edu', 'ORCID @ Pitt')
 			->setTo($toRecipient)
 			->setSubject("Preview");
 		$Mailer
@@ -102,13 +107,14 @@ class Emailer
 	 * @param \App\Model\Entity\OrcidBatchTrigger $trigger with at least one recursion
 	 * @return boolean
 	 */
-    public function executeTrigger($trigger) {
-        // Abort if OrcidTrigger does not contain expected information
+	public function executeTrigger($trigger)
+	{
+		// Abort if OrcidTrigger does not contain expected information
 		if (!isset($trigger) || !isset($trigger->orcid_status_type)) {
 			return false;
 		}
 		// Trigger may not run prior to begin_date
-		if (isset($trigger->BEGIN_DATE) && $trigger->BEGIN_DATE > time() ) {
+		if (isset($trigger->BEGIN_DATE) && $trigger->BEGIN_DATE > time()) {
 			return false;
 		}
 		$failures = 0;
@@ -126,7 +132,7 @@ class Emailer
 		$options = ['conditions' => ['CurrentOrcidStatuses.ORCID_STATUS_TYPE_ID' => $trigger->ORCID_STATUS_TYPE_ID]];
 		// This will be our selection of users
 		$users = [];
-		if (isset($trigger->orcid_batch_group->id)) {
+		if (isset($trigger->orcid_batch_group->ID)) {
 			$users = $OrcidBatchGroupTable->getAssociatedUsers($trigger->ORCID_BATCH_GROUP_ID, 'CurrentOrcidStatuses.ORCID_USER_ID');
 			$options['conditions'][] = $users;
 		}
@@ -154,7 +160,7 @@ class Emailer
 			}
 			// If this email is repeating, also check the last sent date
 			if ($trigger->REPEAT) {
-				$options['conditions']['TRUNC(NVL(OrcidEmail.SENT, SYSDATE) + '.$trigger->REPEAT.') >'] = date('Y-m-d');
+				$options['conditions']['TRUNC(NVL(OrcidEmail.SENT, SYSDATE) + ' . $trigger->REPEAT . ') >'] = date('Y-m-d');
 			}
 			if (!$this->OrcidEmail->find('first', $options)) {
 				$this->OrcidEmail->create();
@@ -165,5 +171,5 @@ class Emailer
 			}
 		}
 		return !$failures;
-    }
+	}
 }

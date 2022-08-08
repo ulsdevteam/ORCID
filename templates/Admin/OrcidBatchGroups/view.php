@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchGroup $orcidBatchGroup
@@ -34,19 +35,24 @@
                 </tr>
                 <tr>
                     <th><?= __('Cached') ?></th>
-                    <td><?= h($orcidBatchGroup->CACHE_CREATION_DATE).' ('.$this->Number->format(count($orcidBatchGroup->orcid_batch_group_caches)).' records)' ?></td>
+                    <td><?= h($orcidBatchGroup->CACHE_CREATION_DATE) . ' (' . $this->Number->format(count($orcidBatchGroup->orcid_batch_group_caches)) . ' records)' ?>
+                    </td>
                 </tr>
             </table>
         </div>
     </div>
 </div>
-<div class="navigation actions">
-    <h3 class="heading"><?= __('Actions') ?></h3>
-        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->ID]) ?>
-        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->ID), 'class' => 'side-nav-item']) ?>
-        <?= $this->Form->postLink(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->ID]]); ?>
-        <?= $this->Form->postLink(__('Expire Cache '), ['action' => 'recache', $orcidBatchGroup->ID]) ?>
-    <h3 class="heading"><?= __('Navigation') ?></h3>
-        <?= $this->Html->link(__('List Groups'), ['action' => 'index']) ?>
-        <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-</div>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->ID]) ?>
+            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->ID), 'class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->ID]]); ?>
+            <?= $this->Form->postLink(__('Expire Cache '), ['action' => 'recache', $orcidBatchGroup->ID]) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Groups'), ['action' => 'index']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>

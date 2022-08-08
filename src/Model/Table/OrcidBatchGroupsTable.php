@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -32,11 +33,13 @@ use Cake\ORM\TableRegistry;
 class OrcidBatchGroupsTable extends Table
 {
 
-    public function getAssociatedUsers($groupId, $key) {
-        $this->updateCache($groupId);
+	public function getAssociatedUsers($groupId, $key)
+	{
 		$OrcidBatchGroupCaches = TableRegistry::getTableLocator()->get('OrcidBatchGroupCaches');
-        // Everything below has not been touched yet.
-        // Won't work for sure.
+		$this->OrcidBatchGroupCaches = $OrcidBatchGroupCaches->find()->where(['ORCID_BATCH_GROUP_ID' => $groupId])->all();
+		$this->updateCache($groupId);
+		// Everything below has not been touched yet.
+		// Won't work for sure.
 		$db = $this->OrcidBatchGroupCache->getDataSource();
 		$subQuery = $db->buildStatement(
 			[
@@ -46,31 +49,31 @@ class OrcidBatchGroupsTable extends Table
 				'limit'      => null,
 				'offset'     => null,
 				'joins'      => [],
-				'conditions' => $groupId == -1 ? null :['cache.orcid_batch_group_id' => $groupId],
+				'conditions' => $groupId == -1 ? null : ['cache.orcid_batch_group_id' => $groupId],
 				'order'      => null,
 				'group'      => null
-            ],
+			],
 			$this->OrcidBatchGroupCache
 		);
-		$subQuery = ' '.$key.' '.($groupId == -1 ? 'NOT ' : '').'IN (' . $subQuery . ') ';
+		$subQuery = ' ' . $key . ' ' . ($groupId == -1 ? 'NOT ' : '') . 'IN (' . $subQuery . ') ';
 		return $db->expression($subQuery);
-    }
+	}
 
-/**
-     * Ensure the OrcidBatchGroup.id has an updated cache, creating the OrcidUser(s) if necessary
-     *
-     * @param int
-     * @return boolean
-     */
-	public function updateCache( $groupId ) {
+	/**
+	 * Ensure the OrcidBatchGroup.id has an updated cache, creating the OrcidUser(s) if necessary
+	 *
+	 * @param int
+	 * @return boolean
+	 */
+	public function updateCache($groupId)
+	{
 		// Does this group exist?
-        xdebug_break();
 		$group = $this->find()
-            ->where(['id' => $groupId])
-            ->first();
-        // Have not touched GroupCache
+			->where(['ID' => $groupId])
+			->first();
+		// Have not touched GroupCache
 		if (!$group) {
-			$this->OrcidBatchGroupCache->deleteAll(['orcid_batch_group_id' => $groupId], false);
+			$this->OrcidBatchGroupCache->deleteAll(['ORCID_BATCH_GROUP_ID' => $groupId], false);
 			return true;
 		}
 		// No action needed if the cache was updated in the last 30 minutes
@@ -102,7 +105,7 @@ class OrcidBatchGroupsTable extends Table
 					// skip if a group defintion is provided and the user does not match the definition
 					if ($group->group_definition) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = ['conditions' => '(&(cn='.$student->username.')'.$group->group_definition.')'];
+						$options = ['conditions' => '(&(cn=' . $student->username . ')' . $group->group_definition . ')'];
 						if (!$this->Person->find('first', $options)) {
 							continue;
 						}
@@ -121,7 +124,7 @@ class OrcidBatchGroupsTable extends Table
 					// skip if a group defintion is provided and the user does not match the definition
 					if ($group->group_definition) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = ['conditions' => '(&(cn='.$employee->username.')'.$group->group_definition.')'];
+						$options = ['conditions' => '(&(cn=' . $employee->username . ')' . $group->group_definition . ')'];
 						if (!$this->Person->find('first', $options)) {
 							continue;
 						}
@@ -180,80 +183,80 @@ class OrcidBatchGroupsTable extends Table
 		return true;
 	}
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config): void
+	{
+		parent::initialize($config);
 
-        $this->setTable('ULS.ORCID_BATCH_GROUPS');
-        $this->setDisplayField('NAME');
-        $this->setPrimaryKey('ID');
+		$this->setTable('ULS.ORCID_BATCH_GROUPS');
+		$this->setDisplayField('NAME');
+		$this->setPrimaryKey('ID');
 
-        $this->hasMany('OrcidBatchGroupCaches', [
-            'foreignKey' => 'ORCID_BATCH_GROUP_ID',
-        ]);
-        $this->hasMany('OrcidBatchTriggers', [
-            'foreignKey' => 'ORCID_BATCH_GROUP_ID',
-        ]);
-    }
+		$this->hasMany('OrcidBatchGroupCaches', [
+			'foreignKey' => 'ORCID_BATCH_GROUP_ID',
+		]);
+		$this->hasMany('OrcidBatchTriggers', [
+			'foreignKey' => 'ORCID_BATCH_GROUP_ID',
+		]);
+	}
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator): Validator
-    {
-        $validator
-            ->integer('ID')
-            ->notEmptyString('ID')
-            ->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator): Validator
+	{
+		$validator
+			->integer('ID')
+			->notEmptyString('ID')
+			->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
-        $validator
-            ->scalar('name')
-            ->maxLength('name', 512)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
+		$validator
+			->scalar('name')
+			->maxLength('name', 512)
+			->requirePresence('name', 'create')
+			->notEmptyString('name');
 
-        $validator
-            ->scalar('GROUP_DEFINITION')
-            ->maxLength('GROUP_DEFINITION', 2048)
-            ->allowEmptyString('GROUP_DEFINITION');
+		$validator
+			->scalar('GROUP_DEFINITION')
+			->maxLength('GROUP_DEFINITION', 2048)
+			->allowEmptyString('GROUP_DEFINITION');
 
-        $validator
-            ->scalar('EMPLOYEE_DEFINITION')
-            ->maxLength('EMPLOYEE_DEFINITION', 2048)
-            ->allowEmptyString('EMPLOYEE_DEFINITION');
+		$validator
+			->scalar('EMPLOYEE_DEFINITION')
+			->maxLength('EMPLOYEE_DEFINITION', 2048)
+			->allowEmptyString('EMPLOYEE_DEFINITION');
 
-        $validator
-            ->scalar('STUDENT_DEFINITION')
-            ->maxLength('STUDENT_DEFINITION', 2048)
-            ->allowEmptyString('STUDENT_DEFINITION');
+		$validator
+			->scalar('STUDENT_DEFINITION')
+			->maxLength('STUDENT_DEFINITION', 2048)
+			->allowEmptyString('STUDENT_DEFINITION');
 
-        $validator
-            ->dateTime('CACHE_CREATION_DATE')
-            ->allowEmptyDateTime('CACHE_CREATION_DATE');
+		$validator
+			->dateTime('CACHE_CREATION_DATE')
+			->allowEmptyDateTime('CACHE_CREATION_DATE');
 
-        return $validator;
-    }
+		return $validator;
+	}
 
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules): RulesChecker
-    {
-        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules): RulesChecker
+	{
+		$rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
 
-        return $rules;
-    }
+		return $rules;
+	}
 }

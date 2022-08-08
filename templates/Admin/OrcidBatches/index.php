@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatch[]|\Cake\Collection\CollectionInterface $orcidBatches
@@ -12,7 +13,7 @@ An email template will be used to send a message to a user based on one or more 
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('NAME','Name') ?></th>
+                    <th><?= $this->Paginator->sort('NAME', 'Name') ?></th>
                     <th><?= $this->Paginator->sort('FROM_NAME', 'From Name') ?></th>
                     <th><?= $this->Paginator->sort('FROM_ADDR', 'From Addr') ?></th>
                     <th><?= $this->Paginator->sort('SUBJECT', 'Subject') ?></th>
@@ -22,38 +23,34 @@ An email template will be used to send a message to a user based on one or more 
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($orcidBatches as $orcidBatch): ?>
-                <tr>
-                    <td><?= h($orcidBatch->NAME) ?></td>
-                    <td><?= h($orcidBatch->FROM_NAME) ?></td>
-                    <td><?= h($orcidBatch->FROM_ADDR) ?></td>
-                    <td><?= h($orcidBatch->SUBJECT) ?></td>
-                    <td><?= h($orcidBatch->REPLY_TO) ?></td>
-                    <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->NAME, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->ID]) : '' ?></td>
-                    <td class="actions individual">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->ID]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatch->ID]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatch->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID)]) ?>
-                    </td>
-                </tr>
+                <?php foreach ($orcidBatches as $orcidBatch) : ?>
+                    <tr>
+                        <td><?= h($orcidBatch->NAME) ?></td>
+                        <td><?= h($orcidBatch->FROM_NAME) ?></td>
+                        <td><?= h($orcidBatch->FROM_ADDR) ?></td>
+                        <td><?= h($orcidBatch->SUBJECT) ?></td>
+                        <td><?= h($orcidBatch->REPLY_TO) ?></td>
+                        <td><?= $orcidBatch->has('orcid_batch_creator') ? $this->Html->link($orcidBatch->orcid_batch_creator->NAME, ['controller' => 'OrcidBatchCreators', 'action' => 'view', $orcidBatch->orcid_batch_creator->ID]) : '' ?>
+                        </td>
+                        <td class="actions individual">
+                            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->ID]) ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatch->ID]) ?>
+                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatch->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID)]) ?>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
-    </div>
+    <?= $this->element('paginator/pagination'); ?>
 </div>
-<div class="navigation actions">
-    <h3 class="heading"><?= __('Actions') ?></h3>
-    <?= $this->Html->link(__('New Orcid Batch'), ['action' => 'add']) ?>
-    <h3 class="heading"><?= __('Navigation') ?></h3>
-    <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-</div>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('New Orcid Batch'), ['action' => 'add']) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>

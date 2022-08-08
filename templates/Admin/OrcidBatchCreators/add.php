@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchCreator $orcidBatchCreator
@@ -15,9 +16,10 @@
         <div class="orcidBatchCreators form content">
             <?= $this->Form->create($orcidBatchCreator) ?>
             <fieldset>
-                <legend><?= __('Enter the University Computer Account name to create an new administrative user.') ?></legend>
+                <legend><?= __('Enter the University Computer Account name to create an new administrative user.') ?>
+                </legend>
                 <?php
-                    echo $this->Form->control('Name', ['label'=>'Username']);
+                echo $this->Form->control('Name', ['label' => 'Username']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

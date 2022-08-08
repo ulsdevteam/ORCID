@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -43,7 +44,7 @@ class OrcidEmailsTable extends Table
         $this->setTable('ULS.ORCID_EMAILS');
         $this->setDisplayField('id');
         $this->setPrimaryKey('ID');
-        
+
         $this->belongsTo('OrcidUsers', [
             'foreignKey' => 'ORCID_USER_ID',
             'joinType' => 'INNER',

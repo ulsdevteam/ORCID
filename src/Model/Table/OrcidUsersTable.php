@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -133,7 +134,7 @@ class OrcidUsersTable extends Table
         return $rules;
     }
 
-    public function unknownFind() {
-        
+    public function unknownFind()
+    {
     }
 }

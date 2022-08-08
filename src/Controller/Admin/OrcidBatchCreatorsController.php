@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Admin;
@@ -82,7 +83,7 @@ class OrcidBatchCreatorsController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
-            $orcidBatchCreator->FLAGS = $orcidBatchCreator->FLAGS & ~ 1;
+            $orcidBatchCreator->FLAGS = $orcidBatchCreator->FLAGS & ~1;
             if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
                 $this->Flash->success(__('The orcid batch creator has been saved.'));
 

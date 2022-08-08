@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Entity;
@@ -17,14 +18,15 @@ use Cake\Core\Configure;
  */
 class OrcidBatchCreator extends Entity
 {
-    
+
     const FLAG_DISABLED = 1;
 
     private $ldapResult;
 
     private $ldapHandler;
 
-    public function  &__get(string $field) {
+    public function  &__get(string $field)
+    {
         if ($this->has($field)) {
             return parent::__get($field);
         } else if (!(isset($this->ldapResult))) {
@@ -32,12 +34,12 @@ class OrcidBatchCreator extends Entity
             $this->ldapHandler->bindUsingCommonCredentials();
             $ldapResult = $this->ldapHandler->find('search', [
                 'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
-                'filter' => 'cn='.$this->NAME,
+                'filter' => 'cn=' . $this->NAME,
                 'attributes' => [
                     'displayName',
                 ],
             ]);
-            if($ldapResult['count'] > 0) {
+            if ($ldapResult['count'] > 0) {
                 $result = $ldapResult[0];
                 $this->set('DISPLAYNAME', $result['displayname'][0]);
             } else {

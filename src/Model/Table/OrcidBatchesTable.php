@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -47,7 +48,7 @@ class OrcidBatchesTable extends Table
         $this->setTable('ULS.ORCID_BATCHES');
         $this->setDisplayField('NAME');
         $this->setPrimaryKey('ID');
-        
+
         $this->belongsTo('OrcidBatchCreators', [
             'foreignKey' => 'ORCID_BATCH_CREATOR_ID',
             'joinType' => 'INNER',

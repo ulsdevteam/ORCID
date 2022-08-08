@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidStatus $orcidStatus
@@ -20,11 +21,13 @@
             <table>
                 <tr>
                     <th><?= __('Orcid User') ?></th>
-                    <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->username, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->ID]) : '' ?></td>
+                    <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->username, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->ID]) : '' ?>
+                    </td>
                 </tr>
                 <tr>
                     <th><?= __('Orcid Status Type') ?></th>
-                    <td><?= $orcidStatus->has('orcid_status_type') ? $this->Html->link($orcidStatus->orcid_status_type->name, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidStatus->orcid_status_type->ID]) : '' ?></td>
+                    <td><?= $orcidStatus->has('orcid_status_type') ? $this->Html->link($orcidStatus->orcid_status_type->name, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidStatus->orcid_status_type->ID]) : '' ?>
+                    </td>
                 </tr>
                 <tr>
                     <th><?= __('Id') ?></th>

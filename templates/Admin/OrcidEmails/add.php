@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidEmail $orcidEmail
@@ -19,11 +20,11 @@
             <fieldset>
                 <legend><?= __('Add Orcid Email') ?></legend>
                 <?php
-                    echo $this->Form->control('orcid_user_id', ['options' => $orcidUsers]);
-                    echo $this->Form->control('orcid_batch_id', ['options' => $orcidBatches]);
-                    echo $this->Form->control('queued', ['empty' => true]);
-                    echo $this->Form->control('sent', ['empty' => true]);
-                    echo $this->Form->control('cancelled', ['empty' => true]);
+                echo $this->Form->control('orcid_user_id', ['options' => $orcidUsers]);
+                echo $this->Form->control('orcid_batch_id', ['options' => $orcidBatches]);
+                echo $this->Form->control('queued', ['empty' => true]);
+                echo $this->Form->control('sent', ['empty' => true]);
+                echo $this->Form->control('cancelled', ['empty' => true]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

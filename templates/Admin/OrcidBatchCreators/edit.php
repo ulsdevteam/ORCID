@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchCreator $orcidBatchCreator
@@ -22,8 +23,8 @@
             <fieldset>
                 <legend><?= __('Edit Orcid Batch Creator') ?></legend>
                 <?php
-                    echo $this->Form->control('NAME', ['label' => 'Name']);
-                    echo $this->Form->control('FLAGS', ['label' => 'Flags']);
+                echo $this->Form->control('NAME', ['label' => 'Name']);
+                echo $this->Form->control('FLAGS', ['label' => 'Flags']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

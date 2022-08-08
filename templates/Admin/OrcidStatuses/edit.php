@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidStatus $orcidStatus
@@ -24,9 +25,9 @@
             <fieldset>
                 <legend><?= __('Edit Orcid Status') ?></legend>
                 <?php
-                    echo $this->Form->control('orcid_user_id', ['options' => $orcidUsers]);
-                    echo $this->Form->control('orcid_status_type_id', ['options' => $orcidStatusTypes]);
-                    echo $this->Form->control('status_timestamp');
+                echo $this->Form->control('orcid_user_id', ['options' => $orcidUsers]);
+                echo $this->Form->control('orcid_status_type_id', ['options' => $orcidStatusTypes]);
+                echo $this->Form->control('status_timestamp');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

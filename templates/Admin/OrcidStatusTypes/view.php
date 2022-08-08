@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidStatusType $orcidStatusType
@@ -28,24 +29,24 @@
             <div class="related">
                 <h4><?= __('Users at this Checkpoint') ?></h4>
                 <?php if (!empty($orcidStatusType->current_orcid_statuses)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Orcid User') ?></th>
-                            <th><?= __('Status Timestamp') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($orcidStatusType->current_orcid_statuses as $currentStatus) : ?>
+                    <div class="table-responsive">
+                        <table>
                             <tr>
-                                <td><?= h($currentStatus->orcid_user->USERNAME) ?></td>
-                                <td><?= h($currentStatus->STATUS_TIMESTAMP) ?></td>
-                                <td class="actions">
-                                    <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $currentStatus->orcid_user->ID]) ?>
-                                </td>
+                                <th><?= __('Orcid User') ?></th>
+                                <th><?= __('Status Timestamp') ?></th>
+                                <th class="actions"><?= __('Actions') ?></th>
                             </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
+                            <?php foreach ($orcidStatusType->current_orcid_statuses as $currentStatus) : ?>
+                                <tr>
+                                    <td><?= h($currentStatus->orcid_user->USERNAME) ?></td>
+                                    <td><?= h($currentStatus->STATUS_TIMESTAMP) ?></td>
+                                    <td class="actions">
+                                        <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $currentStatus->orcid_user->ID]) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>

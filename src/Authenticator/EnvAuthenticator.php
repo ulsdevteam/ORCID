@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Authenticator;
@@ -10,8 +11,9 @@ use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Cake\Core\Configure;
 
-class EnvAuthenticator extends HttpBasicAuthenticator {
-	/**
+class EnvAuthenticator extends HttpBasicAuthenticator
+{
+    /**
      * Default config for this object.
      * - `fields` The fields to use to identify a user by.
      * - `skipChallenge` If set to `true` then challenge exception will not be
@@ -26,7 +28,7 @@ class EnvAuthenticator extends HttpBasicAuthenticator {
         'skipChallenge' => true,
         'FORCE_LOWERCASE' => true,
         'DROP_SCOPE' => true,
-        'VARIABLE_NAME' => 'REDIRECT_REDIRECT_eppn',
+        'VARIABLE_NAME' => 'REDIRECT_REMOTE_USER',
     ];
 
     /**
@@ -37,13 +39,13 @@ class EnvAuthenticator extends HttpBasicAuthenticator {
      */
     public function __construct(IdentifierInterface $identifier, array $config = [])
     {
-        if(Configure::check('FORCE_LOWERCASE')){
+        if ((!(array_key_exists('FORCE_LOWERCASE', $config))) && Configure::check('FORCE_LOWERCASE')) {
             $this->config['FORCE_LOWERCASE'] = Configure::read('FORCE_LOWERCASE');
         }
-        if(Configure::check('DROP_SCOPE')){
+        if ((!(array_key_exists('DROP_SCOPE', $config))) && Configure::check('DROP_SCOPE')) {
             $this->config['DROP_SCOPE'] = Configure::read('DROP_SCOPE');
         }
-        if(Configure::check('VARIABLE_NAME')){
+        if ((!(array_key_exists('VARIABLE_NAME', $config))) && Configure::check('VARIABLE_NAME')) {
             $this->config['VARIABLE_NAME'] = Configure::read('VARIABLE_NAME');
         }
         parent::__construct($identifier, $config);
@@ -61,13 +63,14 @@ class EnvAuthenticator extends HttpBasicAuthenticator {
         return $this->getUser($request);
     }
 
-	/**
+    /**
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param ServerRequestInterface $request Request object.
      * @return \Authentication\Authenticator\ResultInterface
      */
-    public function getUser(ServerRequestInterface $request) {
+    public function getUser(ServerRequestInterface $request)
+    {
         //return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
         $server = $request->getServerParams();
         $username = $server[$this->_config['VARIABLE_NAME']] ?? '';
@@ -87,8 +90,8 @@ class EnvAuthenticator extends HttpBasicAuthenticator {
             }
             // Drop a specific scope
             foreach ($scopes as $scope) {
-                if (strlen($username) >= strlen($scope) + 1 && strripos($username, '@'.$scope) === strlen($username) - strlen($scope) - 1) {
-                    $username = str_ireplace('@'.$scope, '', $username);
+                if (strlen($username) >= strlen($scope) + 1 && strripos($username, '@' . $scope) === strlen($username) - strlen($scope) - 1) {
+                    $username = str_ireplace('@' . $scope, '', $username);
                     break;
                 }
             }
@@ -96,7 +99,7 @@ class EnvAuthenticator extends HttpBasicAuthenticator {
 
         if (!is_string($username) || $username === '') {
             return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
-        } 
+        }
         $user = $this->_identifier->identify([IdentifierInterface::CREDENTIAL_USERNAME => $username]);
         if ($user === null) {
             return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);

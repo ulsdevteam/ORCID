@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatch $orcidBatch
@@ -19,13 +20,13 @@
             <fieldset>
                 <legend><?= __('Add Orcid Batch') ?></legend>
                 <?php
-                    echo $this->Form->control('name');
-                    echo $this->Form->control('from_name');
-                    echo $this->Form->control('from_addr', ['label' => 'From Address']);
-                    echo $this->Form->control('subject');
-                    echo $this->Form->control('body', ['type' => 'textarea', 'required' => false]);
-                    echo $this->Form->control('reply_to');
-                    echo $this->Form->control('orcid_batch_creator_id', ['label' => 'Template Owner', 'options' => $orcidBatchCreators]);
+                echo $this->Form->control('name');
+                echo $this->Form->control('from_name');
+                echo $this->Form->control('from_addr', ['label' => 'From Address']);
+                echo $this->Form->control('subject');
+                echo $this->Form->control('body', ['type' => 'textarea', 'required' => false]);
+                echo $this->Form->control('reply_to');
+                echo $this->Form->control('orcid_batch_creator_id', ['label' => 'Template Owner', 'options' => $orcidBatchCreators]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

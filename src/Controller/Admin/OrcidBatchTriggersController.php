@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Admin;
@@ -124,12 +125,14 @@ class OrcidBatchTriggersController extends AppController
      * @param string $id
      * @return void
      */
-    public function execute($id = null) {
+    public function execute($id = null)
+    {
         $trigger = $this->OrcidBatchTriggers->get($id, ['contain' => ['OrcidStatusTypes', 'OrcidBatchGroups']]);
         $this->request->allowMethod('post');
+        $this->Emailer = new Emailer();
         if ($trigger->begin_date && $trigger->begin_date > time()) {
             $this->Flash->error(__('The Trigger has a future Begin Date.'));
-        } else if (Emailer::executeTrigger($trigger)) {
+        } else if ($this->Emailer->executeTrigger($trigger)) {
             $this->Flash->success(__('The Trigger has run.'));
         } else {
             $this->Flash->error(__('The Trigger could not be run. Please, try again.'));
@@ -138,33 +141,34 @@ class OrcidBatchTriggersController extends AppController
     }
 
     /**
-    * executeAll method
-    *
-    * @return void
-    */
-    public function executeAll() {
+     * executeAll method
+     *
+     * @return void
+     */
+    public function executeAll()
+    {
         $this->request->allowMethod('post');
         // must not be already sent or cancelled
         $triggers = $this->OrcidBatchTrigger->find('all', ['conditions' => ['or' => [['begin_date <=' => 'today'], ['begin_date' => NULL]], 'order' => ['require_batch_id DESC']]]);
         $success = 0;
         $failed = 0;
+        $this->Emailer = new Emailer();
         foreach ($triggers as $trigger) {
-            if (Emailer::executeTrigger($trigger)) {
+            if ($this->Emailer->executeTrigger($trigger)) {
                 $success++;
             } else {
                 $failed++;
             }
         }
         if ($success) {
-            $this->Flash->success(__('Successfully ran '.$success.' trigger'.($success > 1 ? 's' : '')), 'default', ['class' => 'success']);
+            $this->Flash->success(__('Successfully ran ' . $success . ' trigger' . ($success > 1 ? 's' : '')), 'default', ['class' => 'success']);
         }
         if ($failed) {
-            $this->Flash->error(__('Failed '.$failed.' trigger run'.($failed > 1 ? 's' : '')));
+            $this->Flash->error(__('Failed ' . $failed . ' trigger run' . ($failed > 1 ? 's' : '')));
         }
         if (!$success && !$failed) {
             $this->Flash->error(__('No triggers to run.'));
         }
         return $this->redirect(['action' => 'index']);
     }
-
 }
