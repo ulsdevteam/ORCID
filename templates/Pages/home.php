@@ -10,14 +10,14 @@
 <div id="pitt-header" class="blue"><div id="pittlogo"><a id="p-link" title="University of Pittsburgh" href="http://pitt.edu/">University of Pittsburgh</a></div></div>
 <div id="wrapper">
   <header>
-    <h1><img src="/images/header.jpg">ORCID @ Pitt</h1>
+    <h1><img src="../../webroot/img/header.jpg" alt="ORCID @ Pitt"></h1>
   </header>
   <section>
-        <h2>Create and connect your ORCID iD to the University of Pittsburgh</h2>
-          <p>Here you can create a new ORCID iD and connect it to Pitt.</p>
-          <p>If you already have an ORCID iD, please connect it to Pitt.</p>
-          <p><a href="connect/" class="actionbutton">Create and Connect Your ORCID iD</a></p>
-      </section>
+    <h2>Create and connect your ORCID iD to the University of Pittsburgh</h2>
+    <p>Here you can create a new ORCID iD and connect it to Pitt.</p>
+    <p>If you already have an ORCID iD, please connect it to Pitt.</p>
+    <p><a href="connect/" class="actionbutton">Create and Connect Your ORCID iD</a></p>
+  </section>
 <footer>
   <div class="foot-col">
     <h2>What is ORCID?</h2>

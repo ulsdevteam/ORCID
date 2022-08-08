@@ -34,16 +34,6 @@ use Authentication\Middleware\AuthenticationMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
-use App\Policy\RequestPolicy;
-use Authorization\AuthorizationService;
-use Authorization\AuthorizationServiceInterface;
-use Authorization\AuthorizationServiceProviderInterface;
-use Authorization\Middleware\AuthorizationMiddleware;
-use Authorization\Middleware\RequestAuthorizationMiddleware;
-use Authorization\Policy\MapResolver;
-use Authorization\Policy\OrmResolver;
-use Psr\Http\Message\ResponseInterface;
-use Cake\Http\ServerRequest;
 
 
 /**
@@ -52,7 +42,7 @@ use Cake\Http\ServerRequest;
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
  */
-class Application extends BaseApplication implements AuthenticationServiceProviderInterface, AuthorizationServiceProviderInterface
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -64,7 +54,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         // Call parent to load bootstrap from files.
         parent::bootstrap();
         $this->addPlugin('Authentication');
-        $this->addPlugin('Authorization');
 
         if (PHP_SAPI === 'cli') {
             $this->bootstrapCli();
@@ -121,12 +110,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // https://book.cakephp.org/4/en/controllers/middleware.html#body-parser-middleware
             ->add(new BodyParserMiddleware())
 
-            ->add(new AuthenticationMiddleware($this))
-
-            ->add(new AuthorizationMiddleware($this))
-
-            ->add(new RequestAuthorizationMiddleware())
-            
+            ->add(new AuthenticationMiddleware($this))            
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
@@ -160,33 +144,30 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         // Define where users should be redirected to when they are not authenticated
         $service->setConfig([
-            'unauthenticatedRedirect' => Router::url([
-                    'prefix' => false,
-                    'plugin' => null,
-            ]),
+            'unauthenticatedRedirect' => '/access-denied',
             'queryParam' => 'redirect',
         ]);
 
         $fields = [
-            IdentifierInterface::CREDENTIAL_USERNAME => 'email',
-            IdentifierInterface::CREDENTIAL_PASSWORD => 'password'
+            IdentifierInterface::CREDENTIAL_USERNAME => 'NAME',
         ];
         // Load the authenticators. Session should be first.
-        $service->loadAuthenticator('Authentication.Session');
-        $service->loadAuthenticator('Authentication.Form', [
-            'fields' => $fields,
+        $service->loadAuthenticator('Env', [
+            'fields' => $fields
         ]);
 
         // Load identifiers
-        $service->loadIdentifier('Authentication.Password', compact('fields'));
+        $service->loadIdentifier('Authentication.Password', [
+            'fields' => [
+                'username' => 'NAME'
+            ], 
+            'resolver' => [
+                'className' => 'Authentication.Orm',
+                'userModel' => 'OrcidBatchCreators'
+            ]
+        ]);
 
         return $service;
-    }
-
-    public function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface {
-        $mapResolver = new MapResolver();
-        $mapResolver->map(ServerRequest::class, RequestPolicy::class);
-        return new AuthorizationService($mapResolver);
     }
 
     /**

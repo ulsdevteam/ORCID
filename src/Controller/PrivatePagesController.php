@@ -29,7 +29,7 @@ use Cake\View\Exception\MissingTemplateException;
  *
  * @link https://book.cakephp.org/4/en/controllers/pages-controller.html
  */
-class PagesController extends AppController
+class PrivatePagesController extends AppController
 {
     /**
      * Displays a view
@@ -69,12 +69,5 @@ class PagesController extends AppController
             }
             throw new NotFoundException();
         }
-    }
-
-    public function beforeFilter(\Cake\Event\EventInterface $event)
-    {
-        parent::beforeFilter($event);
-
-        $this->Authentication->allowUnauthenticated(['display']);
     }
 }
