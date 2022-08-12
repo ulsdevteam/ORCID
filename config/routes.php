@@ -44,6 +44,10 @@ return static function (RouteBuilder $routes) {
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    $routes->prefix('Admin', ['path' => '/orcadmin'], function (RouteBuilder $routes) {
+        $routes->fallbacks(DashedRoute::class);
+    });
+
     
     $routes->prefix('Admin', function (RouteBuilder $routes) {
         // All routes here will be prefixed with `/admin`, and
@@ -60,6 +64,7 @@ return static function (RouteBuilder $routes) {
          */
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
         $builder->connect('/admin', ['controller' => 'PrivatePages', 'action' => 'display', 'admin']);
+        $builder->connect('/orcadmin', ['controller' => 'PrivatePages', 'action' => 'display', 'admin']);
 
         /*
          * ...and connect the rest of 'Pages' controller's URLs.

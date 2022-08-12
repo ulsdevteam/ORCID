@@ -77,7 +77,7 @@ class OrcidBatchGroupsTable extends Table
 			return true;
 		}
 		// No action needed if the cache was updated in the last 30 minutes
-		if ($group->cache_creation_date && $group->cache_creation_date->wasWithinLast('30 minutes')) {
+		if ($group->CACHE_CREATION_DATE && $group->CACHE_CREATION_DATE->wasWithinLast('30 minutes')) {
 			return true;
 		}
 		// Indicate that this cache update is in-progress (blocks simultaneous cache refreshes)
@@ -87,25 +87,25 @@ class OrcidBatchGroupsTable extends Table
 		// $db = $this->getDataSource();
 		/* $deprecated = $db->value(date('Y-m-d H:i:s'), 'date');
 		$this->OrcidBatchGroupCache->updateAll(['deprecated' => $deprecated), ['orcid_batch_group_id' => $groupId));
-		if ($group['OrcidBatchGroup']['group_definition']) {
+		if ($group['OrcidBatchGroup']['GROUP_DEFINITION']) {
 			$this->Person = ClassRegistry::init('Person');
 		} */
 
 		$groupMembers = [];
-		if ($group->student_definition || $group->employee_definition) {
+		if ($group->STUDENT_DEFINITION || $group->EMPLOYEE_DEFINITION) {
 			// CDS defintion(s) is (are) the base query
-			if ($group->student_definition) {
-				$this->OrcidStudent = TableRegistry::getTableLocator()->get('OrcidUsers');
-				$options = ['conditions' => $group->student_definition];
+			if ($group->STUDENT_DEFINITION) {
+				$this->OrcidStudent = TableRegistry::getTableLocator()->get('OrcidStudents');
+				$options = ['conditions' => $group->STUDENT_DEFINITION];
 				$students = $this->OrcidStudent->find('all', $options)->all();
 				if (!$students) {
 					$students = [];
 				}
 				foreach ($students as $student) {
 					// skip if a group defintion is provided and the user does not match the definition
-					if ($group->group_definition) {
+					if ($group->GROUP_DEFINITION) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = ['conditions' => '(&(cn=' . $student->username . ')' . $group->group_definition . ')'];
+						$options = ['conditions' => '(&(cn=' . $student->username . ')' . $group->GROUP_DEFINITION . ')'];
 						if (!$this->Person->find('first', $options)) {
 							continue;
 						}
@@ -113,29 +113,29 @@ class OrcidBatchGroupsTable extends Table
 					$groupMembers[$student->username] = $student->username;
 				}
 			}
-			if ($group->employee_definition) {
-				$this->OrcidEmployee = TableRegistry::getTableLocator()->get('OrcidUsers');
-				$options = ['conditions' => $group->employee_definition];
-				$employees = $this->OrcidEmployee->find('all', $options);
+			if ($group->EMPLOYEE_DEFINITION) {
+				$this->OrcidEmployee = TableRegistry::getTableLocator()->get('OrcidEmployees');
+				$options = ['conditions' => $group->EMPLOYEE_DEFINITION];
+				$employees = $this->OrcidEmployee->find('all', $options)->all();
 				if (!$employees) {
 					$employees = [];
 				}
 				foreach ($employees as $employee) {
 					// skip if a group defintion is provided and the user does not match the definition
-					if ($group->group_definition) {
+					if ($group->GROUP_DEFINITION) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = ['conditions' => '(&(cn=' . $employee->username . ')' . $group->group_definition . ')'];
+						$options = ['conditions' => '(&(cn=' . $employee->username . ')' . $group->GROUP_DEFINITION . ')'];
 						if (!$this->Person->find('first', $options)) {
 							continue;
 						}
 					}
-					$groupMembers[$employee->username] = $employee->username;
+					$groupMembers[$employee->USERNAME] = $employee->USERNAME;
 				}
 			}
-		} else if ($group->group_definition) {
+		} else if ($group->GROUP_DEFINITION) {
 			// group_defintion is the base query
 			// TODO: risky because Person is LDAP and may not support paging
-			$options = ['recurisve' => -1, 'conditions' => $group->group_definition];
+			$options = ['recurisve' => -1, 'conditions' => $group->GROUP_DEFINITION];
 			$people = $this->Person->find('all', $options);
 			if (!$people) {
 				$people = [];
@@ -149,7 +149,7 @@ class OrcidBatchGroupsTable extends Table
 		$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
 		// Refresh the cache
 		foreach ($groupMembers as $groupMember) {
-			$options = ['conditions' => ['OrcidUser.username' => $groupMember]];
+			$options = ['conditions' => ['OrcidUser.USERNAME' => $groupMember]];
 			$user = $this->OrcidUser->find('first', $options);
 			if (!$user) {
 				$this->OrcidUser->create();

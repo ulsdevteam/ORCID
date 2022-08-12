@@ -134,7 +134,4 @@ class OrcidUsersTable extends Table
         return $rules;
     }
 
-    public function unknownFind()
-    {
-    }
 }
