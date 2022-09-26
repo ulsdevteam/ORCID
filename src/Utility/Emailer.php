@@ -114,7 +114,7 @@ class Emailer
 			return false;
 		}
 		// Trigger may not run prior to begin_date
-		if (isset($trigger->BEGIN_DATE) && $trigger->BEGIN_DATE > time()) {
+		if (isset($trigger->BEGIN_DATE) && $trigger->BEGIN_DATE->timestamp > time()) {
 			return false;
 		}
 		$failures = 0;
@@ -134,38 +134,40 @@ class Emailer
 		$users = [];
 		if (isset($trigger->orcid_batch_group->ID)) {
 			$users = $OrcidBatchGroupTable->getAssociatedUsers($trigger->ORCID_BATCH_GROUP_ID, 'CurrentOrcidStatuses.ORCID_USER_ID');
-			$options['conditions'][] = $users;
+
 		}
-		$userStatuses = $this->CurrentOrcidStatus->find('all', $options);
+		$userStatuses = $CurrentOrcidStatusTable->find('all', $options);
+		if (!empty($users)){
+			$userStatuses->where(['ORCID_USER_ID ' . ($trigger->ORCID_BATCH_GROUP_ID == -1 ? 'NOT' : '') . ' IN' => $users]);
+		}
 		foreach ($userStatuses as $userStatus) {
 			// If a prior email is required, check for it
 			if ($trigger->require_batch_id) {
-				$options = ['conditions' => ['OrcidEmail.ORCID_USER_ID' => $userStatus->ORCID_USER_ID]];
+				$options = ['conditions' => ['OrcidEmails.ORCID_USER_ID' => $userStatus->ORCID_USER_ID]];
 				if ($trigger->REQUIRE_BATCH_ID !== -1) {
-					$options['conditions']['OrcidEmail.ORCID_BATCH_ID'] = $trigger->REQUIRE_BATCH_ID;
+					$options['conditions']['OrcidEmails.ORCID_BATCH_ID'] = $trigger->REQUIRE_BATCH_ID;
 				}
-				if (!$this->OrcidEmail->find('first', $options)) {
+				if (!$OrcidEmailTable->find('first', $options)) {
 					// if the prior email was not found, skip
 					continue;
 				}
 			}
 			// Create unless the email already exists
-			$options = ['conditions' => ['OrcidEmail.ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'OrcidEmail.ORCID_BATCH_ID' => $trigger->OrcidBatch->ID]];
+			$options = ['conditions' => ['OrcidEmails.ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'OrcidEmails.ORCID_BATCH_ID' => $trigger->ORCID_BATCH_ID]];
 			// If a maximum repeat is set, count the number of times sent
 			if ($trigger->MAXIMUM_REPEAT) {
-				if ($this->OrcidEmail->find('count', $options) >= $trigger->maximum_repeat) {
+				if ($OrcidEmailTable->find('all', $options)->count() >= $trigger->maximum_repeat) {
 					// if already at or past the limit, skip
 					continue;
 				}
 			}
 			// If this email is repeating, also check the last sent date
 			if ($trigger->REPEAT) {
-				$options['conditions']['TRUNC(NVL(OrcidEmail.SENT, SYSDATE) + ' . $trigger->REPEAT . ') >'] = date('Y-m-d');
+				$options['conditions']['TRUNC(NVL(OrcidEmails.SENT, SYSDATE) + ' . $trigger->REPEAT . ') >'] = date('Y-m-d');
 			}
-			if (!$this->OrcidEmail->find('first', $options)) {
-				$this->OrcidEmail->create();
-				$newEmail = ['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->OrcidBatch->ID, 'queued' => date('Y-m-d H:i:s')];
-				if (!$this->OrcidEmail->save($newEmail)) {
+			if (!$OrcidEmailTable->find('all', $options)->first()) {
+				$newEmail = $OrcidEmailTable->newEntity(['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->OrcidBatch->ID, 'queued' => date('Y-m-d H:i:s')]);
+				if (!$OrcidEmailTable->save($newEmail)) {
 					$failures++;
 				}
 			}
