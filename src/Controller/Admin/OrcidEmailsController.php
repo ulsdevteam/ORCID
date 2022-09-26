@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use Cake\I18n\FrozenTime;
+use App\Utility\Emailer;
+use Cake\ORM\Locator\TableLocator;
 
 /**
  * OrcidEmails Controller
@@ -112,4 +115,121 @@ class OrcidEmailsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+    /**
+	 * requeue method
+	 *
+	 * @throws NotFoundException0
+	 * @param string $id
+	 * @return void
+	 */
+	public function requeue($id = null) { 
+		$orcidEmail = $this->OrcidEmails->get($id);
+		$this->request->allowMethod(array('post', 'put'));
+		if (!(empty($orcidEmail->SENT) || empty($orcidEmail->CANCELLED))){
+			$orcidEmail->SENT = null;
+			$orcidEmail->CANCELLED = null;
+			$orcidEmail->QUEUED = new FrozenTime();
+			if ($this->orcidEmails->save($orcidEmail)){
+				$this->Flash->success(__('The Email has been requeued.'));
+			} else {
+				$this->Flash->error(__('The orcid email could not be requeued. Please, try again.'));
+			}
+		} else {
+			$this->Flash->error(__('The orcid email could not be requeued.'));
+		}
+		return $this->redirect(array('action' => 'view', $id));
+	}
+
+/**
+ * cancel method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function cancel($id = null) {
+		$orcidEmail = $this->OrcidEmails->get($id);
+		$this->request->allowMethod('post', 'delete');
+		// must not be already sent or cancelled
+		if (!(empty($orcidEmail->SENT) || empty($orcidEmail->CANCELLED))){
+			$this->Flash->error(__('This Email cannot be cancelled.'));
+		} else {
+			$orcidEmail->CANCELLED = new FrozenTime();
+			if ($this->OrcidEmail->save($orcidEmail)) {
+				$this->Flash->success(__('The Email has been cancelled.'));
+			} else {
+				$this->Flash->error(__('The Email could not be cancelled. Please, try again.'));
+			}
+		}
+		return $this->redirect(array('action' => 'view', $id));
+	}
+	
+/**
+ * send method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function send($id = null) {
+		$orcidEmail = $this->OrcidEmails->get($id);
+		$this->Person = $this->getTableLocator()->get('OrcidUsers');
+		$this->request->allowMethod('post');
+		// must not be already sent or cancelled
+		$this->Emailer = new Emailer();
+		if (!(empty($orcidEmail->SENT) || !empty($orcidEmail->CANCELLED))){
+			$this->Flash->error(__('This Email cannot be sent.'));
+		} else {
+			$options = '(cn='.$orcidEmail->ORCID_USER_ID.')';
+			$person = $this->Person->defintionSearch($options);
+			if ($this->Emailer->sendBatch($person, $orcidEmail)) {
+				$this->Flash->success(__('The Email has been sent.'));
+			} else {
+				$this->Flash->error(__('The Email could not be sent. Please, try again.'));
+			}
+		}
+		return $this->redirect(array('action' => 'view', $id));
+	}
+
+/**
+ * sendAll method
+ *
+ * @return void
+ */
+	public function sendAll() {
+		$this->request->allowMethod('post');
+		// must not be already sent or cancelled
+		$options = array('conditions' => array('OrcidEmail.SENT IS NOT' => NULL, 'OrcidEmail.CANCELLED IS NOT' => NULL));
+		$orcidEmails = $this->OrcidEmail->find('all', $options);
+		$success = 0;
+		$failed = 0;
+		$this->Person = $this->getTableLocator()->get('OrcidUsers');
+		$this->Emailer = new Emailer();
+        foreach ($orcidEmails as $orcidEmail){
+            if (!(empty($orcidEmail->SENT) || !empty($orcidEmail->CANCELLED))){
+                $this->Flash->error(__('This Email cannot be sent.'));
+            } else {
+                $options = '(cn='.$orcidEmail->ORCID_USER_ID.')';
+                $person = $this->Person->defintionSearch($options);
+                if ($this->Emailer->sendBatch($person, $orcidEmail)) {
+                    $success++;
+                } else {
+                    $failed++;
+                }
+            }
+		}
+		if ($success) {
+			$this->Session->setFlash(__('Successfully sent '.$success.' email'.($success > 1 ? 's' : '')), 'default', array('class' => 'success'));
+		}
+		if ($failed) {
+			$this->Session->setFlash(__('Failed to send '.$failed.' email'.($failed > 1 ? 's' : '')));
+		}
+		if (!$success && !$failed) {
+			$this->Session->setFlash(__('No emails to send.'));
+		}
+		return $this->redirect(['action' => 'index']);
+	}
+
 }
