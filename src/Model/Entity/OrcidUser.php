@@ -43,7 +43,7 @@ class OrcidUser extends Entity
 
             $this->ldapHandler = $OrcidUsersTable->ldapHandler;
 
-            $this->ldapResult = $this->ldapHandler->find('search', [
+            $this->ldapResult = $this->ldapHandler->find('search',  [
                 'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
                 'filter' => 'cn=' . $this->USERNAME,
                 'attributes' => [
