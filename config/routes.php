@@ -63,6 +63,7 @@ return static function (RouteBuilder $routes) {
          * to use (in this case, templates/Pages/home.php)...
          */
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+        $builder->connect('/connect', ['prefix' => 'Admin', 'controller' => 'OrcidUsers', 'action' => 'connect']);
         $builder->connect('/admin', ['controller' => 'PrivatePages', 'action' => 'display', 'admin']);
         $builder->connect('/orcadmin', ['controller' => 'PrivatePages', 'action' => 'display', 'admin']);
 
