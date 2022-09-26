@@ -6,12 +6,12 @@ namespace App\Authenticator;
 
 use Authentication\Identifier\IdentifierInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Authentication\Authenticator\HttpBasicAuthenticator;
+use Authentication\Authenticator\AbstractAuthenticator;
 use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Cake\Core\Configure;
 
-class EnvAuthenticator extends HttpBasicAuthenticator
+class EnvAuthenticator extends AbstractAuthenticator
 {
     /**
      * Default config for this object.
