@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -35,28 +36,12 @@ class OrcidBatchGroupsTable extends Table
 
 	public function getAssociatedUsers($groupId, $key)
 	{
-		$OrcidBatchGroupCaches = TableRegistry::getTableLocator()->get('OrcidBatchGroupCaches');
-		$this->OrcidBatchGroupCaches = $OrcidBatchGroupCaches->find()->where(['ORCID_BATCH_GROUP_ID' => $groupId])->all();
+		[$table, $field] = explode(".", $key);
+		$this->OrcidBatchGroupCache = TableRegistry::getTableLocator()->get('OrcidBatchGroupCaches');
 		$this->updateCache($groupId);
-		// Everything below has not been touched yet.
-		// Won't work for sure.
-		$db = $this->OrcidBatchGroupCache->getDataSource();
-		$subQuery = $db->buildStatement(
-			[
-				'fields'     => ['cache.orcid_user_id'],
-				'table'      => $db->fullTableName($this->OrcidBatchGroupCache),
-				'alias'      => 'cache',
-				'limit'      => null,
-				'offset'     => null,
-				'joins'      => [],
-				'conditions' => $groupId == -1 ? null : ['cache.orcid_batch_group_id' => $groupId],
-				'order'      => null,
-				'group'      => null
-			],
-			$this->OrcidBatchGroupCache
-		);
-		$subQuery = ' ' . $key . ' ' . ($groupId == -1 ? 'NOT ' : '') . 'IN (' . $subQuery . ') ';
-		return $db->expression($subQuery);
+
+		return $this->OrcidBatchGroupCaches->find()->select(['ORCID_USER_ID'])->distinct()->where(['ORCID_BATCH_GROUP_ID' => ($groupId == -1 ? null : $groupId)]);
+
 	}
 
 	/**
@@ -135,49 +120,42 @@ class OrcidBatchGroupsTable extends Table
 		} else if ($group->GROUP_DEFINITION) {
 			// group_defintion is the base query
 			// TODO: risky because Person is LDAP and may not support paging
-			$options = ['recurisve' => -1, 'conditions' => $group->GROUP_DEFINITION];
-			$people = $this->Person->find('all', $options);
-			if (!$people) {
-				$people = [];
-			}
 			$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
+			$people = $this->OrcidUser->defintionSearch($group->GROUP_DEFINITION);
 			foreach ($people as $person) {
-				$groupMembers[$person['Person']['cn']] = $person['Person']['cn'];
+				$groupMembers[$person] = $person;
 			}
 		}
 
 		$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
 		// Refresh the cache
 		foreach ($groupMembers as $groupMember) {
-			$options = ['conditions' => ['OrcidUser.USERNAME' => $groupMember]];
-			$user = $this->OrcidUser->find('first', $options);
+			$options = ['conditions' => ['USERNAME' => $groupMember]];
+			$user = $this->OrcidUser->find('all', $options)->first();
 			if (!$user) {
-				$this->OrcidUser->create();
-				$user = ['username' => $groupMember];
-				if (!$this->OrcidUser->save($user)) {
+				$user = $this->OrcidUser->newEntity(['USERNAME' => $groupMember]);
+				if ($this->OrcidUser->save($user)) {
 					continue;
 				} else {
-					$user = $this->OrcidUser->find('first', $options);
+					$user = $this->OrcidUser->find('all', $options)->first();
 				}
 			}
 			// create or update the user in the cache
-			if ($user->id) {
-				$options = ['conditions' => ['orcid_user_id' => $user->id, 'orcid_batch_group_id' => $groupId]];
-				$cache = $this->OrcidBatchGroupCache->find('first', $options);
+			if ($user->ID) {
+				$options = ['conditions' => ['ORCID_USER_ID' => $user->ID, 'ORCID_BATCH_GROUP_ID' => $groupId]];
+				$cache = $this->OrcidBatchGroupCache->find('all', $options)->first();
 				if (!$cache) {
-					$this->OrcidBatchGroupCache->create();
-					$cache->orcid_user_id = $user->id;
-					$cache->orcid_batch_group_id = $groupId;
+					$cache = $this->OrcidBatchGroupCache->newEntity(['ORCID_USER_ID' => $user->ID, 'ORCID_BATCH_GROUP_ID' => $groupId]);
 				} else {
-					$cache->deprecated = NULL;
+					$cache->DEPRECATED = NULL;
 				}
 				$this->OrcidBatchGroupCache->save($cache);
 			}
 		}
 		// If the cache entry wasn't updated, delete it
-		$this->OrcidBatchGroupCache->deleteAll(['orcid_batch_group_id' => $groupId, 'NOT' => ['deprecated' => NULL]]);
+		$this->OrcidBatchGroupCache->deleteAll(['ORCID_BATCH_GROUP_ID' => $groupId, ['deprecated IS NOT NULL']]);
 		// Indicate that this cache update is complete
-		$group->cache_creation_date = date('Y-m-d H:i:s');
+		$group->CACHE_CREATION_DATE = FrozenTime::now();
 		$this->save($group);
 
 		return true;
