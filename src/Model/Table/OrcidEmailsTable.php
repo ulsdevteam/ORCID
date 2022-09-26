@@ -71,7 +71,7 @@ class OrcidEmailsTable extends Table
         $validator
             ->integer('ORCID_USER_ID')
             ->requirePresence('ORCID_USER_ID', 'create')
-            ->notEmptyString('ORCID_USER_ID')
+            ->notEmptyString('ORCID_USER_ID', 'The target user must be provided.')
             ->add('ORCID_USER_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
