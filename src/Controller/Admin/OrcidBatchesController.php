@@ -118,7 +118,7 @@ class OrcidBatchesController extends AppController
         $orcidBatch = $this->OrcidBatches->get($id);
         if ($this->request->is(array('post', 'put'))) {
             $toRecipient = $this->request->getdata('recipient');
-            if ($toRecipient) {
+            if (!empty($toRecipient)) {
                 $Emailer = new Emailer();
                 if ($Emailer->sendBatch($toRecipient, $orcidBatch)) {
                     $this->Flash->success(__('A preview of the Batch Email Template has been sent.'));

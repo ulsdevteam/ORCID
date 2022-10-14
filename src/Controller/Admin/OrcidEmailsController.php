@@ -174,7 +174,7 @@ class OrcidEmailsController extends AppController
  * @return void
  */
 	public function send($id = null) {
-		$orcidEmail = $this->OrcidEmails->get($id);
+		$orcidEmail = $this->OrcidEmails->get($id, ['contains' => 'OrcidUsers']);
 		$this->Person = $this->getTableLocator()->get('OrcidUsers');
 		$this->request->allowMethod('post');
 		// must not be already sent or cancelled
@@ -182,13 +182,15 @@ class OrcidEmailsController extends AppController
 		if (!(empty($orcidEmail->SENT) || !empty($orcidEmail->CANCELLED))){
 			$this->Flash->error(__('This Email cannot be sent.'));
 		} else {
-			$options = '(cn='.$orcidEmail->ORCID_USER_ID.')';
-			$person = $this->Person->defintionSearch($options);
-			if ($this->Emailer->sendBatch($person, $orcidEmail)) {
-				$this->Flash->success(__('The Email has been sent.'));
-			} else {
-				$this->Flash->error(__('The Email could not be sent. Please, try again.'));
-			}
+			$orcidUser = $this->Person->get($orcidEmail->orcid_user->ID);
+            $person = $orcidUser->get('email');
+            if (!empty($person)) {
+                if ($this->Emailer->sendBatch($person, $orcidEmail)) {
+                    $this->Flash->success(__('The Email has been sent.'));
+                } else {
+                    $this->Flash->error(__('The Email could not be sent. Please, try again.'));
+                }
+            }
 		}
 		return $this->redirect(array('action' => 'view', $id));
 	}
@@ -211,9 +213,9 @@ class OrcidEmailsController extends AppController
             if (!(empty($orcidEmail->SENT) || !empty($orcidEmail->CANCELLED))){
                 $this->Flash->error(__('This Email cannot be sent.'));
             } else {
-                $options = '(cn='.$orcidEmail->ORCID_USER_ID.')';
-                $person = $this->Person->defintionSearch($options);
-                if ($this->Emailer->sendBatch($person, $orcidEmail)) {
+                $orcidUser = $this->Person->get($orcidEmail->orcid_user->ID);
+                $person = $orcidUser->get('email');
+                if (!empty($person) && $this->Emailer->sendBatch($person, $orcidEmail)) {
                     $success++;
                 } else {
                     $failed++;
@@ -221,13 +223,13 @@ class OrcidEmailsController extends AppController
             }
 		}
 		if ($success) {
-			$this->Session->setFlash(__('Successfully sent '.$success.' email'.($success > 1 ? 's' : '')), 'default', array('class' => 'success'));
+            $this->Flash->success(__('Successfully sent '.$success.' email'.($success > 1 ? 's' : '')), 'default', array('class' => 'success'));
 		}
 		if ($failed) {
-			$this->Session->setFlash(__('Failed to send '.$failed.' email'.($failed > 1 ? 's' : '')));
+			$this->Flash->error(__('Failed to send '.$failed.' email'.($failed > 1 ? 's' : '')));
 		}
 		if (!$success && !$failed) {
-			$this->Session->setFlash(__('No emails to send.'));
+			$this->Flash->error(__('No emails to send.'));
 		}
 		return $this->redirect(['action' => 'index']);
 	}

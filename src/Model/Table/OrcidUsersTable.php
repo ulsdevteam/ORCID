@@ -77,7 +77,6 @@ class OrcidUsersTable extends Table
     }
 
     public function defintionSearch($cn) {
-        //$cn = $cn
         $this->ldapResult = $this->ldapHandler->find('search',  [
             'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
             'filter' => $cn,

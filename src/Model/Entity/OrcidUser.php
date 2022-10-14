@@ -76,7 +76,7 @@ class OrcidUser extends Entity
                 }
             } else {
 
-                $this->set("name", "");
+                $this->set("displayname", "");
                 $this->set("email", "");
                 $this->set("department", "");
                 $this->set("rc", "");

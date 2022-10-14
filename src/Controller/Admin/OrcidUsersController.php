@@ -9,6 +9,10 @@ use App\Model\Entity\OrcidStatusType;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenTime;
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
+use Cake\Utility\Xml;
+use Cake\Http\Client;
+use Exception;
 
 use function PHPUnit\Framework\equalTo;
 
@@ -227,7 +231,7 @@ class OrcidUsersController extends AppController
             if ($groupQuery === $this::NULL_STRING_ID) {
                 // notMatching creates a left join
                 $orcidUsersTable = $orcidUsersTable->notMatching('OrcidBatchGroupCaches', function ($q) use ($groupQuery) {
-                    return $q->where(['OrcidBatchGroupCaches.ORCID_BATCH_GROUP_ID IS NOT NULL']);
+                    return $q->where(['OrcidBatchGroupCaches.ORCID_BATCH_GROUP_ID IS NOT' => null]);
                 });
             } else {
                 // matching creates an inner join
@@ -258,13 +262,6 @@ class OrcidUsersController extends AppController
     // The adding of a new orcid user shouldn't be too bad with it being inside the cakephp
     // application The main issue is understanding and rewriting the actual connection.
     public function connect() {
-        echo "TEST";
-        echo str_contains($_SERVER['REDIRECT_REDIRECT_Shib-Handler'], "pitt");
-        /* if(!isset($_SERVER['REDIRECT_REDIRECT_Shib-Handler']) ||  ) {
-            error_log('Invalid AUTH_TYPE: '.(isset($_SERVER['AUTH_TYPE']) ? $_SERVER['AUTH_TYPE'] : ''));
-            die_with_error_page('403 Unauthenticated');
-        } */
-        return;
 
         // Grab the remote user from Shibboleth
         $remote_user = filter_var($_SERVER['REDIRECT_REDIRECT_eppn'], FILTER_SANITIZE_STRING);
@@ -285,6 +282,105 @@ class OrcidUsersController extends AppController
         if (in_array('FERPA', $shib_groups, TRUE)) {
             $orcid_affiliations[] = 'FERPA';
         }
+        
+
+        // This default success message will be used multiple places
+        // TESTING HERE
+        $user = $this->OrcidUsers->find("all")->where(["USERNAME" => strtoupper("trl75")])->first();
+        $orcidLogin = Configure::read('Resources.default-orcid.ORCID_LOGIN');
+        $this->viewBuilder()->setTemplatePath("connect")->setTemplate('success')->setLayout('public')->setVar("user", $user)->setVar("ORCID_LOGIN", $orcidLogin);
+        return;
+        // Check for ORCID sending us an error message
+        if (isset($_GET['error'])) {
+            switch ($_GET['error']) {
+                case 'access_denied':
+                    // user explicitly denied us access (maybe)
+                    // ORCID's workflow is a little off - a user can click deny without actually logging in
+                    // Clear the existing token if we've lost permission
+                    $user = $this->OrcidUsers->find("all")->where(["USERNAME" => strtoupper($remote_user)])->first();
+                    //$row = $this->execute_query_or_die($conn, 'SELECT ORCID, TOKEN FROM ULS.ORCID_USERS WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user)));
+                    if (isset($user)) {
+                        // Yes, the user exists.  Do we already have a valid ORCID and token?
+                        if (isset($user->ORCID) && isset($user->TOKEN)) {
+                            if (!$this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
+                                //$this->execute_query_or_die($conn, 'UPDATE ULS.ORCID_USERS SET MODIFIED = SYSDATE, TOKEN = :token WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user), 'token' => ''));
+                                $user->set("TOKEN", "");
+                                $user->set("MODIFIED", FrozenTime::now());
+                            }
+                        }
+                    }
+                    // Ask if the user meant to do that
+                    $html = array(
+                        'header' => 'ORCID@Pitt Trusted Party Status',
+                        'p' => array('You chose not to grant trusted party status to Pitt, thus not allowing the university to access your ORCID iD.', 'Allowing Pitt to be a trusted party will help you and the university maintain accurate records of your research outputs within Pitt systems such as the Faculty Information System and D-Scholarship@Pitt.', 'If you would like to grant Pitt trusted party status or add information to your ORCID profile, please <a href="/connect">restart this process</a>.', 'To find out more about the ORCID@Pitt initiative and the benefits of having an ORCID iD, please visit the <a href="http://www.library.pitt.edu/orcid">ORCID@Pitt website.</a>'),
+                    );
+                    require('../includes/template.php');
+                    exit();
+                default:
+                    // ORCID could send a different error message, but that isn't handled (yet)
+                    error_log(var_export($_GET, true));
+                    $this->die_with_error_page('500 Unrecognized ORCID error');
+            }
+            // The switch should have exit()'d for us
+        } else if (!isset($_GET['code'])) {
+            // If we don't have a CODE from ORCID,
+            // We are in the workflow before the redirect to ORCID
+            // Check the status of the current user
+            // Possible outcomes of this conditional are:
+            //   An HTTP error message
+            //   A redirect to the success message
+            //   A pass through to the sendoff to ORCID
+            // Does this user exist?
+            // $row = $this->execute_query_or_die($conn, 'SELECT ORCID, TOKEN, USERNAME FROM ULS.ORCID_USERS WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user)));
+            $user = $this->OrcidUsers->find("all")->where(["USERNAME" => strtoupper($remote_user)])->first();
+            if (isset($user) && isset($user->USERNAME)) {
+                // Yes, the user exists.  Do we already have a valid ORCID and token?
+                if (isset($user->ORCID) && isset($user->TOKEN)) {
+                    if ($this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
+                        // Yes, we already have a valid ORCID and token.  Send a success message and exit
+                        $this->viewBuilder()->setTemplatePath("connect")->setTemplate('success')->setLayout('public')->setVar("user", $user)->setVar("ORCID_LOGIN", $orcidLogin);
+                        return;
+                    }
+                }
+            } else {
+                // This user doesn't exist yet.  Add them.
+                // $this->execute_query_or_die($conn, 'INSERT INTO ULS.ORCID_USERS (USERNAME, CREATED, MODIFIED) VALUES (:shibUser, SYSDATE, SYSDATE)', array('shibUser' => strtoupper($remote_user)));
+                $user = $this->OrcidUsers->newEmptyEntity();
+                $user->USERNAME = strtoupper($remote_user);
+                $user->CREATED = FrozenTime::now();
+                $user->MODIFIED = FrozenTime::now();
+                $this->OrcidUsers->save($user);
+            }
+
+            // If we haven't exited to this point, note that the user has visited and we are going to redirect them to ORCID
+            $OrcidStatuses = $this->getTableLocator()->get('orcid_statuses');
+            $this->execute_query_or_die($conn, 'INSERT INTO ULS.ORCID_STATUSES (ORCID_USER_ID, ORCID_STATUS_TYPE_ID, STATUS_TIMESTAMP) SELECT ORCID_USERS.ID, ORCID_STATUS_TYPES.ID, SYSDATE FROM ULS.ORCID_USERS JOIN ULS.ORCID_STATUS_TYPES ON (ORCID_USERS.USERNAME = :shibUser AND ORCID_STATUS_TYPES.SEQ = 2) WHERE NOT EXISTS (SELECT ORCID_STATUSES.ID FROM ULS.ORCID_STATUSES WHERE ORCID_STATUSES.ORCID_STATUS_TYPE_ID = ORCID_STATUS_TYPES.ID AND ORCID_STATUSES.ORCID_USER_ID = ORCID_USERS.ID)', array('shibUser' => strtoupper($remote_user)));
+
+            $OAUTH_PATH = "Resources."(Configure::read('debug') ? 'default-orcid' : 'production-orcid');
+
+            // For the ORCID sandbox, use mailinator URLS
+            if (Configure::read('debug')) {
+                $shib_mail = str_replace('@', '.', $shib_mail).'@mailinator.com';
+            }
+
+            // redirect to ORCID
+            $state = bin2hex(openssl_random_pseudo_bytes(16));
+            setcookie('oauth_state', $state, time() + 3600, null, null, false, true);
+            $url = Configure::read($OAUTH_PATH."OAUTH_AUTHORIZATION_URL") . '?' . http_build_query(array(
+                'response_type' => 'code',
+                'client_id' => Configure::read($OAUTH_PATH."OAUTH_CLIENT_ID"),
+                'redirect_uri' => Configure::read($OAUTH_PATH."OAUTH_REDIRECT_URI"),
+                'scope' => Configure::read($OAUTH_PATH."OAUTH_SCOPE"),
+                'state' => $state,
+                'given_names' => $shib_gn,
+                'family_names' => $shib_ln,
+                'email' => $shib_mail,
+                // ORCID bug: https://trello.com/c/Y0dqjqId/362-authorization-code-not-generated-when-signed-in-user-visits-link-with-orcid-parameter
+                // ULS ticket: https://ulstracker.atlassian.net/browse/SYSDEV-1615
+                'orcid' => isset($row['ORCID']) ? $row['ORCID'] : '',
+            ));
+            header('Location: ' . $url);
+        }
     }
 
     /**
@@ -295,21 +391,17 @@ class OrcidUsersController extends AppController
      * @return string XML on success
      */
     function read_profile($orcid, $token) {
-        $curl = curl_init();
-        curl_setopt_array(
-            $curl,
-            array(
-                CURLINFO_HEADER_OUT => true,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_MAXREDIRS => 5,
-                CURLOPT_URL => OAUTH_API_URL.$orcid.'/record',
-                CURLOPT_HTTPHEADER => array('Content-Type: application/vdn.orcid+xml', 'Authorization: Bearer '.$token),
-            )
-        );
-        $result = curl_exec($curl);	 //fetches all the records of a user
-        $info = curl_getinfo($curl);
-        if ($info['http_code'] == 200) {
+        $client = new Client();
+        $result = $client->post(Configure::read('Resources.'.(Configure::read('debug') ? 'default-orcid' : 'production-orcid').'.OAUTH_API_URL').$orcid.'/record', [], ['headers' =>[
+            'Content-Type' => 'application/vdn.orcid+xml',
+            'Authorization' => 'Bearer '.$token,
+        ],
+        'curl' => [
+            CURLINFO_HEADER_OUT => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5,
+            ]]);
+        if ($result->getStatusCode() == 200) {
             return $result;
         } else {
             return false;
@@ -325,32 +417,22 @@ class OrcidUsersController extends AppController
      * @return boolean success
      */
     function write_extid($orcid, $token, $id) {
-        $payload = '<?xml version="1.0" encoding="UTF-8"?>
-        <external-identifier:external-identifier 
-            xmlns:external-identifier="http://www.orcid.org/ns/external-identifier" 
-            xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-            xsi:schemaLocation="http://www.orcid.org/ns/external-identifier ../person-external-identifier-2.0.xsd">				
-                <common:external-id-type>'.PITT_EXTID_NAME.'</common:external-id-type>
-                <common:external-id-value>'.$id.'</common:external-id-value>
-                <common:external-id-url>'.EXTERNAL_WEBHOOK.'?id='.$id.'</common:external-id-url>
-                <common:external-id-relationship>self</common:external-id-relationship>
-        </external-identifier:external-identifier>';
-        $curl = curl_init();
-        curl_setopt_array(
-            $curl,
-            array(
-                CURLINFO_HEADER_OUT => true,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_URL => OAUTH_API_URL.$orcid.'/external-identifiers',
-                CURLOPT_HTTPHEADER => array('Content-Type: application/orcid+xml', 'Content-Length: '.strlen($payload), 'Authorization: Bearer '.$token),
-            )
-        );
-        $result = curl_exec($curl);
-        $info = curl_getinfo($curl);
-        // why is this code usually 200?
-        return ($info['http_code'] == 201 || $info['http_code'] == 200);
+        $payload = Xml::build(Configure::read('App.wwwRoot').'/xml/external-identifiers.xml', ['readFile' => true]);
+        $client = new Client();
+        $result = $client->post(Configure::read('Resources.'.(Configure::read('debug') ? 'default-orcid' : 'production-orcid').'.OAUTH_API_URL').$orcid.'/identifiers', $payload, ['headers' =>[
+            'Content-Type' => 'application/vdn.orcid+xml',
+            'Authorization' => 'Bearer '.$token,
+        ],
+        'curl' => [
+            CURLINFO_HEADER_OUT => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5,
+            ]]);
+        if ( $result->getStatusCode() == 201 || $result->getStatusCode() == 200) {
+            return $result;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -365,56 +447,24 @@ class OrcidUsersController extends AppController
         if ($type !== 'employment' && $type !== 'education') {
             return true;
         }
-        $commonParams = '<common:name>University of Pittsburgh</common:name>
-                <common:address>
-                    <common:city>Pittsburgh</common:city>
-                    <common:region>PA</common:region>
-                    <common:country>US</common:country>
-                </common:address>
-                <common:disambiguated-organization>
-                    <common:disambiguated-organization-identifier>'.PITT_AFFILIATION_ID.'</common:disambiguated-organization-identifier>
-                    <common:disambiguation-source>'.PITT_AFFILIATION_KEY.'</common:disambiguation-source>
-                </common:disambiguated-organization>';
-            
         if($type == 'employment') {
-            $payload = '<?xml version="1.0" encoding="UTF-8"?>
-            <employment:employment visibility="public"		  
-            xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns="http://www.orcid.org/ns/orcid"		 
-            xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.0.xsd">
-            <employment:organization>
-                '.$commonParams.'
-            </employment:organization>
-            </employment:employment>';
-        } else {
-            $payload = '<?xml version="1.0" encoding="UTF-8"?>
-            <education:education visibility="public" 
-            xmlns:education="http://www.orcid.org/ns/education"
-            xmlns:common="http://www.orcid.org/ns/common"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"		 
-            xmlns="http://www.orcid.org/ns/orcid"
-            xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0.xsd">
-            <education:organization>
-                '.$commonParams.'
-            </education:organization>
-            </education:education>';
+            $payload = Xml::build(Configure::read('App.wwwRoot').'xml/employment.xml', ['readFile' => true]);
+        } else { 
+            $payload = Xml::build(Configure::read('App.wwwRoot').'xml/education.xml', ['readFile' => true]);
         }
-        $curl = curl_init();
-        curl_setopt_array(
-            $curl,
-            array(
-                CURLINFO_HEADER_OUT => true,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_URL => OAUTH_API_URL.$orcid.'/'.$type,
-                CURLOPT_HTTPHEADER => array('Content-Type: application/vnd.orcid+xml', 'Content-Length: '.strlen($payload), 'Authorization: Bearer '.$token),
-            )
-        );
-        $result = curl_exec($curl);
-        $info = curl_getinfo($curl);
-        return ($info['http_code'] == 201 || $info['http_code'] == 200);
+        $client = new Client();
+        $result = $client->post(Configure::read('Resources.'.(Configure::read('debug') ? 'default-orcid' : 'production-orcid').'.OAUTH_API_URL').$orcid.'/'.$type, $payload, ['headers' =>[
+            'Content-Type' => 'application/vdn.orcid+xml',
+            'Authorization' => 'Bearer '.$token,
+        ],
+        'curl' => [
+            CURLINFO_HEADER_OUT => true,
+            ]]);
+        if ( $result->getStatusCode() == 201 || $result->getStatusCode() == 200) {
+            return $result;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -425,14 +475,12 @@ class OrcidUsersController extends AppController
      */
     function read_affiliation($xml, $type) {
         try {
-            $doc = new DOMDocument();
-            $doc->loadXML($xml);
-            $xpath = new DOMXPath($doc);
-            $xpath->registerNamespace('o', "http://www.orcid.org/ns/activities");
-            $xpath->registerNamespace('e', "http://www.orcid.org/ns/".$type);
-            $xpath->registerNamespace('c', "http://www.orcid.org/ns/common");
+            $doc = Xml::build($xml);
+            $doc->registerXPathNamespace('o', "http://www.orcid.org/ns/activities");
+            $doc->registerXPathNamespace('e', "http://www.orcid.org/ns/".$type);
+            $doc->registerXPathNamespace('c', "http://www.orcid.org/ns/common");
             // Check if disambiguation source exists for education or employment by matching with our disambiguation-source and disambiguation-organization-identifier
-            $elements = $xpath->query('//e:'.$type.'-summary[e:organization/c:disambiguated-organization[c:disambiguation-source[text()="'.PITT_AFFILIATION_KEY.'"] and c:disambiguated-organization-identifier[text()="'.PITT_AFFILIATION_ID.'"]]]'); 
+            $elements = $doc->xpath('//e:'.$type.'-summary[e:organization/c:disambiguated-organization[c:disambiguation-source[text()="'.Configure::read("PITT_AFFILIATION_KEY").'"] and c:disambiguated-organization-identifier[text()="'.Configure::read("PITT_AFFILIATION_ID").'"]]]'); 
         } catch (Exception $e) {
             error_log($e);
             return false;
@@ -449,12 +497,10 @@ class OrcidUsersController extends AppController
      */
     function read_extid($xml) {
         try {
-            $doc = new DOMDocument();		
-            $doc->loadXML($xml);
-            $xpath = new DOMXPath($doc);
-            $xpath->registerNamespace('o', "http://www.orcid.org/ns/common");
+            $doc = Xml::build($xml);
+            $doc->registerXPathNamespace('o', "http://www.orcid.org/ns/common");
             // Check on an external ID with our common name
-            $elements = $xpath->query('//o:external-id-type[text()="'.PITT_EXTID_NAME.'"]');
+            $elements = $doc->xpath('//o:external-id-type[text()="'.Configure::read("PITT_EXTID_NAME").'"]');
         } catch (Exception $e) {
             error_log($e);
             return false;
@@ -471,11 +517,11 @@ class OrcidUsersController extends AppController
      * @return true if record could be validated; false if any error occurred
      */
     function validate_record($orcid, $token, $user, $affiliations = array()) {
-        $profile = read_profile($orcid, $token);
+        $profile = $this->read_profile($orcid, $token);
         if ($profile) {
             // The profile should have an External ID unless the the FERPA flag is present on a student-only record
-            if ((!in_array('FERPA', $affiliations) || in_array('employment', $affiliations)) && !read_extid($profile)) {
-                if (!write_extid($orcid, $token, $user)) {
+            if ((!in_array('FERPA', $affiliations) || in_array('employment', $affiliations)) && !$this->read_extid($profile)) {
+                if (!$this->write_extid($orcid, $token, $user)) {
                     return false;
                 }
             }
@@ -486,8 +532,8 @@ class OrcidUsersController extends AppController
                 if ($affiliation == 'education' && in_array('FERPA', $affiliations)) {
                     continue;
                 }
-                if (!read_affiliation($profile, $affiliation)) {
-                    if (!write_affiliation($orcid, $token, $affiliation)) {
+                if (!$this->read_affiliation($profile, $affiliation)) {
+                    if (!$this->write_affiliation($orcid, $token, $affiliation)) {
                         return false;
                     }
                 }
@@ -496,12 +542,15 @@ class OrcidUsersController extends AppController
         }
         return false;
     }
+    // Should not be needed since the so far the only thing calling this is execute_query_or_Die
+    // Which should be translated into Cakephp
+    // Should be easily done with view templates
     /**
      * Generate an error page based on a HTTP error code and message
      * @param string $error
      */
     function die_with_error_page($error) {
-        header(SERVER_PROTOCOL.' '.$error);
+        header($this->request->getEnv("SERVER_PROTOCOL", "HTTP/1.1").' '.$error);
         $html = array(
             'header' => 'ORCID@Pitt Problem',
             'p' => array('Our apologies. Something went wrong and we were unable to create an ORCID iD for you and link it to the University of Pittsburgh.', 'Please <a href="/connect">try again</a>.', 'If you need assistance with creating your ORCID iD, please contact the ORCID Communications Group (<a href="mailto:orcidcomm@mail.pitt.edu">orcidcomm@mail.pitt.edu</a>).', 'Thank you for your patience.'),
@@ -525,7 +574,7 @@ class OrcidUsersController extends AppController
             foreach ($binder as $k => $v) {
                 if (!oci_bind_by_name($stmt, ':'.$k, $binder[$k])) {
                     error_log(var_export(oci_error(), true));
-                    die_with_error_page('500 Database connection error');
+                    $this->die_with_error_page('500 Database connection error');
                 }
             }
             if (oci_execute($stmt)) {
@@ -539,11 +588,11 @@ class OrcidUsersController extends AppController
                 }
             } else {
                 error_log(var_export(oci_error(), true));
-                die_with_error_page('500 Database connection error');
+                $this->die_with_error_page('500 Database connection error');
             }
         } else {
             error_log(var_export(oci_error(), true));
-            die_with_error_page('500 Database connection error');
+            $this->die_with_error_page('500 Database connection error');
         }
         return true;
     }
