@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+            <employment:employment visibility="public"		  
+            xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://www.orcid.org/ns/orcid"		 
+            xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.0.xsd">
+            <employment:organization>
+                <common:name>University of Pittsburgh</common:name>
+                <common:address>
+                    <common:city>Pittsburgh</common:city>
+                    <common:region>PA</common:region>
+                    <common:country>US</common:country>
+                </common:address>
+                <common:disambiguated-organization>
+                    <common:disambiguated-organization-identifier>6614</common:disambiguated-organization-identifier>
+                    <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                </common:disambiguated-organization>
+            </employment:organization>
+            </employment:employment>

@@ -57,6 +57,9 @@ return static function (RouteBuilder $routes) {
     });
 
     $routes->scope('/', function (RouteBuilder $builder) {
+        $builder->redirect('/find', 'https://find.pitt.edu', ['status' => 302]);
+        $builder->redirect('/find?*', 'https://find.pitt.edu', ['status' => 302]);
+        
         /*
          * Here, we are connecting '/' (base path) to a controller called 'Pages',
          * its action called 'display', and we pass a param to select the view file
