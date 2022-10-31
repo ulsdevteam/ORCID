@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * OrcidBatchTriggers Model
@@ -138,5 +139,15 @@ class OrcidBatchTriggersTable extends Table
         $rules->add($rules->existsIn('ORCID_BATCH_GROUP_ID', 'OrcidBatchGroups'), ['errorField' => 'ORCID_BATCH_GROUP_ID']);
 
         return $rules;
+    }
+
+    /**
+     * Returns the database connection name to use by default.
+     *
+     * @return string
+     */
+    public static function defaultConnectionName(): string
+    {
+        return (Configure::read('debug')) ? 'default' : 'production-default';
     }
 }

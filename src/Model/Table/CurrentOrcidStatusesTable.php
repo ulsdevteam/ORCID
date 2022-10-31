@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * CurrentOrcidStatus Model
@@ -87,5 +88,15 @@ class CurrentOrcidStatusesTable extends Table
         $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
 
         return $rules;
+    }
+
+    /**
+     * Returns the database connection name to use by default.
+     *
+     * @return string
+     */
+    public static function defaultConnectionName(): string
+    {
+        return (Configure::read('debug')) ? 'default' : 'production-default';
     }
 }

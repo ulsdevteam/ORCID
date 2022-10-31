@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * OrcidEmployees Model
@@ -245,6 +246,6 @@ class OrcidEmployeesTable extends Table
      */
     public static function defaultConnectionName(): string
     {
-        return 'cds';
+        return (Configure::read('debug')) ? 'default-cds' : 'production-cds';
     }
 }

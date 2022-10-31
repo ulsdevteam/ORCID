@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * OrcidStatuses Model
@@ -41,9 +42,9 @@ class OrcidStatusesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('ORCID_STATUSES');
+        $this->setTable('ULS.ORCID_STATUSES');
         $this->setDisplayField('id');
-        $this->setPrimaryKey('id');
+        $this->setPrimaryKey('ID');
 
         $this->belongsTo('OrcidUsers', [
             'foreignKey' => 'ORCID_USER_ID',
@@ -77,8 +78,7 @@ class OrcidStatusesTable extends Table
         $validator
             ->integer('ORCID_STATUS_TYPE_ID')
             ->requirePresence('ORCID_STATUS_TYPE_ID', 'create')
-            ->notEmptyString('ORCID_STATUS_TYPE_ID')
-            ->add('ORCID_STATUS_TYPE_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_STATUS_TYPE_ID');
 
         $validator
             ->dateTime('STATUS_TIMESTAMP')
@@ -99,10 +99,19 @@ class OrcidStatusesTable extends Table
     {
         $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
         $rules->add($rules->isUnique(['ORCID_USER_ID', 'ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_USER_ID']);
-        $rules->add($rules->isUnique(['ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
         $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
         $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
 
         return $rules;
+    }
+
+    /**
+     * Returns the database connection name to use by default.
+     *
+     * @return string
+     */
+    public static function defaultConnectionName(): string
+    {
+        return (Configure::read('debug')) ? 'default' : 'production-default';
     }
 }

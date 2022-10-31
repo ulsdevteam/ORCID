@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * OrcidBatchCreators Model
@@ -94,5 +95,15 @@ class OrcidBatchCreatorsTable extends Table
         $rules->add($rules->isUnique(['NAME']), ['errorField' => 'NAME']);
 
         return $rules;
+    }
+
+    /**
+     * Returns the database connection name to use by default.
+     *
+     * @return string
+     */
+    public static function defaultConnectionName(): string
+    {
+        return (Configure::read('debug')) ? 'default' : 'production-default';
     }
 }

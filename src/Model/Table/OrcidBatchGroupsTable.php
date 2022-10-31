@@ -10,6 +10,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\ORM\TableRegistry;
+use Cake\Core\Configure;
 
 /**
  * OrcidBatchGroups Model
@@ -234,4 +235,14 @@ class OrcidBatchGroupsTable extends Table
 
 		return $rules;
 	}
+
+	/**
+     * Returns the database connection name to use by default.
+     *
+     * @return string
+     */
+    public static function defaultConnectionName(): string
+    {
+        return (Configure::read('debug')) ? 'default' : 'production-default';
+    }
 }
