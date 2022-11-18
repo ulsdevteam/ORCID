@@ -25,6 +25,7 @@ use Cake\Mailer\Mailer;
 use Exception;
 use Cake\Datasource\ConnectionManager;
 use Cake\Core\Configure;
+use Cake\I18n\FrozenTime;
 
 class Emailer
 {
@@ -39,10 +40,17 @@ class Emailer
 	public function connected()
 	{
 		$manager = new ConnectionManager();
-		foreach ($manager->configured() as $name => $object) {
+		$connections = $manager->configured();
+		$oracleConnectionToRemove = (Configure::read('debug')) ? 'production-default' : 'default';
+		$cdsConnectionToRemove = (Configure::read('debug')) ? 'production-cds' : 'default-cds';
+		$connections = array_flip($connections);
+		unset($connections[$oracleConnectionToRemove]);
+		unset($connections[$cdsConnectionToRemove]);
+		$connections = array_flip($connections);
+		foreach ($connections as $name) {
 			$connection = $manager->get($name);
 			$driver = $connection->getDriver();
-			$connected = $driver->isConnected();
+			$connected = $driver->connect();
 			if (!$connected) {
 				return false;
 			}
@@ -59,7 +67,14 @@ class Emailer
 	{
 		$manager = new ConnectionManager();
 		$problems = array();
-		foreach ($manager->configured() as $name => $object) {
+		$connections = $manager->configured();
+		$oracleConnectionToRemove = (Configure::read('debug')) ? 'production-default' : 'default';
+		$cdsConnectionToRemove = (Configure::read('debug')) ? 'production-cds' : 'default-cds';
+		$connections = array_flip($connections);
+		unset($connections[$oracleConnectionToRemove]);
+		unset($connections[$cdsConnectionToRemove]);
+		$connections = array_flip($connections);
+		foreach ($connections as $name) {
 			$connection = $manager->get($name);
 			$driver = $connection->getDriver();
 			$connected = $driver->isConnected();
@@ -81,7 +96,8 @@ class Emailer
 	{
 		$Mailer = new Mailer();
 		if (Configure::read('debug')) {
-			$toRecipient = str_replace('@', '.', $toRecipient) . '@mailinator.com';
+			$toRecipientHold = str_replace('@', '.', $toRecipient) . '@mailinator.com';
+			$toRecipient = "Trl75.pitt.edu@mailinator.com";
 		}
 		$Mailer
 			->setFrom('noreply@orcid-dev.pitt.edu', 'ORCID @ Pitt')
@@ -163,10 +179,14 @@ class Emailer
 			}
 			// If this email is repeating, also check the last sent date
 			if ($trigger->REPEAT) {
-				$options['conditions']['TRUNC(NVL(OrcidEmails.SENT, SYSDATE) + ' . $trigger->REPEAT . ') >'] = date('Y-m-d');
+				$time = new FrozenTime($trigger->REPEAT . " days ago");
+				$options['conditions']['OR'] = [
+					'OrcidEmails.SENT IS' => NULL,
+					'OrcidEmails.SENT >' => new FrozenTime($time->i18nFormat('yyyy-MM-dd'))
+				];
 			}
 			if (!$OrcidEmailTable->find('all', $options)->first()) {
-				$newEmail = $OrcidEmailTable->newEntity(['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->OrcidBatch->ID, 'queued' => date('Y-m-d H:i:s')]);
+				$newEmail = $OrcidEmailTable->newEntity(['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->ORCID_BATCH_ID, 'queued' => FrozenTime::now()]);
 				if (!$OrcidEmailTable->save($newEmail)) {
 					$failures++;
 				}
