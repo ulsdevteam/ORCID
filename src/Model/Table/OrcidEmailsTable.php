@@ -72,14 +72,12 @@ class OrcidEmailsTable extends Table
         $validator
             ->integer('ORCID_USER_ID')
             ->requirePresence('ORCID_USER_ID', 'create')
-            ->notEmptyString('ORCID_USER_ID', 'The target user must be provided.')
-            ->add('ORCID_USER_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_USER_ID', 'The target user must be provided.');
 
         $validator
             ->integer('ORCID_BATCH_ID')
             ->requirePresence('ORCID_BATCH_ID', 'create')
-            ->notEmptyString('ORCID_BATCH_ID')
-            ->add('ORCID_BATCH_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_BATCH_ID', 'The target batch must be provided.');
 
         $validator
             ->dateTime('QUEUED')
@@ -105,12 +103,7 @@ class OrcidEmailsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
-        $rules->add($rules->isUnique(['ORCID_USER_ID']), ['errorField' => 'ORCID_USER_ID']);
-        $rules->add($rules->isUnique(['CANCELLED'], ['allowMultipleNulls' => true]), ['errorField' => 'CANCELLED']);
-        $rules->add($rules->isUnique(['QUEUED'], ['allowMultipleNulls' => true]), ['errorField' => 'QUEUED']);
-        $rules->add($rules->isUnique(['SENT'], ['allowMultipleNulls' => true]), ['errorField' => 'SENT']);
-        $rules->add($rules->isUnique(['ORCID_BATCH_ID']), ['errorField' => 'ORCID_BATCH_ID']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);        $rules->add($rules->isUnique(['CANCELLED'], ['allowMultipleNulls' => true]), ['errorField' => 'CANCELLED']);
         $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
         $rules->add($rules->existsIn('ORCID_BATCH_ID', 'OrcidBatches'), ['errorField' => 'ORCID_BATCH_ID']);
 

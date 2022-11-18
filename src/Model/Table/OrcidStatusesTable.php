@@ -43,7 +43,7 @@ class OrcidStatusesTable extends Table
         parent::initialize($config);
 
         $this->setTable('ULS.ORCID_STATUSES');
-        $this->setDisplayField('id');
+        $this->setDisplayField('ID');
         $this->setPrimaryKey('ID');
 
         $this->belongsTo('OrcidUsers', [
@@ -72,8 +72,7 @@ class OrcidStatusesTable extends Table
         $validator
             ->integer('ORCID_USER_ID')
             ->requirePresence('ORCID_USER_ID', 'create')
-            ->notEmptyString('ORCID_USER_ID')
-            ->add('ORCID_USER_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_USER_ID');
 
         $validator
             ->integer('ORCID_STATUS_TYPE_ID')
@@ -98,7 +97,6 @@ class OrcidStatusesTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
-        $rules->add($rules->isUnique(['ORCID_USER_ID', 'ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_USER_ID']);
         $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
         $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
 
