@@ -7,7 +7,7 @@
 ?>
 <div class="orcidBatchCreators index content">
     <?= $this->Html->link(__('New Orcid Batch Creator'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Orcid Batch Creators') ?></h3>
+    <h3><?= __('ORCID Batch Creators') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>

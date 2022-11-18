@@ -11,12 +11,12 @@
             <h3><?= h($orcidEmail->ID) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Orcid User') ?></th>
+                    <th><?= __('ORCID User') ?></th>
                     <td><?= $orcidEmail->has('orcid_user') ? $this->Html->link($orcidEmail->orcid_user->ID, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidEmail->orcid_user->ID]) : '' ?>
                     </td>
                 </tr>
                 <tr>
-                    <th><?= __('Orcid Batch') ?></th>
+                    <th><?= __('ORCID Batch') ?></th>
                     <td><?= $orcidEmail->has('orcid_batch') ? $this->Html->link($orcidEmail->orcid_batch->NAME, ['controller' => 'OrcidBatches', 'action' => 'view', $orcidEmail->orcid_batch->ID]) : '' ?>
                     </td>
                 </tr>
@@ -44,7 +44,7 @@
     <nav>
         <div class="navigation actions">
             <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Form->postLink(__('Delete Orcid Email'), ['action' => 'delete', $orcidEmail->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidEmail->ID), 'class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Requeue'), ['action' => 'requeue', $orcidEmail->ID], ['confirm' => __('Are you sure you want to this email'), 'class' => 'side-nav-item']) ?>
             <?= $this->Form->postLink(__('Send Orcid Email'), ['action' => 'send', $orcidEmail->ID], ['confirm' => __('Are you sure you want to send "{0}"?', $orcidEmail->ID)]) ?>
             <h3 class="heading"><?= __('Navigation') ?></h3>
             <?= $this->Html->link(__('List Orcid Emails'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>

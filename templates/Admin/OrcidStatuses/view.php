@@ -20,13 +20,13 @@
             <h3><?= h($orcidStatus->ID) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Orcid User') ?></th>
-                    <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->username, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->ID]) : '' ?>
+                    <th><?= __('ORCID User') ?></th>
+                    <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->USERNAME, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->ID]) : '' ?>
                     </td>
                 </tr>
                 <tr>
-                    <th><?= __('Orcid Status Type') ?></th>
-                    <td><?= $orcidStatus->has('orcid_status_type') ? $this->Html->link($orcidStatus->orcid_status_type->name, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidStatus->orcid_status_type->ID]) : '' ?>
+                    <th><?= __('ORCID Status Type') ?></th>
+                    <td><?= $orcidStatus->has('orcid_status_type') ? $this->Html->link($orcidStatus->orcid_status_type->NAME, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidStatus->orcid_status_type->ID]) : '' ?>
                     </td>
                 </tr>
                 <tr>
@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Status Timestamp') ?></th>
-                    <td><?= h($orcidStatus->status_timestamp) ?></td>
+                    <td><?= h($orcidStatus->STATUS_TIMESTAMP) ?></td>
                 </tr>
             </table>
         </div>

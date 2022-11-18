@@ -6,7 +6,7 @@
  */
 ?>
 <div class="orcidUsers index content">
-    <h3><?= __('Orcid Users') ?></h3>
+    <h3><?= __('ORCID Users') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>

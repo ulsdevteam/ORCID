@@ -7,14 +7,14 @@
 ?>
 <div class="orcidEmails index content">
     <?= $this->Html->link(__('New Orcid Email'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Orcid Emails') ?></h3>
+    <h3><?= __('ORCID Emails') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('ID', 'Id') ?></th>
-                    <th><?= $this->Paginator->sort('ORCID_USER_ID', 'Orcid User') ?></th>
-                    <th><?= $this->Paginator->sort('ORCID_BATCH_ID', 'Orcid Batch') ?></th>
+                    <th><?= $this->Paginator->sort('ORCID_USER_ID', 'ORCID User') ?></th>
+                    <th><?= $this->Paginator->sort('ORCID_BATCH_ID', 'ORCID Batch') ?></th>
                     <th><?= $this->Paginator->sort('QUEUED', 'Queued') ?></th>
                     <th><?= $this->Paginator->sort('SENT', 'Sent') ?></th>
                     <th><?= $this->Paginator->sort('CANCELLED', 'Cancelled') ?></th>

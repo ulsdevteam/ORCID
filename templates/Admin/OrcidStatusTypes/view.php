@@ -32,7 +32,7 @@
                     <div class="table-responsive">
                         <table>
                             <tr>
-                                <th><?= __('Orcid User') ?></th>
+                                <th><?= __('ORCID User') ?></th>
                                 <th><?= __('Status Timestamp') ?></th>
                                 <th class="actions"><?= __('Actions') ?></th>
                             </tr>

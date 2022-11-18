@@ -7,15 +7,15 @@
 ?>
 <div class="orcidStatuses index content">
     <?= $this->Html->link(__('New Orcid Status'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Orcid Statuses') ?></h3>
+    <h3><?= __('ORCID Statuses') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_user_id') ?></th>
-                    <th><?= $this->Paginator->sort('orcid_status_type_id') ?></th>
-                    <th><?= $this->Paginator->sort('status_timestamp') ?></th>
+                    <th><?= $this->Paginator->sort('ID', 'Id') ?></th>
+                    <th><?= $this->Paginator->sort('ORCID_USER_ID', 'ORCID User') ?></th>
+                    <th><?= $this->Paginator->sort('ORCID_STATUS_TYPE_ID', 'ORCID Status Type') ?></th>
+                    <th><?= $this->Paginator->sort('STATUS_TIMESTAMP', 'Status Timestamp') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -25,9 +25,9 @@
                         <td><?= $this->Number->format($orcidStatus->ID) ?></td>
                         <td><?= $orcidStatus->has('orcid_user') ? $this->Html->link($orcidStatus->orcid_user->ID, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->ID]) : '' ?>
                         </td>
-                        <td><?= $orcidStatus->has('orcid_status_type') ? $this->Html->link($orcidStatus->orcid_status_type->name, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidStatus->orcid_status_type->ID]) : '' ?>
+                        <td><?= $orcidStatus->has('orcid_status_type') ? $this->Html->link($orcidStatus->orcid_status_type->NAME, ['controller' => 'OrcidStatusTypes', 'action' => 'view', $orcidStatus->orcid_status_type->ID]) : '' ?>
                         </td>
-                        <td><?= h($orcidStatus->status_timestamp) ?></td>
+                        <td><?= h($orcidStatus->STATUS_TIMESTAMP) ?></td>
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $orcidStatus->ID]) ?>
                             <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidStatus->ID]) ?>

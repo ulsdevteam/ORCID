@@ -6,7 +6,7 @@
  */
 ?>
 <div class="orcidBatchTriggers index content">
-    <h3><?= __('Orcid Batch Triggers') ?></h3>
+    <h3><?= __('ORCID Batch Triggers') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>

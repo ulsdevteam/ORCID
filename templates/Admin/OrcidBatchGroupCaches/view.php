@@ -20,12 +20,12 @@
             <h3><?= h($orcidBatchGroupCache->ID) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Orcid Batch Group') ?></th>
+                    <th><?= __('ORCID Batch Group') ?></th>
                     <td><?= $orcidBatchGroupCache->has('orcid_batch_group') ? $this->Html->link($orcidBatchGroupCache->orcid_batch_group->name, ['controller' => 'OrcidBatchGroups', 'action' => 'view', $orcidBatchGroupCache->orcid_batch_group->ID]) : '' ?>
                     </td>
                 </tr>
                 <tr>
-                    <th><?= __('Orcid User') ?></th>
+                    <th><?= __('ORCID User') ?></th>
                     <td><?= $orcidBatchGroupCache->has('orcid_user') ? $this->Html->link($orcidBatchGroupCache->orcid_user->ID, ['controller' => 'OrcidUsers', 'action' => 'view', $orcidBatchGroupCache->orcid_user->ID]) : '' ?>
                     </td>
                 </tr>

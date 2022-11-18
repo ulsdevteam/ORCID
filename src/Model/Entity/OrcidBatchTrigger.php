@@ -21,7 +21,7 @@ use Cake\ORM\Entity;
  * @property int $MAXIMUM_REPEAT
  *
  * @property \App\Model\Entity\OrcidStatusType $orcid_status_type
- * @property \App\Model\Entity\ORCIDBATCH $orcid_batch
+ * @property \App\Model\Entity\OrcidBatch $orcid_batch
  * @property \App\Model\Entity\OrcidBatchGroup $orcid_batch_group
  */
 class OrcidBatchTrigger extends Entity

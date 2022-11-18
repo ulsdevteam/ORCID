@@ -8,7 +8,7 @@
 <div class="container">
     <div class="orcidStatusTypes index content">
         <?= $this->Html->link(__('New Orcid Status Type'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-        <h3><?= __('Orcid Status Types') ?></h3>
+        <h3><?= __('ORCID Status Types') ?></h3>
         <div class="table-responsive">
             <table>
                 <thead>

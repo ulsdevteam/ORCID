@@ -4,6 +4,12 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidUser $orcidUser
  */
+
+use Cake\Collection\Collection;
+use Cake\I18n\FrozenTime;
+
+FrozenTime::setToStringFormat("M/dd/YYYY h:mm:ss a");
+
 ?>
 <div class="row">
     <div class="column-responsive column-80">
@@ -59,13 +65,16 @@
             <div class="related">
                 <h4><?= __('Workflow Checkpoint History') ?></h4>
                 <?php if (!empty($orcidUser->all_orcid_statuses)) : ?>
+                    <?php $collection = new Collection($orcidUser->all_orcid_statuses); 
+                        $sortedCollection = $collection->sortBy("STATUS_TIMESTAMP", SORT_ASC);
+                     ?>
                     <div class="table-responsive">
                         <table>
                             <tr>
                                 <th><?= __('Workflow Checkpoint') ?></th>
                                 <th><?= __('Timestamp') ?></th>
                             </tr>
-                            <?php foreach ($orcidUser->all_orcid_statuses as $orcidStatus) : ?>
+                            <?php foreach ($sortedCollection as $orcidStatus) : ?>
                                 <tr>
                                     <td><?= h($orcidStatus->orcid_status_type->NAME) ?></td>
                                     <td><?= h($orcidStatus->STATUS_TIMESTAMP) ?></td>
@@ -81,7 +90,7 @@
                     <div class="table-responsive">
                         <table>
                             <tr>
-                                <th><?= __('Orcid Batch Id') ?></th>
+                                <th><?= __('ORCID Batch Id') ?></th>
                                 <th><?= __('Queued') ?></th>
                                 <th><?= __('Sent') ?></th>
                                 <th><?= __('Cancelled') ?></th>
