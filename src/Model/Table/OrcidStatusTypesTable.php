@@ -33,7 +33,7 @@ use Cake\Core\Configure;
 class OrcidStatusTypesTable extends Table
 {
 
-    public const OPTOUT_SEQUENCE = 6;
+    public const OPTOUT_SEQUENCE = 5;
     /**
      * Initialize method
      *
