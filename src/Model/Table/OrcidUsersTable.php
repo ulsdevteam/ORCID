@@ -76,20 +76,30 @@ class OrcidUsersTable extends Table
         $this->ldapHandler->bindUsingCommonCredentials();
     }
 
-    public function defintionSearch($cn) {
+    public function definitionSearch($cn, $attributes = null) {
+        $ldapAttributes = ['cn'];
+        if (isset($attributes)) {
+            foreach ($attributes as $attribute) {
+                $ldapAttributes[] = $attribute;
+            }
+        }
         $this->ldapResult = $this->ldapHandler->find('search',  [
             'baseDn' => 'ou=Accounts,dc=univ,dc=pitt,dc=edu',
             'filter' => $cn,
-            'attributes' => [
-                'cn',
-            ],
+            'attributes' => $ldapAttributes
         ]);
         $people = array();
         foreach ($this->ldapResult as $person) {
             if (!is_array($person)){
                 continue;
             }
-            $people[] = $person['cn'][0];
+            if (isset($attributes)) {
+                foreach ($ldapAttributes as $attribute) {
+                    $people[$attribute] = $person[$attribute][0];
+                }
+            } else {
+                $people[] = $person['cn'][0];
+            }
         }
         return $people;
     }

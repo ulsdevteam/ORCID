@@ -66,20 +66,11 @@ class OrcidBatchGroupsTable extends Table
 		if ($group->CACHE_CREATION_DATE && $group->CACHE_CREATION_DATE->wasWithinLast('30 minutes')) {
 			return true;
 		}
-		// Indicate that this cache update is in-progress (blocks simultaneous cache refreshes)
-		//$this->save($group);
-		// mark all current cache entries as needing validation or removal
-		// quoting the value separately (only when conditions are used) is some sort of ridiculous backwards compatibility thing with DboSource's update() implementation
-		// $db = $this->getDataSource();
-		/* $deprecated = $db->value(date('Y-m-d H:i:s'), 'date');
-		$this->OrcidBatchGroupCache->updateAll(['deprecated' => $deprecated), ['orcid_batch_group_id' => $groupId));
-		if ($group['OrcidBatchGroup']['GROUP_DEFINITION']) {
-			$this->Person = ClassRegistry::init('Person');
-		} */
+		
 		$this->OrcidUser = TableRegistry::getTableLocator()->get('OrcidUsers');
 		$groupMembers = [];
 		if ($group->STUDENT_DEFINITION || $group->EMPLOYEE_DEFINITION) {
-			// CDS defintion(s) is (are) the base query
+			// CDS definition(s) is (are) the base query
 			if ($group->STUDENT_DEFINITION) {
 				$this->OrcidStudent = TableRegistry::getTableLocator()->get('OrcidStudents');
 				$options = ['conditions' => $group->STUDENT_DEFINITION];
@@ -88,10 +79,10 @@ class OrcidBatchGroupsTable extends Table
 					$students = [];
 				}
 				foreach ($students as $student) {
-					// skip if a group defintion is provided and the user does not match the definition
+					// skip if a group definition is provided and the user does not match the definition
 					if ($group->GROUP_DEFINITION) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = '&(cn=' . $student->username . ')' . $group->GROUP_DEFINITION;
+						$options = '(cn=' . $student->username . ')' . $group->GROUP_DEFINITION;
 						if (!$this->OrcidUser->definitionSearch($options)) {
 							continue;
 						}
@@ -107,11 +98,11 @@ class OrcidBatchGroupsTable extends Table
 					$employees = [];
 				}
 				foreach ($employees as $employee) {
-					// skip if a group defintion is provided and the user does not match the definition
+					// skip if a group definition is provided and the user does not match the definition
 					if ($group->GROUP_DEFINITION) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = '&(cn=' . $employee->username . ')' . $group->GROUP_DEFINITION;
-						if (!$this->OrcidUser->defintionSearch($options)) {
+						$options = '(cn=' . $employee->username . ')' . $group->GROUP_DEFINITION;
+						if (!$this->OrcidUser->definitionSearch($options)) {
 							continue;
 						}
 					}
@@ -119,9 +110,9 @@ class OrcidBatchGroupsTable extends Table
 				}
 			}
 		} else if ($group->GROUP_DEFINITION) {
-			// group_defintion is the base query
+			// group_definition is the base query
 			// TODO: risky because Person is LDAP and may not support paging
-			$people = $this->OrcidUser->defintionSearch($group->GROUP_DEFINITION);
+			$people = $this->OrcidUser->definitionSearch($group->GROUP_DEFINITION);
 			foreach ($people as $person) {
 				$groupMembers[$person] = $person;
 			}
