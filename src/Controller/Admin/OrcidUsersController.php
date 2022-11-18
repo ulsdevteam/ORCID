@@ -114,7 +114,7 @@ class OrcidUsersController extends AppController
             if ($this->OrcidUsers->save($orcidUser)) {
                 $this->Flash->success(__('The orcid user has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', $id]);
             }
             $this->Flash->error(__('The orcid user could not be saved. Please, try again.'));
         }
@@ -150,19 +150,17 @@ class OrcidUsersController extends AppController
      */
     public function optout($id = null)
     {
-        if (!$this->OrcidUsers->exists($id)) {
-            throw new NotFoundException(__('Invalid ORCID User'));
-        }
+        $this->OrcidUsers->get($id);
         if ($this->request->is(['post', 'put'])) {
             $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
             $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
-            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->id;
+            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->ID;
             $orcidStatuses = $OrcidStatusTable->find()->where(['ORCID_USER_ID' => $id, 'ORCID_STATUS_TYPE_ID' =>  $orcidStatusTypeID])->first();
 
             if (isset($orcidStatuses)) {
                 var_dump("Opted out already");
                 $this->Flash->error(__('The ORCID User has already opted out.'));
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', $id]);
             }
             $time = FrozenTime::now();
             $data = [
@@ -176,7 +174,7 @@ class OrcidUsersController extends AppController
             } else {
                 $this->Flash->error(__('The ORCID Opt-out could not be saved. Please, try again.'));
             }
-            return $this->redirect(['action' => 'index']);
+            return $this->redirect(['action' => 'view', $id]);
         }
     }
 
@@ -527,7 +525,6 @@ class OrcidUsersController extends AppController
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_MAXREDIRS => 5,
             ]]);
-            $result->getXml()->asXML();
         if ($result->getStatusCode() == 200) {
             return $result->getXml();
         } else {
