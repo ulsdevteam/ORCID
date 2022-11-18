@@ -28,7 +28,7 @@ class OrcidEmailsController extends AppController
             'contain' => ['OrcidUsers', 'OrcidBatches'],
         ];
         $orcidEmails = $this->paginate($this->OrcidEmails);
-
+        
         $this->set(compact('orcidEmails'));
     }
 
@@ -174,8 +174,8 @@ class OrcidEmailsController extends AppController
  * @return void
  */
 	public function send($id = null) {
-		$orcidEmail = $this->OrcidEmails->get($id, ['contains' => 'OrcidUsers']);
-		$this->Person = $this->getTableLocator()->get('OrcidUsers');
+		$orcidEmail = $this->OrcidEmails->get($id, ['contain' => 'OrcidUsers']);
+		$this->Person = $this->fetchTable('OrcidUsers');
 		$this->request->allowMethod('post');
 		// must not be already sent or cancelled
 		$this->Emailer = new Emailer();
@@ -207,7 +207,7 @@ class OrcidEmailsController extends AppController
 		$orcidEmails = $this->OrcidEmail->find('all', $options);
 		$success = 0;
 		$failed = 0;
-		$this->Person = $this->getTableLocator()->get('OrcidUsers');
+		$this->Person = $this->fetchTable('OrcidUsers');
 		$this->Emailer = new Emailer();
         foreach ($orcidEmails as $orcidEmail){
             if (!(empty($orcidEmail->SENT) || !empty($orcidEmail->CANCELLED))){
