@@ -37,11 +37,11 @@ class EmailCommand extends Command
     {
 		$function = $args->getArgument('function');
 		if (isset($function)) {
-			switch (strtoupper($function)) {
-				case "SENDALL":
+			switch ($function) {
+				case "sendAll":
 					$this->sendAll($io);
 					break;
-				case "QUEUEALL":
+				case "queueAll":
 					$this->queueAll($io);
 					break;
 				default:
@@ -91,7 +91,7 @@ class EmailCommand extends Command
 			['OrcidEmails.SENT IS' => NULL,
 			 'OrcidEmails.CANCELLED IS' => NULL]
 		];
-		$emails = $orcidEmailTable->find('all', $options)->contain(["OrcidUsers", "OrcidBatches", "OrcidBatches.OrcidEmails"]);
+		$emails = $orcidEmailTable->find('all', $options)->contain(["OrcidUsers", "OrcidBatches"]);
 		$success = 0;
 		$failed = 0;
 		foreach ($emails as $email) {
@@ -101,20 +101,15 @@ class EmailCommand extends Command
 			$person = $usersTable->definitionSearch($condition, ['mail']);
 			if (!isset($person) || !isset($person['mail'])) {
 				$io->out('No email address for '.$email->orcid_user->USERNAME.'.');
-			} else if ($this->Emailer->sendBatch($person['mail'], $email->orcid_batch)) {
-				$email->SENT = FrozenTime::now();
-				if (!$orcidEmailTable->save($email)) {
-					$failed++;
-				} else {
-					$success++;
-				}
+			} elseif ($this->Emailer->sendEmail($person['mail'], $email)) {
+				$success++;
 			} else {
 				$failed++;
 			}
 		}
 		if ($success) {
 			$io->out('Sent '.$success.' email'.($success > 1 ? 's' : '').'.');
-		} else if (!$failed) {
+		} elseif (!$failed) {
 			$io->out('No email scheduled to send.');
 		}
 		if ($failed) {
@@ -159,7 +154,7 @@ class EmailCommand extends Command
 		}
 		if ($success) {
 			$io->out('Successfully ran '.$success.' trigger'.($success > 1 ? 's' : ''));
-		} else if (!$failed) {
+		} elseif (!$failed) {
 			$io->out('No triggers to run.');
 		}
 		if ($failed) {
