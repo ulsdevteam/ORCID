@@ -82,7 +82,7 @@ class EnvAuthenticator extends AbstractAuthenticator
                 // Drop any scope/
                 $username = preg_replace('/@.*$/', '', $username);
             }
-            $scopes = array();
+            $scopes = [];
             if (is_string($this->_config['DROP_SCOPE'])) {
                 $scopes[] = $this->_config['DROP_SCOPE'];
             } elseif (is_array($this->_config['DROP_SCOPE'])) {
