@@ -59,12 +59,12 @@ class OrcidBatchCreatorsController extends AppController
         $orcidBatchCreator = $this->OrcidBatchCreators->newEmptyEntity();
         if ($this->request->is('post')) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
-            if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
-                $this->Flash->success(__('The orcid batch creator has been saved.'));
+            if ($this->OrcidBatchCreators->save($orcidBatchCreator) !== false ) {
+                $this->Flash->success(__('The Administrator has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch creator could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Administrator could not be saved. Please, try again.'));
         }
         $this->set(compact('orcidBatchCreator'));
     }
@@ -84,12 +84,12 @@ class OrcidBatchCreatorsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
             $orcidBatchCreator->FLAGS = $orcidBatchCreator->FLAGS & ~1;
-            if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
-                $this->Flash->success(__('The orcid batch creator has been saved.'));
+            if ($this->OrcidBatchCreators->save($orcidBatchCreator) !== false ) {
+                $this->Flash->success(__('The Administrator has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch creator could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Administrator could not be saved. Please, try again.'));
         }
         $this->set(compact('orcidBatchCreator'));
     }
@@ -102,33 +102,13 @@ class OrcidBatchCreatorsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchCreator = $this->OrcidBatchCreators->patchEntity($orcidBatchCreator, $this->request->getData());
             $orcidBatchCreator->FLAGS = $orcidBatchCreator->FLAGS | 1;
-            if ($this->OrcidBatchCreators->save($orcidBatchCreator)) {
-                $this->Flash->success(__('The orcid batch creator has been saved.'));
+            if ($this->OrcidBatchCreators->save($orcidBatchCreator) !== false ) {
+                $this->Flash->success(__('The Administrator has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch creator could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Administrator could not be saved. Please, try again.'));
         }
         $this->set(compact('orcidBatchCreator'));
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Orcid Batch Creator id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $orcidBatchCreator = $this->OrcidBatchCreators->get($id);
-        if ($this->OrcidBatchCreators->delete($orcidBatchCreator)) {
-            $this->Flash->success(__('The orcid batch creator has been deleted.'));
-        } else {
-            $this->Flash->error(__('The orcid batch creator could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
     }
 }

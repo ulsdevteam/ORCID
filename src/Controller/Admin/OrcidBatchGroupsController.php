@@ -52,12 +52,12 @@ class OrcidBatchGroupsController extends AppController
         $orcidBatchGroup = $this->OrcidBatchGroups->newEmptyEntity();
         if ($this->request->is('post')) {
             $orcidBatchGroup = $this->OrcidBatchGroups->patchEntity($orcidBatchGroup, $this->request->getData());
-            if ($this->OrcidBatchGroups->save($orcidBatchGroup)) {
-                $this->Flash->success(__('The orcid batch group has been saved.'));
+            if ($this->OrcidBatchGroups->save($orcidBatchGroup) !== false ) {
+                $this->Flash->success(__('The Group has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch group could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Group could not be saved. Please, try again.'));
         }
         $this->set(compact('orcidBatchGroup'));
     }
@@ -76,12 +76,12 @@ class OrcidBatchGroupsController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchGroup = $this->OrcidBatchGroups->patchEntity($orcidBatchGroup, $this->request->getData());
-            if ($this->OrcidBatchGroups->save($orcidBatchGroup)) {
-                $this->Flash->success(__('The orcid batch group has been saved.'));
+            if ($this->OrcidBatchGroups->save($orcidBatchGroup) !== false ) {
+                $this->Flash->success(__('The Group has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch group could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Group could not be saved. Please, try again.'));
         }
         $this->set(compact('orcidBatchGroup'));
     }
@@ -98,9 +98,9 @@ class OrcidBatchGroupsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $orcidBatchGroup = $this->OrcidBatchGroups->get($id);
         if ($this->OrcidBatchGroups->delete($orcidBatchGroup)) {
-            $this->Flash->success(__('The orcid batch group has been deleted.'));
+            $this->Flash->success(__('The Group has been deleted.'));
         } else {
-            $this->Flash->error(__('The orcid batch group could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The Group could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
@@ -116,8 +116,8 @@ class OrcidBatchGroupsController extends AppController
     public function recache($id = null)
     {
         $orcidBatchGroup = $this->OrcidBatchGroups->get($id);
-        $orcidBatchGroup->set('cache_creation_date', null);
-        if ($this->OrcidBatchGroups->save($orcidBatchGroup)) {
+        $orcidBatchGroup->CACHE_CREATION_DATE = null;
+        if ($this->OrcidBatchGroups->save($orcidBatchGroup) !== false ) {
             $this->Flash->success(__('The Group cache has been expired.'));
         } else {
             $this->Flash->error(__('The Group cache could not be expired. Please, try again.'));

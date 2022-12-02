@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\AppController;
 use App\Utility\Emailer;
+use Cake\I18n\FrozenTime;
 
 /**
  * OrcidBatchTriggers Controller
@@ -56,12 +57,12 @@ class OrcidBatchTriggersController extends AppController
         $orcidBatchTrigger = $this->OrcidBatchTriggers->newEmptyEntity();
         if ($this->request->is('post')) {
             $orcidBatchTrigger = $this->OrcidBatchTriggers->patchEntity($orcidBatchTrigger, $this->request->getData());
-            if ($this->OrcidBatchTriggers->save($orcidBatchTrigger)) {
-                $this->Flash->success(__('The orcid batch trigger has been saved.'));
+            if ($this->OrcidBatchTriggers->save($orcidBatchTrigger) !== false ) {
+                $this->Flash->success(__('The Trigger has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch trigger could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Trigger could not be saved. Please, try again.'));
         }
         $orcidStatusTypes = $this->OrcidBatchTriggers->OrcidStatusTypes->find('list', ['limit' => 200])->all();
         $orcidBatches = $this->OrcidBatchTriggers->OrcidBatches->find('list', ['limit' => 200])->all();
@@ -84,12 +85,12 @@ class OrcidBatchTriggersController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatchTrigger = $this->OrcidBatchTriggers->patchEntity($orcidBatchTrigger, $this->request->getData());
-            if ($this->OrcidBatchTriggers->save($orcidBatchTrigger)) {
-                $this->Flash->success(__('The orcid batch trigger has been saved.'));
+            if ($this->OrcidBatchTriggers->save($orcidBatchTrigger) !== false ) {
+                $this->Flash->success(__('The Trigger has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The orcid batch trigger could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Trigger could not be saved. Please, try again.'));
         }
         $reqBatches = [0 => __('No Requirement'), -1 => __('Require any prior Email')];
         $orcidStatusTypes = $this->OrcidBatchTriggers->OrcidStatusTypes->find('list', ['limit' => 200])->all();
@@ -110,9 +111,9 @@ class OrcidBatchTriggersController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $orcidBatchTrigger = $this->OrcidBatchTriggers->get($id);
         if ($this->OrcidBatchTriggers->delete($orcidBatchTrigger)) {
-            $this->Flash->success(__('The orcid batch trigger has been deleted.'));
+            $this->Flash->success(__('The Trigger has been deleted.'));
         } else {
-            $this->Flash->error(__('The orcid batch trigger could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The Trigger could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
@@ -130,9 +131,9 @@ class OrcidBatchTriggersController extends AppController
         $trigger = $this->OrcidBatchTriggers->get($id, ['contain' => ['OrcidStatusTypes', 'OrcidBatchGroups']]);
         $this->request->allowMethod('post');
         $this->Emailer = new Emailer();
-        if ($trigger->begin_date && $trigger->begin_date > time()) {
+        if (isset($trigger->BEGIN_DATE) && $trigger->BEGIN_DATE->greaterThan(FrozenTime::now())) {
             $this->Flash->error(__('The Trigger has a future Begin Date.'));
-        } else if ($this->Emailer->executeTrigger($trigger)) {
+        } elseif ($this->Emailer->executeTrigger($trigger)) {
             $this->Flash->success(__('The Trigger has run.'));
         } else {
             $this->Flash->error(__('The Trigger could not be run. Please, try again.'));

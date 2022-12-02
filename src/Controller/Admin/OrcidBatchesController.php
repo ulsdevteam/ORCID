@@ -57,7 +57,7 @@ class OrcidBatchesController extends AppController
         $orcidBatch = $this->OrcidBatches->newEmptyEntity();
         if ($this->request->is(['patch', 'put', 'post'])) {
             $orcidBatch = $this->OrcidBatches->patchEntity($orcidBatch, $this->request->getData());
-            if ($this->OrcidBatches->save($orcidBatch)) {
+            if ($this->OrcidBatches->save($orcidBatch) !== false ) {
                 $this->Flash->success(__('The orcid batch has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -82,7 +82,7 @@ class OrcidBatchesController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatch = $this->OrcidBatches->patchEntity($orcidBatch, $this->request->getData());
-            if ($this->OrcidBatches->save($orcidBatch)) {
+            if ($this->OrcidBatches->save($orcidBatch) !== false ) {
                 $this->Flash->success(__('The orcid batch has been saved.'));
 
                 return $this->redirect(['action' => 'index']);

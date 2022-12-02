@@ -63,6 +63,110 @@ class OrcidUsersController extends AppController
     }
 
     /**
+     * find method
+     *
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     */
+    public function find()
+    {
+        $options = $this->request->getQueryParams();
+
+        if ($options) {
+            $userQuery = $options['q'] ?? '';
+            $findType = $options['f'] ?? '';
+            $groupQuery = $options['g'] ?? '';
+            $statusQuery = $options['s'] ?? '';
+        } else {
+            $userQuery = '';
+            $findType = '';
+            $groupQuery = '';
+            $statusQuery = '';
+        }
+
+        $BatchGroups = $this->fetchTable('OrcidBatchGroups');
+        $batchGroups = $BatchGroups->find('all')->all();
+        $StatusTypesTable = $this->fetchTable('OrcidStatusTypes');
+        $statusTypes = $StatusTypesTable->find('all')->all();
+        $orcidUsers = $this->paginate($this->_parameterize($userQuery, $findType, $groupQuery, $statusQuery));
+
+        $findTypes = ['Containing', 'Starting With', 'Ending With', 'Matching Exactly'];
+        $statuses = [-1 => ''];
+        $groups = [0 => ''];
+
+        foreach ($batchGroups as $group) {
+            $groups[$group->ID] = $group->NAME;
+        }
+        asort($groups);
+
+        foreach ($statusTypes as $status) {
+            $statuses[$status->ID] = $status->NAME;
+        }
+        ksort($statuses);
+
+        $groups[$this::NULL_ID] = 'No Matching Group';
+
+        $this->set('findTypes', $findTypes);
+        $this->set('userQuery', $userQuery);
+        $this->set('selectedType', $findType);
+        $this->set('selectedGroup', $groupQuery);
+        $this->set('selectedStatus', $statusQuery);
+        $this->set('statusTypes', $statuses);
+        $this->set('batchGroups', $groups);
+        $this->set(compact('orcidUsers'));
+    }
+
+    /**
+     * report method
+     *
+     * @param string|null $queryString the query string from previous request
+     * @return void
+     */
+    public function report($queryString = null) {
+        $debug = Configure::read('debug');
+		Configure::write('debug', 1);
+        parse_str($queryString, $options);
+
+        if ($options) {
+            $userQuery = $options['q'] ?? '';
+            $findType = $options['f'] ?? '';
+            $groupQuery = $options['g'] ?? '';
+            $statusQuery = $options['s'] ?? '';
+        } else {
+            $userQuery = '';
+            $findType = '';
+            $groupQuery = '';
+            $statusQuery = '';
+        }
+		$filename = tempnam(TMP, 'rep');
+		$fh = fopen($filename, 'w');
+		$OrcidBatchGroup = $this->fetchTable('OrcidBatchGroups');
+		$OrcidStatusType = $this->fetchTable('OrcidStatusTypes');
+		$findTypes = [0 => __('Containing'), 1 => __('Starting With'), 2 => __('Ending With'), 3 => __('Matching Exactly')];
+		$orcidBatchGroups = $OrcidBatchGroup->find('list');
+		$orcidUsers = $this->_parameterize($userQuery, $findType, $groupQuery, $statusQuery);
+		$reportTitle = __('Users').($userQuery ? $findTypes[$findType].' '.'"'.$userQuery.'"' : '').($groupQuery ? ' '.__('within').' '.$OrcidBatchGroup->get($groupQuery)->NAME : '').($statusQuery != $this::NULL_STRING_ID ? ' '.__('with Current Status of').' '.$OrcidStatusType->get($statusQuery)->NAME : '');
+		fputcsv($fh, [$reportTitle,null,null,null,null]);
+		fputcsv($fh, ['Username','ORCID iD','Name','RC','Department','Current Status','As Of']);
+		foreach ($orcidUsers as $orcidUser) {
+			fputcsv($fh, [
+				$orcidUser->USERNAME,
+				$orcidUser->ORCID,
+				$orcidUser->displayname,
+				$orcidUser->rcdepartment,
+				$orcidUser->department,
+				$OrcidStatusType->get($orcidUser->current_orcid_statuses[0]->ORCID_STATUS_TYPE_ID)->NAME,
+				$orcidUser->current_orcid_statuses[0]->STATUS_TIMESTAMP,
+			]);
+		}
+		fclose($fh);
+		$this->response = $this->response->withFile($filename, ['download' => true, 'name' => 'report.csv']);
+		$this->response = $this->response->withType('text/csv');
+		Configure::write('debug', $debug);
+		return $this->response;
+    }
+
+
+    /**
      * View method
      *
      * @param string|null $id Orcid User id.
@@ -87,7 +191,7 @@ class OrcidUsersController extends AppController
         $orcidUser = $this->OrcidUsers->newEmptyEntity();
         if ($this->request->is('post')) {
             $orcidUser = $this->OrcidUsers->patchEntity($orcidUser, $this->request->getData());
-            if ($this->OrcidUsers->save($orcidUser)) {
+            if ($this->OrcidUsers->save($orcidUser) !== false ) {
                 $this->Flash->success(__('The orcid user has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -111,7 +215,7 @@ class OrcidUsersController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidUser = $this->OrcidUsers->patchEntity($orcidUser, $this->request->getData());
-            if ($this->OrcidUsers->save($orcidUser)) {
+            if ($this->OrcidUsers->save($orcidUser) !== false ) {
                 $this->Flash->success(__('The orcid user has been saved.'));
 
                 return $this->redirect(['action' => 'view', $id]);
@@ -169,7 +273,7 @@ class OrcidUsersController extends AppController
                 'STATUS_TIMESTAMP' => $time
             ];
             $OptOutStatus = $OrcidStatusTable->newEntity($data);
-            if ($OrcidStatusTable->save($OptOutStatus)) {
+            if ($OrcidStatusTable->save($OptOutStatus) !== false ) {
                 $this->Flash->success(__('The ORCID Opt-out has been saved.'));
             } else {
                 $this->Flash->error(__('The ORCID Opt-out could not be saved. Please, try again.'));
@@ -178,47 +282,7 @@ class OrcidUsersController extends AppController
         }
     }
 
-    /**
-     * find method
-     *
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     */
-    public function find()
-    {
-        $options = $this->request->getQueryParams();
-
-        if ($options) {
-            $userQuery = $options['q'] ?? '';
-            $findType = $options['s'] ?? '';
-            $groupQuery = $options['g'] ?? '';
-        } else {
-            $userQuery = '';
-            $findType = '';
-            $groupQuery = '';
-        }
-
-        $BatchGroups = $this->fetchTable('OrcidBatchGroups');
-        $batchGroups = $BatchGroups->find('all')->all();
-        $orcidUsers = $this->paginate($this->_parameterize($userQuery, $findType, $groupQuery));
-
-        $findTypes = ['Containing', 'Starting With', 'Ending With', 'Matching Exactly'];
-        $groups = [0 => ''];
-
-        foreach ($batchGroups as $group) {
-            $groups[$group->ID] = $group->NAME;
-        }
-
-        $groups[$this::NULL_ID] = 'No Matching Group';
-
-        $this->set('findTypes', $findTypes);
-        $this->set('userQuery', $userQuery);
-        $this->set('selectedType', $findType);
-        $this->set('selectedGroup', $groupQuery);
-        $this->set('batchGroups', $groups);
-        $this->set(compact('orcidUsers'));
-    }
-
-    private function _parameterize($userQuery, $findType, $groupQuery)
+    private function _parameterize($userQuery, $findType, $groupQuery, $statusQuery)
     {
 
         // container to hold conditions
@@ -231,11 +295,11 @@ class OrcidUsersController extends AppController
         if (!empty($userQuery)) {
             if ($findType === $this::EXACTLY) {
                 $conditions = ['OR' => [['USERNAME' => strtoupper($userQuery)], ['ORCID' => $userQuery]]];
-            } else if ($findType === $this::ENDS_WITH) {
+            } elseif ($findType === $this::ENDS_WITH) {
                 $conditions = ['OR' => [['USERNAME LIKE' => '%' . strtoupper($userQuery)], ['ORCID LIKE' => '%' . $userQuery]]];
-            } else if ($findType === $this::STARTS_WITH) {
+            } elseif ($findType === $this::STARTS_WITH) {
                 $conditions = ['OR' => [['USERNAME LIKE' => strtoupper($userQuery) . '%'], ['ORCID LIKE' => $userQuery . '%']]];
-            } else if ($findType === $this::CONTAINS) {
+            } elseif ($findType === $this::CONTAINS) {
                 $conditions = ['OR' => [['USERNAME LIKE' => '%' . strtoupper($userQuery) . '%'], ['ORCID LIKE' => '%' . $userQuery . '%']]];
             }
         }
@@ -255,8 +319,15 @@ class OrcidUsersController extends AppController
             }
         }
 
+        //query by current status
+        if ($statusQuery != $this::NULL_STRING_ID) {
+            $orcidUsersTable = $orcidUsersTable->matching('CurrentOrcidStatuses', function ($q) use ($statusQuery) {
+                return $q->where(['CurrentOrcidStatuses.ORCID_STATUS_TYPE_ID' => $statusQuery]);
+            });
+        }
+        
         // if no query specified, return nothing
-        if (empty($userQuery) && empty($groupQuery)) {
+        if (empty($userQuery) && empty($groupQuery) && $statusQuery === $this::NULL_STRING_ID) {
             // no ORCID id should be -1
             $conditions = ['ORCID' => $this::NULL_ID];
         }
@@ -287,9 +358,9 @@ class OrcidUsersController extends AppController
         $shib_groups = explode(';', filter_var($_SERVER['REDIRECT_REDIRECT_PittCustomGroupMembership'], FILTER_SANITIZE_STRING)); 
 
         if (in_array('employee', $shib_affiliations, TRUE) || in_array('faculty', $shib_affiliations, TRUE) || in_array('staff', $shib_affiliations, TRUE)) {
-            $orcid_affiliations = array('employment');
+            $orcid_affiliations = ['employment'];
         } else {
-            $orcid_affiliations = array();
+            $orcid_affiliations = [];
         }
         if (in_array('FERPA', $shib_groups, TRUE)) {
             $orcid_affiliations[] = 'FERPA';
@@ -328,7 +399,7 @@ class OrcidUsersController extends AppController
                     throw new UnrecognizedOrcidException($_GET['error']); */
             }
             // The switch should have exit()'d for us
-        } else if (!isset($_GET['code'])) {
+        } elseif (!isset($_GET['code'])) {
             // If we don't have a CODE from ORCID,
             // We are in the workflow before the redirect to ORCID
             // Check the status of the current user
@@ -425,7 +496,7 @@ class OrcidUsersController extends AppController
                 'expires' => (time() + 3600),
                 'httponly' => true
             ]);
-            $url = Configure::read($this->OAUTH_PATH."OAUTH_AUTHORIZATION_URL") . '?' . http_build_query(array(
+            $url = Configure::read($this->OAUTH_PATH."OAUTH_AUTHORIZATION_URL") . '?' . http_build_query([
                 'response_type' => 'code',
                 'client_id' => Configure::read($this->OAUTH_PATH."OAUTH_CLIENT_ID"),
                 'redirect_uri' => Configure::read($this->OAUTH_PATH."OAUTH_REDIRECT_URI"),
@@ -437,7 +508,7 @@ class OrcidUsersController extends AppController
                 // ORCID bug: https://trello.com/c/Y0dqjqId/362-authorization-code-not-generated-when-signed-in-user-visits-link-with-orcid-parameter
                 // ULS ticket: https://ulstracker.atlassian.net/browse/SYSDEV-1615
                 'orcid' => isset($row['ORCID']) ? $row['ORCID'] : '',
-            ));
+            ]);
             $this->redirect($url);
             return;
         }
@@ -613,7 +684,7 @@ class OrcidUsersController extends AppController
             $elements = $xml->xpath('//e:'.$type.'-summary[e:organization/c:disambiguated-organization[c:disambiguation-source[text()="'.Configure::read("Resources.PITT_AFFILIATION_KEY").'"] and c:disambiguated-organization-identifier[text()="'.Configure::read("Resources.PITT_AFFILIATION_ID").'"]]]'); 
         // NOT SURE HOW THIS WILL WORK, we'll see in live testing.
         } catch (Exception $e) {
-            error_log($e);
+            error_log($e->getMessage());
             return false;
         }
         return !empty($elements);
@@ -632,7 +703,7 @@ class OrcidUsersController extends AppController
             // Check on an external ID with our common name
             $elements = $xml->xpath('//o:external-id-type[text()="'.Configure::read("Resources.PITT_EXTID_NAME").'"]');
         } catch (Exception $e) {
-            error_log($e);
+            error_log($e->getMessage());
             return false;
         }
         return !empty($elements);
@@ -646,7 +717,7 @@ class OrcidUsersController extends AppController
      * @param array $affiliations
      * @return true if record could be validated; false if any error occurred
      */
-    function validate_record($orcid, $token, $user, $affiliations = array()) {
+    function validate_record($orcid, $token, $user, $affiliations = []) {
         $profile = $this->read_profile($orcid, $token);
         if ($profile) {
             // The profile should have an External ID unless the the FERPA flag is present on a student-only record

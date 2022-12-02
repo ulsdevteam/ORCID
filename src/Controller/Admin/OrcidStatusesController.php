@@ -55,7 +55,7 @@ class OrcidStatusesController extends AppController
         $orcidStatus = $this->OrcidStatuses->newEmptyEntity();
         if ($this->request->is('post')) {
             $orcidStatus = $this->OrcidStatuses->patchEntity($orcidStatus, $this->request->getData());
-            if ($this->OrcidStatuses->save($orcidStatus)) {
+            if ($this->OrcidStatuses->save($orcidStatus) !== false ) {
                 $this->Flash->success(__('The orcid status has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -81,7 +81,7 @@ class OrcidStatusesController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidStatus = $this->OrcidStatuses->patchEntity($orcidStatus, $this->request->getData());
-            if ($this->OrcidStatuses->save($orcidStatus)) {
+            if ($this->OrcidStatuses->save($orcidStatus) !== false ) {
                 $this->Flash->success(__('The orcid status has been saved.'));
 
                 return $this->redirect(['action' => 'index']);

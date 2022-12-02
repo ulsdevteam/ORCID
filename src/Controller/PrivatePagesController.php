@@ -33,6 +33,7 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class PrivatePagesController extends PagesController
 {
+
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         $grandparent = get_parent_class(get_parent_class($this));

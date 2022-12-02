@@ -36,9 +36,7 @@ class OrcidStatusTypesController extends AppController
      */
     public function view($id = null)
     {
-        $orcidStatusType = $this->OrcidStatusTypes->get($id, [
-            'contain' => ['OrcidBatchTriggers', 'CurrentOrcidStatuses', 'CurrentOrcidStatuses.OrcidUsers'],
-        ]);
+        $orcidStatusType = $this->OrcidStatusTypes->get($id);
 
         $this->set(compact('orcidStatusType'));
     }
@@ -53,7 +51,7 @@ class OrcidStatusTypesController extends AppController
         $orcidStatusType = $this->OrcidStatusTypes->newEmptyEntity();
         if ($this->request->is('post')) {
             $orcidStatusType = $this->OrcidStatusTypes->patchEntity($orcidStatusType, $this->request->getData());
-            if ($this->OrcidStatusTypes->save($orcidStatusType)) {
+            if ($this->OrcidStatusTypes->save($orcidStatusType) !== false ) {
                 $this->Flash->success(__('The orcid status type has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -77,7 +75,7 @@ class OrcidStatusTypesController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidStatusType = $this->OrcidStatusTypes->patchEntity($orcidStatusType, $this->request->getData());
-            if ($this->OrcidStatusTypes->save($orcidStatusType)) {
+            if ($this->OrcidStatusTypes->save($orcidStatusType) !== false ) {
                 $this->Flash->success(__('The orcid status type has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
