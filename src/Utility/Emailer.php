@@ -66,7 +66,7 @@ class Emailer
 	public function getFailedConnections()
 	{
 		$manager = new ConnectionManager();
-		$problems = array();
+		$problems = [];
 		$connections = $manager->configured();
 		$oracleConnectionToRemove = (Configure::read('debug')) ? 'production-default' : 'default';
 		$cdsConnectionToRemove = (Configure::read('debug')) ? 'production-cds' : 'default-cds';
@@ -85,8 +85,26 @@ class Emailer
 		return $problems;
 	}
 
+
+	/**
+	 * Send an email, updates SENT if sendBatch is successful
+	 * 
+	 * @param string $toRecipient The email address to send the mail to
+	 * @param \App\Model\Entity\OrcidEmail $orcidEmail The email that contains a batch
+	 * @return boolean successful send
+	 */
+	public function sendEmail($toRecipient, $orcidEmail)
+	{
+		if ($this->sendBatch($toRecipient, $orcidEmail->orcid_batch)) {
+			$orcidEmail->SENT = FrozenTime::now();
+			$orcidEmailsTable = $this->fetchTable('OrcidEmails');
+			return $orcidEmailsTable->save($orcidEmail);
+		}
+		return false;
+	}
+
 	/** 
-	 * Send a batch message to a person, optionally marking an email as sent
+	 * Send a batch message to a person
 	 * 
 	 * @param string $toRecipient The email address to send the mail to
 	 * @param \App\Model\Entity\OrcidBatch $orcidBatch The batch to send, may contain an OrcidEmail to mark sent
@@ -186,8 +204,8 @@ class Emailer
 				];
 			}
 			if (!$OrcidEmailTable->find('all', $options)->first()) {
-				$newEmail = $OrcidEmailTable->newEntity(['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->ORCID_BATCH_ID, 'queued' => FrozenTime::now()]);
-				if (!$OrcidEmailTable->save($newEmail)) {
+				$newEmail = $OrcidEmailTable->newEntity(['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->ORCID_BATCH_ID, 'QUEUED' => FrozenTime::now()]);
+				if ($OrcidEmailTable->save($newEmail) !== false ) {
 					$failures++;
 				}
 			}
