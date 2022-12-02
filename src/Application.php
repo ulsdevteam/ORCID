@@ -53,7 +53,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function bootstrap(): void
     {
-        ini_set('memory_limit', '500M');
         // Call parent to load bootstrap from files.
         parent::bootstrap();
         $this->addPlugin('Authentication');
