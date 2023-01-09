@@ -9,7 +9,7 @@ use Cake\Collection\Collection;
 use Cake\I18n\FrozenTime;
 
 FrozenTime::setToStringFormat("M/dd/YYYY h:mm:ss a");
-
+$this->assign('title', 'ORCID User');
 ?>
 <div class="row">
     <div class="column-responsive column-80">

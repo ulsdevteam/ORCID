@@ -4,22 +4,8 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidUser $orcidUser
  */
+$this->assign('title', 'Add ORCID User');
 ?>
-<div class="row">
-    <div class="column-responsive column-80">
-        <div class="orcidUsers form content">
-            <?= $this->Form->create($orcidUser) ?>
-            <fieldset>
-                <legend><?= __('Add Orcid User') ?></legend>
-                <?php
-                echo $this->Form->control('USERNAME');
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
-    </div>
-</div>
 <aside class="column">
     <nav>
         <div class="navigation actions">
@@ -30,3 +16,18 @@
         </div>
     </nav>
 </aside>
+<div class="row">
+    <div class="column-responsive column-80">
+        <div class="orcidUsers form content">
+            <?= $this->Form->create($orcidUser) ?>
+            <fieldset>
+                <legend><?= __('Add Orcid User') ?></legend>
+                <?php
+                echo $this->Form->control('USERNAME', ['label' => 'Username']);
+                ?>
+            </fieldset>
+            <?= $this->Form->button(__('Submit')) ?>
+            <?= $this->Form->end() ?>
+        </div>
+    </div>
+</div>

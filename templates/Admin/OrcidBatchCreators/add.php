@@ -4,22 +4,26 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchCreator $orcidBatchCreator
  */
+$this->assign('title', 'Add Administrator');
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h4 class="heading"><?= __('Navigation') ?></h4>
             <?= $this->Html->link(__('List Orcid Batch Creators'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
         </div>
-    </aside>
+    </nav>
+</aside>
+<div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchCreators form content">
+            <h3><?= __('Add Administrator') ?></h3>
             <?= $this->Form->create($orcidBatchCreator) ?>
             <fieldset>
-                <legend><?= __('Enter the University Computer Account name to create an new administrative user.') ?>
-                </legend>
+                <p><?= __('Enter the University Computer Account name to create an new administrative user.') ?></p>
                 <?php
-                echo $this->Form->control('Name', ['label' => 'Username']);
+                echo $this->Form->control('NAME', ['label' => 'Username']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

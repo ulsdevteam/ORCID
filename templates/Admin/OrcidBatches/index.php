@@ -4,11 +4,23 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatch[]|\Cake\Collection\CollectionInterface $orcidBatches
  */
+$this->assign('title', 'Batch Email Templates');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('New Batch Email Template'), ['action' => 'add']) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="orcidBatches index content">
     <h3><?= __('Batch Email Templates') ?></h3>
-    <?= __('
-An email template will be used to send a message to a user based on one or more triggers. Each email template can be sent to any user only once, unless manually re-queued.'); ?>
+    <p>
+        <?= __('An email template will be used to send a message to a user based on one or more triggers. Each email template can be sent to any user only once, unless manually re-queued.'); ?>
+    </p>
     <div class="table-responsive">
         <table>
             <thead>
@@ -44,13 +56,3 @@ An email template will be used to send a message to a user based on one or more 
     </div>
     <?= $this->element('paginator/pagination'); ?>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('New Orcid Batch'), ['action' => 'add']) ?>
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

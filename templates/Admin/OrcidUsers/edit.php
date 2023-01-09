@@ -4,6 +4,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidUser $orcidUser
  */
+$this->assign('title', 'Edit ORCID User');
 ?>
 <div class="row">
     <aside class="column">
@@ -23,9 +24,9 @@
             <fieldset>
                 <legend><?= __('Edit Orcid User') ?></legend>
                 <?php
-                echo $this->Form->control('USERNAME');
-                echo $this->Form->control('ORCID');
-                echo $this->Form->control('TOKEN');
+                echo $this->Form->control('USERNAME', ['label' => 'Username']);
+                echo $this->Form->control('ORCID', ['label' => 'ORCID']);
+                echo $this->Form->control('TOKEN', ['label' => 'Token']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

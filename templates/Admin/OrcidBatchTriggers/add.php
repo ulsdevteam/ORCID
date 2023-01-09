@@ -7,7 +7,17 @@
  * @var \Cake\Collection\CollectionInterface|string[] $orcidBatches
  * @var \Cake\Collection\CollectionInterface|string[] $orcidBatchGroups
  */
+$this->assign('title', 'Triggers');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Triggers'), ['action' => 'index']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchTriggers form content">
@@ -21,14 +31,14 @@
                     Begin Date (if provided). The number of times this Email Batch has been sent to this user must not
                     repeat more than Repeat Limit times (if provided).</div>
                 <?php
-                echo $this->Form->control('NAME');
+                echo $this->Form->control('NAME', ['label' => 'Name']);
                 echo $this->Form->control('ORCID_BATCH_GROUP_ID', ['label' => 'Group', 'options' => $orcidBatchGroups, 'empty' => [0 => '']]);
                 echo $this->Form->control('ORCID_STATUS_TYPE_ID', ['label' => 'Workflow Checkpoint', 'options' => $orcidStatusTypes]);
                 echo $this->Form->control('ORCID_BATCH_ID', ['label' => 'Email Batch', 'options' => $orcidBatches]);
                 echo $this->Form->control('TRIGGER_DELAY', ['label' => 'Trigger Delay (in days)', 'default' => 0]);
                 echo $this->Form->control('REPEAT', ['label' => 'Repeat Every (in days, 0 for never)', 'default' => 0]);
                 echo $this->Form->control('MAXIMUM_REPEAT', ['label' => 'Repeat Limit (in times, 0 for no limit)', 'default' => 0]);
-                echo $this->Form->control('BEGIN_DATE');
+                echo $this->Form->control('BEGIN_DATE', ['label' => 'Begin Date']);
                 echo $this->Form->control('REQUIRE_BATCH_ID', ['label' => 'Require Prior Batch', 'options' => $reqBatches]);
                 ?>
             </fieldset>
@@ -37,12 +47,3 @@
         </div>
     </div>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('List Triggers'), ['action' => 'index']) ?>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

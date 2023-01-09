@@ -4,6 +4,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidUser[]|\Cake\Collection\CollectionInterface $orcidUsers
  */
+$this->assign('title', 'ORCID Users');
 ?>
 <div class="orcidUsers index content">
     <h3><?= __('ORCID Users') ?></h3>
@@ -42,7 +43,7 @@
     <nav>
         <div class="navigation actions">
             <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('New Orcid User'), ['actfion' => 'add']) ?>
+            <?= $this->Html->link(__('New Orcid User'), ['action' => 'add']) ?>
             <h3 class="heading"><?= __('Navigation') ?></h3>
             <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
             <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>

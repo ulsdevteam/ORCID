@@ -4,7 +4,21 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchTrigger $orcidBatchTrigger
  */
+$this->assign('title', 'Trigger');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('Edit Orcid Batch Trigger'), ['action' => 'edit', $orcidBatchTrigger->ID], ['class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Delete Orcid Batch Trigger'), ['action' => 'delete', $orcidBatchTrigger->ID], ['confirm' => __('Are you sure you want to delete "{0}"?', $orcidBatchTrigger->NAME), 'class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Execute'), ['action' => 'execute', $orcidBatchTrigger->ID], ['confirm' => __('Are you sure you want to execute "{0}"?', $orcidBatchTrigger->NAME)]) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Triggers'), ['action' => 'index']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchTriggers view content">
@@ -37,38 +51,25 @@
                 </tr>
                 <tr>
                     <th><?= __('Trigger Delay') ?></th>
-                    <td><?= $this->Number->format($orcidBatchTrigger->TRIGGER_DELAY) ?></td>
+                    <td><?= $this->Number->format($orcidBatchTrigger->TRIGGER_DELAY) . ' ' . __($orcidBatchTrigger->TRIGGER_DELAY == 1 ? 'day' : 'days') ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Repeat Every') ?></th>
-                    <td><?= $this->Number->format($orcidBatchTrigger->REPEAT) ?></td>
+                    <td><?= $this->Number->format($orcidBatchTrigger->REPEAT) . ' ' . __($orcidBatchTrigger->REPEAT == 1 ? 'day' : 'days') ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Repeat Limit') ?></th>
-                    <td><?= $this->Number->format($orcidBatchTrigger->MAXIMUM_REPEAT) ?></td>
+                    <td><?= $orcidBatchTrigger->MAXIMUM_REPEAT ? $this->Number->format($orcidBatchTrigger->MAXIMUM_REPEAT)  . ' ' . __($orcidBatchTrigger->MAXIMUM_REPEAT == 1 ? 'time' : 'times') : 'unlimited' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Begin Date') ?></th>
-                    <td><?= h($orcidBatchTrigger->BEGIN_DATE) ?></td>
+                    <td><?= h($orcidBatchTrigger->BEGIN_DATE->format('d-M-Y')) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Require Prior Batch') ?></th>
-                    <td><?= h($orcidBatchTrigger->REQUIRE_BATCH_ID) ?></td>
+                    <td><?= h($orcidBatchTrigger->REQUIRE_BATCH_ID ? 'Yes' : 'No') ?></td>
                 </tr>
             </table>
         </div>
     </div>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('Edit Orcid Batch Trigger'), ['action' => 'edit', $orcidBatchTrigger->ID], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Orcid Batch Trigger'), ['action' => 'delete', $orcidBatchTrigger->ID], ['confirm' => __('Are you sure you want to delete "{0}"?', $orcidBatchTrigger->NAME), 'class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Execute'), ['action' => 'execute', $orcidBatchTrigger->ID], ['confirm' => __('Are you sure you want to execute "{0}"?', $orcidBatchTrigger->NAME)]) ?>
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('List Triggers'), ['action' => 'index']) ?>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

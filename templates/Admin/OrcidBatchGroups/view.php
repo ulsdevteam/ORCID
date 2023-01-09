@@ -4,7 +4,22 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchGroup $orcidBatchGroup
  */
+$this->assign('title', 'Orcid Batch Groups');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->ID]) ?>
+            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->ID), 'class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->ID]]); ?>
+            <?= $this->Form->postLink(__('Expire Cache '), ['action' => 'recache', $orcidBatchGroup->ID]) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Groups'), ['action' => 'index']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchGroups view content">
@@ -42,17 +57,3 @@
         </div>
     </div>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatchGroup->ID]) ?>
-            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchGroup->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchGroup->ID), 'class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('List Users'), ['controller' => 'OrcidUsers', 'action' => 'find', 'prefix' => 'Admin', '?' => ['g' => $orcidBatchGroup->ID]]); ?>
-            <?= $this->Form->postLink(__('Expire Cache '), ['action' => 'recache', $orcidBatchGroup->ID]) ?>
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('List Groups'), ['action' => 'index']) ?>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

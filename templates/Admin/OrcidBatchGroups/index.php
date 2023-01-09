@@ -4,7 +4,19 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchGroup[]|\Cake\Collection\CollectionInterface $orcidBatchGroups
  */
+$this->assign('title', 'Orcid Batch Groups');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('New Group'), ['action' => 'add']) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Triggers'), ['controller' => 'orcid_batch_triggers','action' => 'index']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="orcidBatchGroups index content">
     <h3><?= __('ORCID Batch Groups') ?></h3>
     <div class="table-responsive">
@@ -38,13 +50,3 @@
     </div>
     <?= $this->element('paginator/pagination'); ?>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('New Orcid Batch'), ['action' => 'add']) ?>
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

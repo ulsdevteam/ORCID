@@ -15,7 +15,7 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+$cakeDescription = 'ORCID @ Pitt Admin';
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,8 +24,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        <?= $cakeDescription ?>:
-        <?= $this->fetch('title') ?>
+        <?= $this->fetch('title') ?> -
+        <?= $cakeDescription ?>
+        
     </title>
     <?= $this->Html->meta('icon') ?>
 
@@ -34,16 +35,22 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake']) ?>
 
     <?= $this->Html->script('jquery-3.6.0.min') ?>
-    <!-- <?= $this->Html->script('tiny_mce4/tinymce.min') ?> -->
+    <?= $this->Html->script('tiny_mce4/tinymce.min') ?>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
+    <link href="../../webroot/css/default.css" rel="stylesheet" type="text/css" />
     <?= $this->fetch('script') ?>
 </head>
 
 <body>
     <nav class="top-nav">
-        <div class="top-nav-title">
-            <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
+        <div id="pitt-header" class="blue">
+            <div id="pittlogo">
+                <a id="p-link" title="University of Pittsburgh" href="http://pitt.edu/">
+                    University of Pittsburgh
+                </a
+            </div>
+            <a href="<?= $this->Url->build(['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>">ORCID @ Pitt Admin</a>
         </div>
     </nav>
     <main class="main">

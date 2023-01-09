@@ -5,34 +5,35 @@
  * @var \App\Model\Entity\OrcidBatch $orcidBatch
  * @var string[]|\Cake\Collection\CollectionInterface $orcidBatchCreators
  */
+$this->assign('title', 'Edit Batch Email Template');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('View'), ['action' => 'view']) ?>
+            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatch->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID)]) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Orcid Batches'), ['action' => 'index']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <?php $this->TinyMCE->editor(['theme' => 'modern', 'selector' => 'textarea', 'plugins' => 'code link']); ?>
 <div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatch->ID]) ?>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $orcidBatch->ID],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Orcid Batches'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
     <div class="column-responsive column-80">
         <div class="orcidBatches form content">
             <?= $this->Form->create($orcidBatch) ?>
             <fieldset>
-                <legend><?= __('Edit Orcid Batch') ?></legend>
+                <legend><?= __('Edit Batch Email Template') ?></legend>
                 <?php
-                echo $this->Form->control('name');
-                echo $this->Form->control('from_name');
-                echo $this->Form->control('from_addr', ['label' => 'From Address']);
-                echo $this->Form->control('subject');
-                echo $this->Form->control('body', ['type' => 'textarea', 'required' => false]);
-                echo $this->Form->control('reply_to');
-                echo $this->Form->control('orcid_batch_creator_id', ['label' => 'Template Owner', 'options' => $orcidBatchCreators]);
+                echo $this->Form->control('NAME', ['label' => 'Name']);
+                echo $this->Form->control('FROM_NAME', ['label' => 'From Name']);
+                echo $this->Form->control('FROM_ADDR', ['label' => 'From Address']);
+                echo $this->Form->control('SUBJECT', ['label' => 'Subject']);
+                echo $this->Form->control('BODY', ['label' => 'Body', 'type' => 'textarea', 'required' => false]);
+                echo $this->Form->control('REPLY_TO', ['label' => 'Reply To']);
+                echo $this->Form->control('ORCID_BATCH_CREATOR_ID', ['label' => 'Template Owner', 'options' => $orcidBatchCreators]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

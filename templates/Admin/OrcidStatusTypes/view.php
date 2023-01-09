@@ -4,15 +4,18 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidStatusType $orcidStatusType
  */
+$this->assign('title', 'Workflow Checkpoint');
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Orcid Status Types'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List Orcid Status Types'), ['action' => 'index']) ?>
             <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
         </div>
-    </aside>
+    </nav>
+</aside>
+<div class="row">
     <div class="column-responsive column-80">
         <div class="orcidStatusTypes view content">
             <h3><?= h($orcidStatusType->NAME) ?></h3>
@@ -27,21 +30,21 @@
                 </tr>
             </table>
             <div class="related">
-                <h4><?= __('Users at this Checkpoint') ?></h4>
+                <h4><?= __('Workflow Checkpoint History') ?></h4>
                 <?php if (!empty($orcidStatusType->current_orcid_statuses)) : ?>
                     <div class="table-responsive">
                         <table>
                             <tr>
                                 <th><?= __('ORCID User') ?></th>
                                 <th><?= __('Status Timestamp') ?></th>
-                                <th class="actions"><?= __('Actions') ?></th>
+                                <th><?= __('Actions') ?></th>
                             </tr>
-                            <?php foreach ($orcidStatusType->current_orcid_statuses as $currentStatus) : ?>
+                            <?php foreach ($orcidStatusType->current_orcid_statuses as $orcidStatus) : ?>
                                 <tr>
-                                    <td><?= h($currentStatus->orcid_user->USERNAME) ?></td>
-                                    <td><?= h($currentStatus->STATUS_TIMESTAMP) ?></td>
+                                    <td><?= $orcidStatus->orcid_user->USERNAME ?></td>
+                                    <td><?= $orcidStatus->STATUS_TIMESTAMP ?></td>
                                     <td class="actions">
-                                        <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $currentStatus->orcid_user->ID]) ?>
+                                        <?= $this->Html->link(__('View'), ['controller' => 'OrcidUsers', 'action' => 'view', $orcidStatus->orcid_user->ID]) ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

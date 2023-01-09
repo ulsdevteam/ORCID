@@ -4,10 +4,20 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidBatchCreator[]|\Cake\Collection\CollectionInterface $orcidBatchCreators
  */
+$this->assign('title', 'Administrators');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h4 class="heading"><?= __('Actions') ?></h4>
+            <?= $this->Html->link(__('New Administrator'), ['action' => 'add']) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="orcidBatchCreators index content">
-    <?= $this->Html->link(__('New Orcid Batch Creator'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('ORCID Batch Creators') ?></h3>
+    <p><?= __('The following users are allowed to use this interface to administer email templates and triggers.') ?></p>
     <div class="table-responsive">
         <table>
             <thead>
@@ -31,12 +41,11 @@
                             <?php else : ?>
                                 <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->ID]) ?>
                             <?php endif; ?>
-                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidBatchCreator->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatchCreator->ID)]) ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <?= $this->element('paginator/pagination'); ?>
     </div>
-    <?= $this->element('paginator/pagination'); ?>
 </div>

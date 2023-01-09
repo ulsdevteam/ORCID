@@ -4,9 +4,17 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\OrcidEmail[]|\Cake\Collection\CollectionInterface $orcidEmails
  */
+$this->assign('title', 'Scheduled Emails');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="orcidEmails index content">
-    <?= $this->Html->link(__('New Orcid Email'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('ORCID Emails') ?></h3>
     <div class="table-responsive">
         <table>
