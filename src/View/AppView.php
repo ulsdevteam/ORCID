@@ -40,6 +40,6 @@ class AppView extends View
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadHelper('TinyMCE.TinyMCE');
+        $this->loadHelper('TinyMCE.TinyMCE', ['script' => 'tiny_mce4/tinymce.min']);
     }
 }
