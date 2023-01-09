@@ -29,7 +29,7 @@ class OrcidBatchCreator extends Entity
     {
         if ($this->has($field)) {
             return parent::__get($field);
-        } else if (!(isset($this->ldapResult))) {
+        } elseif (!(isset($this->ldapResult))) {
             $this->ldapHandler = new \LdapUtility\Ldap(Configure::read('ldapUtility.ldap'));
             $this->ldapHandler->bindUsingCommonCredentials();
             $ldapResult = $this->ldapHandler->find('search', [

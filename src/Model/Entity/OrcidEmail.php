@@ -17,7 +17,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime|null $CANCELLED
  *
  * @property \App\Model\Entity\OrcidUser $orcid_user
- * @property \App\Model\Entity\ORCIDBATCH $orcid_batch
+ * @property \App\Model\Entity\OrcidBatch $orcid_batch
  */
 class OrcidEmail extends Entity
 {

@@ -38,7 +38,7 @@ class OrcidUser extends Entity
     {
         if ($this->has($field)) {
             return parent::__get($field);
-        } else if (!(isset($this->ldapResult))) {
+        } elseif (!(isset($this->ldapResult))) {
             $OrcidUsersTable = $this->fetchTable('OrcidUsers');
 
             $this->ldapHandler = $OrcidUsersTable->ldapHandler;
@@ -57,29 +57,56 @@ class OrcidUser extends Entity
             if ($this->ldapResult['count'] > 0) {
 
                 $result = $this->ldapResult[0];
-                $this->set("displayname", $result['displayname'][0]);
-                $this->set("email", $result['mail'][0]);
-                if (!isset($result['department'])) {
-                    $this->set("department", "");
+
+                if (isset($result['displayname'])){
+                    $this->set("displayname", $result['displayname'][0]);
                 } else {
+                    $this->set("displayname", "");
+                }
+
+                if (isset($result['mail'])){
+                    $this->set("email", $result['mail'][0]);
+                } else {
+                    $this->set("email", "");
+                }
+
+                if (isset($result['department'])) {
                     $this->set("department", $result['department'][0]);
+                } else {
+                    $this->set("department", "");
                 }
 
                 if (!isset($result['pittemployeerc'])) {
                     $this->set("department", "");
                     $this->set("rc", "");
                 } elseif (($result['pittemployeerc']['count'] > 0)) {
+
                     $this->set("rc", $result['pittemployeerc'][0]);
-                    $this->set("rcdepartment", "RC " . $result['pittemployeerc'][0] . " / " . $result['department'][0]);
+
+                    if (isset($result['department'])) {
+                        $this->set("rcdepartment", "RC " . $result['pittemployeerc'][0] . " / " . $result['department'][0]);
+                    } else {
+                        $this->set("rcdepartment", "RC " . $result['pittemployeerc'][0]);
+                    }
+
                 } else {
-                    $this->set("rcdepartment", $result['department'][0]);
+
+                    if (isset($result['department'])) {
+                        $this->set("rcdepartment", $result['department'][0]);
+                    } else {
+                        $this->set("rcdepartment", "");
+                    }
+
+                    $this->set("rc", "");                
                 }
             } else {
 
                 $this->set("displayname", "");
                 $this->set("email", "");
                 $this->set("department", "");
+                $this->set("rcdepartment", "");
                 $this->set("rc", "");
+                
             }
         }
         return parent::__get($field);
