@@ -75,12 +75,12 @@ class OrcidUsersController extends AppController
             $userQuery = $options['q'] ?? '';
             $findType = $options['f'] ?? '';
             $groupQuery = $options['g'] ?? '';
-            $statusQuery = $options['s'] ?? '';
+            $statusQuery = $options['s'] ?? '-1';
         } else {
             $userQuery = '';
             $findType = '';
             $groupQuery = '';
-            $statusQuery = '';
+            $statusQuery = '-1';
         }
 
         $BatchGroups = $this->fetchTable('OrcidBatchGroups');
@@ -122,27 +122,24 @@ class OrcidUsersController extends AppController
      * @return void
      */
     public function report($queryString = null) {
-        $debug = Configure::read('debug');
-		Configure::write('debug', 1);
         parse_str($queryString, $options);
 
         if ($options) {
             $userQuery = $options['q'] ?? '';
             $findType = $options['f'] ?? '';
             $groupQuery = $options['g'] ?? '';
-            $statusQuery = $options['s'] ?? '';
+            $statusQuery = $options['s'] ?? '-1';
         } else {
             $userQuery = '';
             $findType = '';
             $groupQuery = '';
-            $statusQuery = '';
+            $statusQuery = '-1';
         }
 		$filename = tempnam(TMP, 'rep');
 		$fh = fopen($filename, 'w');
 		$OrcidBatchGroup = $this->fetchTable('OrcidBatchGroups');
 		$OrcidStatusType = $this->fetchTable('OrcidStatusTypes');
 		$findTypes = [0 => __('Containing'), 1 => __('Starting With'), 2 => __('Ending With'), 3 => __('Matching Exactly')];
-		$orcidBatchGroups = $OrcidBatchGroup->find('list');
 		$orcidUsers = $this->_parameterize($userQuery, $findType, $groupQuery, $statusQuery);
 		$reportTitle = __('Users').($userQuery ? $findTypes[$findType].' '.'"'.$userQuery.'"' : '').($groupQuery ? ' '.__('within').' '.$OrcidBatchGroup->get($groupQuery)->NAME : '').($statusQuery != $this::NULL_STRING_ID ? ' '.__('with Current Status of').' '.$OrcidStatusType->get($statusQuery)->NAME : '');
 		fputcsv($fh, [$reportTitle,null,null,null,null]);
@@ -152,7 +149,7 @@ class OrcidUsersController extends AppController
 				$orcidUser->USERNAME,
 				$orcidUser->ORCID,
 				$orcidUser->displayname,
-				$orcidUser->rcdepartment,
+				$orcidUser->rc,
 				$orcidUser->department,
 				$OrcidStatusType->get($orcidUser->current_orcid_statuses[0]->ORCID_STATUS_TYPE_ID)->NAME,
 				$orcidUser->current_orcid_statuses[0]->STATUS_TIMESTAMP,
@@ -161,7 +158,6 @@ class OrcidUsersController extends AppController
 		fclose($fh);
 		$this->response = $this->response->withFile($filename, ['download' => true, 'name' => 'report.csv']);
 		$this->response = $this->response->withType('text/csv');
-		Configure::write('debug', $debug);
 		return $this->response;
     }
 
