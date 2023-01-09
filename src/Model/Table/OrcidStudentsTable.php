@@ -8,6 +8,8 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
+use Cake\Event\Event;
+use ArrayObject;
 
 /**
  * OrcidStudents Model
@@ -39,7 +41,7 @@ class OrcidStudentsTable extends Table
         parent::initialize($config);
 
         $this->setTable('ORCID_STUDENT');
-        $this->setDisplayField(['EMPLID', 'TERM_CD', 'CAREER_LEVEL_CD']);
+        $this->setDisplayField('USERNAME');
         $this->setPrimaryKey(['EMPLID', 'TERM_CD', 'CAREER_LEVEL_CD']);
     }
 
@@ -313,6 +315,11 @@ class OrcidStudentsTable extends Table
      */
     public static function defaultConnectionName(): string
     {
-        return (Configure::read('debug')) ? 'default-cds' : 'production-cds';
+        return (Configure::read('debug')) ? 'default' : 'production-cds';
     }
+
+    public function beforeFind(Event $event, Query $query, ArrayObject $options, $primary)
+    {
+        $query->whereNotNull('USERNAME');
+    } 
 }

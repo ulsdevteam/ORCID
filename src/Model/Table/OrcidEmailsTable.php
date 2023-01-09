@@ -76,8 +76,7 @@ class OrcidEmailsTable extends Table
 
         $validator
             ->integer('ORCID_BATCH_ID')
-            ->requirePresence('ORCID_BATCH_ID', 'create')
-            ->notEmptyString('ORCID_BATCH_ID', 'The target batch must be provided.');
+            ->allowEmptyString("ORCID_BATCH_ID");
 
         $validator
             ->dateTime('QUEUED')

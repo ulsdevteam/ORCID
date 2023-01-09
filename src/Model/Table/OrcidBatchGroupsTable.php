@@ -82,7 +82,7 @@ class OrcidBatchGroupsTable extends Table
 					// skip if a group definition is provided and the user does not match the definition
 					if ($group->GROUP_DEFINITION) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = '(cn=' . $student->username . ')' . $group->GROUP_DEFINITION;
+						$options = '(cn=' . $student->USERNAME . ')' . $group->GROUP_DEFINITION;
 						if (!$this->OrcidUser->definitionSearch($options)) {
 							continue;
 						}
@@ -101,7 +101,7 @@ class OrcidBatchGroupsTable extends Table
 					// skip if a group definition is provided and the user does not match the definition
 					if ($group->GROUP_DEFINITION) {
 						// TODO: warning: hardcoded foreign key relationship
-						$options = '(cn=' . $employee->username . ')' . $group->GROUP_DEFINITION;
+						$options = '(cn=' . $employee->USERNAME . ')' . $group->GROUP_DEFINITION;
 						if (!$this->OrcidUser->definitionSearch($options)) {
 							continue;
 						}
@@ -109,7 +109,7 @@ class OrcidBatchGroupsTable extends Table
 					$groupMembers[$employee->USERNAME] = $employee->USERNAME;
 				}
 			}
-		} else if ($group->GROUP_DEFINITION) {
+		} elseif ($group->GROUP_DEFINITION) {
 			// group_definition is the base query
 			// TODO: risky because Person is LDAP and may not support paging
 			$people = $this->OrcidUser->definitionSearch($group->GROUP_DEFINITION);
@@ -123,7 +123,7 @@ class OrcidBatchGroupsTable extends Table
 			$user = $this->OrcidUser->find('all', $options)->first();
 			if (!$user) {
 				$user = $this->OrcidUser->newEntity(['USERNAME' => $groupMember]);
-				if ($this->OrcidUser->save($user)) {
+				if ($this->OrcidUser->save($user) !== false ) {
 					continue;
 				} else {
 					$user = $this->OrcidUser->find('all', $options)->first();
@@ -186,25 +186,25 @@ class OrcidBatchGroupsTable extends Table
 			->add('ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
 		$validator
-			->scalar('name')
-			->maxLength('name', 512)
-			->requirePresence('name', 'create')
-			->notEmptyString('name');
+			->scalar('NAME')
+			->maxLength('NAME', 512)
+			->requirePresence('NAME')
+			->notEmptyString('NAME', 'Group name must be provided.');
 
 		$validator
 			->scalar('GROUP_DEFINITION')
 			->maxLength('GROUP_DEFINITION', 2048)
-			->allowEmptyString('GROUP_DEFINITION');
+			->allowEmptyString('GROUP_DEFINITION', 'At least one criteria must be specified.', [$this, 'oneRequired']);
 
 		$validator
 			->scalar('EMPLOYEE_DEFINITION')
 			->maxLength('EMPLOYEE_DEFINITION', 2048)
-			->allowEmptyString('EMPLOYEE_DEFINITION');
+			->allowEmptyString('EMPLOYEE_DEFINITION', 'At least one criteria must be specified.', [$this, 'oneRequired']);
 
 		$validator
 			->scalar('STUDENT_DEFINITION')
 			->maxLength('STUDENT_DEFINITION', 2048)
-			->allowEmptyString('STUDENT_DEFINITION');
+			->allowEmptyString('STUDENT_DEFINITION', 'At least one criteria must be specified.', [$this, 'oneRequired']);
 
 		$validator
 			->dateTime('CACHE_CREATION_DATE')
@@ -236,4 +236,12 @@ class OrcidBatchGroupsTable extends Table
     {
         return (Configure::read('debug')) ? 'default' : 'production-default';
     }
+
+	public static function oneRequired($context) {
+		$data = $context["data"];
+		if (!empty($data) &&  (empty($data['GROUP_DEFINITION']) && empty($data['EMPLOYEE_DEFINITION']) && empty($data['STUDENT_DEFINITION']))) {
+			return false;
+		}
+		return true;
+	}
 }

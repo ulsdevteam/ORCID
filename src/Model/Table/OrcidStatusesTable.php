@@ -72,17 +72,17 @@ class OrcidStatusesTable extends Table
         $validator
             ->integer('ORCID_USER_ID')
             ->requirePresence('ORCID_USER_ID', 'create')
-            ->notEmptyString('ORCID_USER_ID');
+            ->notEmptyString('ORCID_USER_ID', 'User must be provided.');
 
         $validator
             ->integer('ORCID_STATUS_TYPE_ID')
             ->requirePresence('ORCID_STATUS_TYPE_ID', 'create')
-            ->notEmptyString('ORCID_STATUS_TYPE_ID');
+            ->notEmptyString('ORCID_STATUS_TYPE_ID', 'Status type must be provided.');
 
         $validator
-            ->dateTime('STATUS_TIMESTAMP')
+            ->dateTime('STATUS_TIMESTAMP', ['ymd'], 'Status timestamp must be a valid datetime.')
             ->requirePresence('STATUS_TIMESTAMP', 'create')
-            ->notEmptyDateTime('STATUS_TIMESTAMP');
+            ->notEmptyDateTime('STATUS_TIMESTAMP', 'Status timestamp must be provided.');
 
         return $validator;
     }

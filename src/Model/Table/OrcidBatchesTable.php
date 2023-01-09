@@ -79,42 +79,40 @@ class OrcidBatchesTable extends Table
             ->scalar('NAME')
             ->maxLength('NAME', 512)
             ->requirePresence('NAME', 'create')
-            ->notEmptyString('NAME');
+            ->notEmptyString('NAME', 'A name for this batch must be provided.');
 
         $validator
             ->scalar('SUBJECT')
             ->maxLength('SUBJECT', 512)
             ->requirePresence('SUBJECT', 'create')
-            ->notEmptyString('SUBJECT');
+            ->notEmptyString('SUBJECT', 'The email subject must be provided.');
 
         $validator
             ->scalar('BODY')
-            ->maxLength('BODY', 4000)
             ->requirePresence('BODY', 'create')
-            ->notEmptyString('BODY');
+            ->notEmptyString('BODY', 'The email body must be provided.');
 
         $validator
             ->scalar('FROM_NAME')
             ->maxLength('FROM_NAME', 64)
             ->requirePresence('FROM_NAME', 'create')
-            ->notEmptyString('FROM_NAME');
+            ->notEmptyString('FROM_NAME', 'The from display name must be provided.');
 
         $validator
             ->scalar('FROM_ADDR')
             ->maxLength('FROM_ADDR', 64)
             ->requirePresence('FROM_ADDR', 'create')
-            ->notEmptyString('FROM_ADDR');
+            ->notEmptyString('FROM_ADDR', 'The from address must be a valid email.');
 
         $validator
             ->scalar('REPLY_TO')
             ->maxLength('REPLY_TO', 64)
-            ->allowEmptyString('REPLY_TO');
+            ->allowEmptyString('REPLY_TO', 'The reply to address must be a valid email.');
 
         $validator
             ->integer('ORCID_BATCH_CREATOR_ID')
             ->requirePresence('ORCID_BATCH_CREATOR_ID', 'create')
-            ->notEmptyString('ORCID_BATCH_CREATOR_ID')
-            ->add('ORCID_BATCH_CREATOR_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_BATCH_CREATOR_ID', 'The batch creator must be provided.');
 
         return $validator;
     }
@@ -128,8 +126,7 @@ class OrcidBatchesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('ORCID_BATCH_CREATOR_ID', 'ORCIDBATCHCREATORS'), ['errorField' => 'ORCID_BATCH_CREATOR_ID']);
-        $rules->add($rules->isUnique(['ORCID_BATCH_CREATOR_ID']), ['errorField' => 'ORCID_BATCH_CREATOR_ID']);
+        $rules->add($rules->existsIn('ORCID_BATCH_CREATOR_ID', 'OrcidBatchCreators'), ['errorField' => 'ORCID_BATCH_CREATOR_ID', 'message' => 'The batch creator must be provided.']);
         $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
 
         return $rules;

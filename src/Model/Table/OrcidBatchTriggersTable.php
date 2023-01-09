@@ -77,29 +77,27 @@ class OrcidBatchTriggersTable extends Table
             ->scalar('NAME')
             ->maxLength('NAME', 512)
             ->requirePresence('NAME', 'create')
-            ->notEmptyString('NAME');
+            ->notEmptyString('NAME', 'The trigger name must be provided.');
 
         $validator
             ->integer('ORCID_STATUS_TYPE_ID')
             ->requirePresence('ORCID_STATUS_TYPE_ID', 'create')
-            ->notEmptyString('ORCID_STATUS_TYPE_ID')
-            ->add('ORCID_STATUS_TYPE_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_STATUS_TYPE_ID', 'The status type must be provided.');
 
         $validator
             ->integer('ORCID_BATCH_ID')
             ->requirePresence('ORCID_BATCH_ID', 'create')
-            ->notEmptyString('ORCID_BATCH_ID')
-            ->add('ORCID_BATCH_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('ORCID_BATCH_ID', 'The batch must be provided.');
 
         $validator
             ->integer('TRIGGER_DELAY')
             ->requirePresence('TRIGGER_DELAY', 'create')
-            ->notEmptyString('TRIGGER_DELAY');
+            ->notEmptyString('TRIGGER_DELAY')
+            ->add('TRIGGER_DELAY', 'naturalNumber', ['rule' => ['naturalNumber', true], 'message' => 'The triggering days must be a natural number.', ]);
 
         $validator
             ->integer('ORCID_BATCH_GROUP_ID')
-            ->allowEmptyString('ORCID_BATCH_GROUP_ID')
-            ->add('ORCID_BATCH_GROUP_ID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->allowEmptyString('ORCID_BATCH_GROUP_ID');
 
         $validator
             ->dateTime('BEGIN_DATE')
@@ -111,11 +109,13 @@ class OrcidBatchTriggersTable extends Table
 
         $validator
             ->integer('REPEAT')
-            ->notEmptyString('REPEAT');
+            ->notEmptyString('REPEAT')
+            ->add('TRIGGER_DELAY', 'naturalNumber', ['rule' => ['naturalNumber', true], 'message' => 'The repetition days must be a natural number.']);
 
         $validator
             ->integer('MAXIMUM_REPEAT')
-            ->notEmptyString('MAXIMUM_REPEAT');
+            ->notEmptyString('MAXIMUM_REPEAT')
+            ->add('TRIGGER_DELAY', 'naturalNumber', ['rule' => ['naturalNumber', true], 'message' => 'The repetition limit must be a natural number.']);
 
         return $validator;
     }
@@ -129,10 +129,6 @@ class OrcidBatchTriggersTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['ORCID_BATCH_GROUP_ID'], ['allowMultipleNulls' => true]), ['errorField' => 'ORCID_BATCH_GROUP_ID']);
-        $rules->add($rules->isUnique(['BEGIN_DATE'], ['allowMultipleNulls' => true]), ['errorField' => 'BEGIN_DATE']);
-        $rules->add($rules->isUnique(['ORCID_BATCH_ID']), ['errorField' => 'ORCID_BATCH_ID']);
-        $rules->add($rules->isUnique(['ORCID_STATUS_TYPE_ID']), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
         $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
         $rules->add($rules->existsIn('ORCID_STATUS_TYPE_ID', 'OrcidStatusTypes'), ['errorField' => 'ORCID_STATUS_TYPE_ID']);
         $rules->add($rules->existsIn('ORCID_BATCH_ID', 'OrcidBatches'), ['errorField' => 'ORCID_BATCH_ID']);

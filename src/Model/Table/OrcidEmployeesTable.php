@@ -9,6 +9,8 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
+use Cake\Event\Event;
+use ArrayObject;
 
 /**
  * OrcidEmployees Model
@@ -40,7 +42,7 @@ class OrcidEmployeesTable extends Table
         parent::initialize($config);
 
         $this->setTable('ORCID_EMPLOYEE');
-        $this->setDisplayField('EMPLOYEE_NBR');
+        $this->setDisplayField('USERNAME');
         $this->setPrimaryKey('EMPLOYEE_NBR');
     }
 
@@ -246,6 +248,11 @@ class OrcidEmployeesTable extends Table
      */
     public static function defaultConnectionName(): string
     {
-        return (Configure::read('debug')) ? 'default-cds' : 'production-cds';
+        return (Configure::read('debug')) ? 'default' : 'production-cds';
+    }
+
+    public function beforeFind(Event $event, Query $query, ArrayObject $options, $primary)
+    {
+        $query->whereNotNull('USERNAME');
     }
 }

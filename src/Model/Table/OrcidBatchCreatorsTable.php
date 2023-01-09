@@ -70,13 +70,11 @@ class OrcidBatchCreatorsTable extends Table
             ->scalar('NAME')
             ->maxLength('NAME', 8)
             ->requirePresence('NAME', 'create')
-            ->notEmptyString('NAME')
-            ->add('NAME', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('NAME', 'Creator name must be provided.');
 
         $validator
             ->integer('FLAGS')
-            ->notEmptyString('FLAGS')
-            ->add('FLAGS', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmptyString('FLAGS');
 
         return $validator;
     }
@@ -91,8 +89,6 @@ class OrcidBatchCreatorsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
-        $rules->add($rules->isUnique(['FLAGS']), ['errorField' => 'FLAGS']);
-        $rules->add($rules->isUnique(['NAME']), ['errorField' => 'NAME']);
 
         return $rules;
     }

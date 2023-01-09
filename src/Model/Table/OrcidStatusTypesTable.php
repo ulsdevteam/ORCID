@@ -79,12 +79,13 @@ class OrcidStatusTypesTable extends Table
             ->scalar('NAME')
             ->maxLength('NAME', 512)
             ->requirePresence('NAME', 'create')
-            ->notEmptyString('NAME');
+            ->notEmptyString('NAME', 'A name for this status type is required.');
 
         $validator
             ->integer('SEQ')
             ->allowEmptyString('SEQ')
-            ->add('SEQ', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->add('SEQ', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Sequence position already in use.'])
+            ->add('SEQ', 'naturalNumber', ['rule' => ['naturalNumber', true], 'message' => 'Sequence must be a natural number.']);;
 
         return $validator;
     }

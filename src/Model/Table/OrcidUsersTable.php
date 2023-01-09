@@ -51,7 +51,7 @@ class OrcidUsersTable extends Table
         parent::initialize($config);
 
         $this->setTable('ULS.ORCID_USERS');
-        $this->setDisplayField('id');
+        $this->setDisplayField('USERNAME');
         $this->setPrimaryKey('ID');
 
         $this->addBehavior('Timestamp');
@@ -61,7 +61,8 @@ class OrcidUsersTable extends Table
         ]);
         $this->hasMany('CurrentOrcidStatuses', [
             'foreignKey' => 'ORCID_USER_ID',
-        ]);
+        ])->setStrategy('subquery');
+        
         $this->hasMany('OrcidBatchGroupCaches', [
             'foreignKey' => 'ORCID_USER_ID',
         ]);
@@ -88,7 +89,7 @@ class OrcidUsersTable extends Table
             'filter' => $cn,
             'attributes' => $ldapAttributes
         ]);
-        $people = array();
+        $people = [];
         foreach ($this->ldapResult as $person) {
             if (!is_array($person)){
                 continue;
@@ -119,21 +120,25 @@ class OrcidUsersTable extends Table
 
         $validator
             ->scalar('USERNAME')
-            ->maxLength('USERNAME', 8)
-            ->requirePresence('USERNAME', 'create')
-            ->notEmptyString('USERNAME')
-            ->add('USERNAME', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->maxLength('USERNAME', 8, 'Username must be 8 characters or less.')
+            ->requirePresence('USERNAME', 'create', 'Username is required.')
+            ->notEmptyString('USERNAME', 'Username is required.')
+            ->alphaNumeric('USERNAME', 'Username must be alphanumeric.')
+            ->add('USERNAME', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Username is already in use.']);
 
         $validator
             ->scalar('ORCID')
             ->maxLength('ORCID', 19)
             ->allowEmptyString('ORCID')
-            ->add('ORCID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->add('ORCID', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'ORCID is already in use.'])
+            ->add('ORCID', 'formatted', ['rule' => ['custom', '/^(\d{4}-\d{4}-\d{4}-\d{3}[0-9X])$/'], 'message' => 'ORCID must be a valid ORCID format.',])
+            ->add('ORCID', 'checksum', ['rule' => [$this, 'orcid_checksum'], 'message' => 'ORCID must yield a valid ORCID checksum.']);
 
         $validator
             ->scalar('TOKEN')
             ->maxLength('TOKEN', 255)
-            ->allowEmptyString('TOKEN');
+            ->allowEmptyString('TOKEN')
+            ->add('TOKEN', 'UUID', ['rule' => 'uuid', 'message' => 'Scope Token must be a valid UUID.']);
 
         $validator
             ->dateTime('CREATED')
@@ -156,8 +161,8 @@ class OrcidUsersTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
-        $rules->add($rules->isUnique(['USERNAME']), ['errorField' => 'USERNAME']);
-        $rules->add($rules->isUnique(['ORCID'], ['allowMultipleNulls' => true]), ['errorField' => 'ORCID']);
+        $rules->add($rules->isUnique(['USERNAME']), ['errorField' => 'USERNAME', 'message' => 'Username is already in use.']);
+        $rules->add($rules->isUnique(['ORCID'], ['allowMultipleNulls' => true]), ['errorField' => 'ORCID', 'message' => 'ORCID is already in use.']);
 
         return $rules;
     }
@@ -170,6 +175,28 @@ class OrcidUsersTable extends Table
     public static function defaultConnectionName(): string
     {
         return (Configure::read('debug')) ? 'default' : 'production-default';
+    }
+
+
+    /**
+     * Custom validation: ORCID checksum
+     * @param string $check
+     * @return bool
+     */
+    public static function orcid_checksum($check) {
+		$orcid= str_replace('-', '', $check);
+		if (strlen($orcid) != 16) {
+			return false;
+		}
+		$total = 0;
+		for ($i=0; $i<15; $i++) {
+			$total = ($total + $orcid[$i]) *2;
+		}
+		
+		$remainder = $total % 11;
+		$result = (12 - $remainder) % 11;
+
+		return ($orcid[15] == ($result==10 ? 'X' : $result));
     }
 
 }
