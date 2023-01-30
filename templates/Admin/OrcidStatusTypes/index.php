@@ -15,7 +15,7 @@ $this->assign('title', 'Workflow Checkpoints');
     </nav>
 </aside>
 <div class="orcidStatusTypes index content">
-    <h3><?= __($this->fetch('title')) ?></h3>
+    <h2><?= __($this->fetch('title')) ?></h2>
     <p>These checkpoints represent different stages of completion within the workflow, ordered in sequence.  View a checkpoint to see a list of users at this status in the workflow.</p>
     <div class="table-responsive">
         <table>

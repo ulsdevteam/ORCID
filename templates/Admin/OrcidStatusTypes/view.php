@@ -18,7 +18,7 @@ $this->assign('title', 'Workflow Checkpoint');
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidStatusTypes view content">
-            <h3><?= h($orcidStatusType->NAME) ?></h3>
+            <h2><?= h($orcidStatusType->NAME) ?></h2>
             <table>
                 <tr>
                     <th><?= __('Name') ?></th>
