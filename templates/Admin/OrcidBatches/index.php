@@ -17,7 +17,7 @@ $this->assign('title', 'Batch Email Templates');
     </nav>
 </aside>
 <div class="orcidBatches index content">
-    <h3><?= __('Batch Email Templates') ?></h3>
+    <h2><?= __('Batch Email Templates') ?></h2>
     <p>
         <?= __('An email template will be used to send a message to a user based on one or more triggers. Each email template can be sent to any user only once, unless manually re-queued.'); ?>
     </p>

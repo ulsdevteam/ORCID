@@ -21,7 +21,7 @@ $this->assign('title', 'Batch Email Templates');
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatches view content">
-            <h3><?= h($orcidBatch->NAME) ?></h3>
+            <h2><?= "Batch Email Template" ?></h2>
             <table>
                 <tr>
                     <th><?= __('Name') ?></th>
@@ -62,7 +62,6 @@ $this->assign('title', 'Batch Email Templates');
 
             <div class="related">
                 <h4><?= __('Triggers Attached to this Template') ?></h4>
-                <?= $this->Html->link(__('New Trigger'), ['action' => 'add'], ['class' => 'button']) ?>
                 <?php if (!empty($orcidBatch->orcid_batch_triggers)) : ?>
                     <div class="table-responsive">
                         <table>
@@ -89,6 +88,7 @@ $this->assign('title', 'Batch Email Templates');
                         </table>
                     </div>
                 <?php endif; ?>
+                <?= $this->Html->link(__('New Trigger'), ['action' => 'add'], ['class' => 'button']) ?>
             </div>
         </div>
     </div>
