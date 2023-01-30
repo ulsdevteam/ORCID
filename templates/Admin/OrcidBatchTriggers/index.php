@@ -20,7 +20,7 @@ $this->assign('title', 'Triggers');
     </nav>
 </aside>
 <div class="orcidBatchTriggers index content">
-    <h3><?= __('Triggers') ?></h3>
+    <h2><?= __('Triggers') ?></h2>
     <p>Each trigger has the potential to queue an email to a user based on the criteria specified in the trigger.</p>
     <div class="table-responsive">
         <table>
