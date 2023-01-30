@@ -248,7 +248,7 @@ class OrcidEmployeesTable extends Table
      */
     public static function defaultConnectionName(): string
     {
-        return (Configure::read('debug')) ? 'default' : 'production-cds';
+        return (Configure::read('debug')) ? 'default-cds' : 'production-cds';
     }
 
     public function beforeFind(Event $event, Query $query, ArrayObject $options, $primary)
