@@ -18,7 +18,7 @@ $this->assign('title', 'Orcid Batch Groups');
     </nav>
 </aside>
 <div class="orcidBatchGroups index content">
-    <h3><?= __('ORCID Batch Groups') ?></h3>
+    <h2><?= __('ORCID Batch Groups') ?></h2>
     <div class="table-responsive">
         <table>
             <thead>

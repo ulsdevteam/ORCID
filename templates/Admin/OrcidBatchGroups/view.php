@@ -23,7 +23,7 @@ $this->assign('title', 'Orcid Batch Groups');
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchGroups view content">
-            <h3><?= h($orcidBatchGroup->NAME) ?></h3>
+            <h2><?= h($orcidBatchGroup->NAME) ?></h2>
             <table>
                 <tr>
                     <th><?= __('Name') ?></th>
