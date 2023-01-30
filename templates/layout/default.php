@@ -43,24 +43,17 @@ $cakeDescription = 'ORCID @ Pitt Admin';
 </head>
 
 <body>
-    <nav class="top-nav">
-        <div id="pitt-header" class="blue">
-            <div id="pittlogo">
-                <a id="p-link" title="University of Pittsburgh" href="http://pitt.edu/">
-                    University of Pittsburgh
-                </a
-            </div>
+    <div id="header">
+        <h1>
             <a href="<?= $this->Url->build(['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>">ORCID @ Pitt Admin</a>
-        </div>
-    </nav>
+        </h1>
+    </div>
     <main class="main">
         <div class="container">
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
         </div>
     </main>
-    <footer>
-    </footer>
 </body>
 
 </html>

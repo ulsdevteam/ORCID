@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php use Cake\Core\Configure; ?>
 
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -6,7 +7,7 @@
   <meta charset="UTF-8" />
   <title>ORCID @ Pitt</title>
   <link href="../../webroot/css/default.css" rel="stylesheet" type="text/css" />
-  <!-- <?php if (ORCID_PRODUCTION): ?>
+  <?php if (!Configure::read('debug')) : ?>
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -17,7 +18,7 @@
     ga('send', 'pageview');
 
   </script>
-  <?php endif; ?> -->
+  <?php endif; ?>
 </head>
 
 <body>
@@ -52,7 +53,7 @@
         <p class="linker"><a class="actionbutton" href="mailto:orcidcomm@mail.pitt.edu">orcidcomm@mail.pitt.edu</a></p>
       </div>
     </footer>
-  </div><!-- /end wrapper -->
+  </div>
 </body>
 
 </html>

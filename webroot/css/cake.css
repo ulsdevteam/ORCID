@@ -2,6 +2,8 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
+    font-size: 145%;
+    color: #333;
 }
 
 .top-nav-links,
@@ -18,16 +20,12 @@ h1, h2, h3, h4, h5, h6 {
 
 a {
     color:#2f85ae;
-    -webkit-transition:all 0.2s linear;
-    transition:all 0.2s linear;
 }
 
 a:hover,
 a:focus,
 a:active  {
     color:#2a6496;
-    -webkit-transition:all 0.2s easeout;
-    transition:all 0.2s ease-out;
 }
 
 .side-nav a,
@@ -41,7 +39,9 @@ th a,
 .side-nav a:focus,
 .actions a:hover,
 .actions a:focus {
-    color:#2f85ae;
+    background: #ededed;
+    border-color: #acacac;
+    text-decoration: none;
 }
 
 /* Utility */
@@ -54,19 +54,19 @@ th a,
 
 /* Main */
 body {
-    background: #f5f7fa;
+    background: rgb(17, 17, 85)
 }
+
 .content {
     padding: 2rem;
     background: #ffffff;
-    border-radius: 0.4rem;
     /* Thanks Stripe */
-    box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1),
-        0 3px 6px 0 rgba(0, 0, 0, 0.07);
+    /* box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1),
+        0 3px 6px 0 rgba(0, 0, 0, 0.07); */
 }
+
 .actions a {
     font-weight: bold;
-    padding: 0 0.5%;
     font-weight: normal;
     background: #dcdcdc;
     background-image: none;
@@ -90,6 +90,8 @@ body {
     -webkit-user-select: none;
     user-select: none;
     margin-bottom: 5%;
+    padding: 0 1em;
+    text-align: center;
 }
 
 
@@ -102,16 +104,20 @@ body {
     padding: 2rem;
     margin: 0 auto 2rem;
 }
+
 .top-nav-title a {
     font-size: 2.4rem;
     color: #d33c43;
 }
+
 .top-nav-title span {
     color: #404041;
 }
+
 .top-nav-links a {
     margin: 0 0.5rem;
 }
+
 .top-nav-title a,
 .top-nav-links a {
     font-weight: bold;
@@ -143,19 +149,23 @@ body {
     border-radius: 4px;
     margin-bottom: 2rem;
 }
+
 .message.hidden {
     display: none;
 }
+
 .message.success {
     background: #e3fcec;
     color: #1f9d55;
     border-color: #51d88a;
 }
+
 .message.warning {
     background: #fffabc;
     color: #8d7b00;
     border-color: #d3b800;
 }
+
 .message.error {
     background: #fcebea;
     color: #cc1f1a;
@@ -241,13 +251,25 @@ body {
         content: " \2190";
     }
 }
+
 .container {
     display: flex;
+    border-top: 7px solid rgb(204, 204, 154);
     flex-direction: row;
+    padding: 10px 20px 40px 20px;
+    background-color: #ffffff;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-image: url("../img/bg_border.jpg"), url("../img/bg_border.jpg");
+    background-origin: padding-box;
+    background-position: left top, right top;
+    background-repeat: no-repeat, no-repeat;
+    background-size: auto auto;
 }
 
 .content {
-    flex-grow: 2;   
+    min-width: 10%;
+    border-left: 1px solid #666;
 }
 
 
@@ -274,10 +296,22 @@ td:last-child {
     color: #777;
 }
 
+h2 {
+    background: #fff;
+    color: #e32;
+    font-family: "MuseoSlab500Regular","museo-slab","Rockwell",sans-serif;
+    font-size: 190%;
+}
+
 h3 {
+    color: #2c6877;
     font-family: "MuseoSlab500Regular","museo-slab","Rockwell",sans-serif;
     font-size: 165%;
-    margin-bottom: 5%;
+}
+
+.column {
+    background-color: white;
+    padding-right: 2%;
 }
 
 .content .actions {
@@ -301,4 +335,40 @@ td, th, dd, dt{
     width: -moz-available;
     width: -webkit-fill-available;
     width: fill-available;
+}
+
+.main {
+    padding: 0 1%;
+}
+
+#header {
+    padding: 10px 20px;
+    background: #115 url('/img/pitt-logo-bluebkg.gif') no-repeat left;
+}
+
+#header h1 {
+    margin-left: 280px;
+    line-height: 49px;
+    font-size: 140%;
+    color: #cccc9a;
+    background-color: #115;
+    font-family: "MuseoSlab500Regular","museo-slab","Rockwell",sans-serif;
+}
+
+#header a, #footer a {
+    color: #cccc9a;
+}
+
+#header a:hover {
+    text-decoration: underline;
+}
+
+div.form, div.index, div.view {
+	border-left: 1px solid #666;
+	padding: 10px 2%;
+}
+
+.content td.actions {
+    display: inline-flex;
+    flex-direction: column;
 }
