@@ -24,7 +24,7 @@ $this->assign('title', 'Administrator');
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchCreators view content">
-            <h3><?= __($this->fetch('title')) ?></h3>
+            <h2><?= __($this->fetch('title')) ?></h2>
             <table>
                 <tr>
                     <th><?= __('Username') ?></th>

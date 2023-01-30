@@ -18,7 +18,7 @@ $this->assign('title', 'Add Administrator');
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidBatchCreators form content">
-            <h3><?= __('Add Administrator') ?></h3>
+            <h2><?= __('Add Administrator') ?></h3>
             <?= $this->Form->create($orcidBatchCreator) ?>
             <fieldset>
                 <p><?= __('Enter the University Computer Account name to create an new administrative user.') ?></p>

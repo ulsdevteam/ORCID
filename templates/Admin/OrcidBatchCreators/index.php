@@ -22,9 +22,9 @@ $this->assign('title', 'Administrators');
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('Username') ?></th>
-                    <th><?= $this->Paginator->sort('Name') ?></th>
-                    <th><?= $this->Paginator->sort('Enabled') ?></th>
+                    <th><?= $this->Paginator->sort('NAME','Username') ?></th>
+                    <th><?= 'Name' ?></th>
+                    <th><?= $this->Paginator->sort('FLAGS','Enabled') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
