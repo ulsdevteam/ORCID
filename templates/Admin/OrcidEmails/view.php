@@ -21,7 +21,7 @@ $this->assign('title', 'Scheduled Emails');
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidEmails view content">
-            <h3><?= h('Scheduled Email') ?></h3>
+            <h2><?= h('Scheduled Email') ?></h2>
             <table>
                 <tr>
                     <th><?= __('ORCID User') ?></th>

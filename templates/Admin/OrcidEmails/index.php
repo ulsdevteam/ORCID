@@ -15,7 +15,7 @@ $this->assign('title', 'Scheduled Emails');
     </nav>
 </aside>
 <div class="orcidEmails index content">
-    <h3><?= __('ORCID Emails') ?></h3>
+    <h2><?= __('ORCID Emails') ?></h2>
     <div class="table-responsive">
         <table>
             <thead>
