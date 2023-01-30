@@ -9,6 +9,10 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
+use Cake\I18n\FrozenTime;
+use ArrayObject;
 
 /**
  * OrcidUsers Model
@@ -175,6 +179,16 @@ class OrcidUsersTable extends Table
     public static function defaultConnectionName(): string
     {
         return (Configure::read('debug')) ? 'default' : 'production-default';
+    }
+
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
+        if (!$entity->has('CREATED')) {
+            $entity->set('CREATED', FrozenTime::now());
+        }
+        if (!$entity->has('MODIFIED')) {
+            $entity->set('MODIFIED', FrozenTime::now());
+        }
+        return $entity;
     }
 
 

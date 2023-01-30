@@ -23,7 +23,7 @@ $this->assign('title', 'Find ORCID Users');
     <p>Find a user by username or ORCID ID.</p>
     <div class="table-responsive">
         <div class="column-responsive column-80">
-            <div class="orcidUsers form content">
+            <div class="orcidUsers query">
                 <?= $this->Form->create(null, ['type' => 'get', 'id' => 'search']) ?>
                 <fieldset>
                     <?php
@@ -44,9 +44,9 @@ $this->assign('title', 'Find ORCID Users');
                 <tr>
                     <th><?= __('Username') ?></th>
                     <th><?= __('ORCID') ?></th>
-                    <th><?= $this->Paginator->sort('displayname', 'Name') ?></th>
-                    <th><?= $this->Paginator->sort('rc', 'RC') ?></th>
-                    <th><?= $this->Paginator->sort('department', 'Department') ?></th>
+                    <th><?= __('Name') ?></th>
+                    <th><?= __('RC') ?></th>
+                    <th><?= __('Department') ?></th>
                     <th><?= __('Current Checkpoint') ?></th>
                     <th><?= __('As Of') ?></th>
                 </tr>

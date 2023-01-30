@@ -11,10 +11,24 @@ use Cake\I18n\FrozenTime;
 FrozenTime::setToStringFormat("M/dd/YYYY h:mm:ss a");
 $this->assign('title', 'ORCID User');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->ID]) ?>
+            <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->ID], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->USERNAME)]) ?>
+            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->ID], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->USERNAME)]) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?>
+            <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="row">
     <div class="column-responsive column-80">
         <div class="orcidUsers view content">
-            <h3><?= h('ORCID User') ?></h3>
+            <h2><?= h('ORCID User') ?></h2>
             <table>
                 <tr>
                     <th><?= __('Username') ?></th>
@@ -90,7 +104,7 @@ $this->assign('title', 'ORCID User');
                     <div class="table-responsive">
                         <table>
                             <tr>
-                                <th><?= __('ORCID Batch Id') ?></th>
+                                <th><?= __('ORCID Batch Email Template') ?></th>
                                 <th><?= __('Queued') ?></th>
                                 <th><?= __('Sent') ?></th>
                                 <th><?= __('Cancelled') ?></th>
@@ -98,13 +112,12 @@ $this->assign('title', 'ORCID User');
                             </tr>
                             <?php foreach ($orcidUser->orcid_emails as $orcidEmails) : ?>
                                 <tr>
-                                    <td><?= h($orcidEmails->ORCID_BATCH_ID) ?></td>
+                                    <td><?= $this->Html->link($orcidEmails->orcid_batch->NAME, ['controller' => 'OrcidBatches', 'action' => 'view', $orcidEmails->ORCID_BATCH_ID]) ?></td>
                                     <td><?= h($orcidEmails->QUEUED) ?></td>
                                     <td><?= h($orcidEmails->SENT) ?></td>
                                     <td><?= h($orcidEmails->CANCELLED) ?></td>
                                     <td class="actions">
-                                        <?= $this->Html->link(__('View'), ['controller' => 'OrcidEmails', 'action' => 'view', $orcidEmails->ID]) ?>
-                                        <?= $this->Html->link(__('Edit'), ['controller' => 'OrcidEmails', 'action' => 'edit', $orcidEmails->ID]) ?>
+                                        <?= $this->Form->postLink(__('Requeue'), ['controller' => 'OrcidEmails', 'action' => 'requeue', $orcidEmails->ID]) ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -115,17 +128,3 @@ $this->assign('title', 'ORCID User');
         </div>
     </div>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidUser->ID]) ?>
-            <?= $this->Form->postLink(__('Opt Out'), ['action' => 'optout', $orcidUser->ID], ['confirm' => __('Are you sure you want to opt out {0}?', $orcidUser->USERNAME)]) ?>
-            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $orcidUser->ID], ['confirm' => __('Are you sure you want to delete {0}?', $orcidUser->USERNAME)]) ?>
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('List ORCID Users'), ['controller' => 'OrcidUsers', 'action' => 'index', 'prefix' => 'Admin']); ?>
-            <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

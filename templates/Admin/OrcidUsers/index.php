@@ -6,8 +6,20 @@
  */
 $this->assign('title', 'ORCID Users');
 ?>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
+            <?= $this->Html->link(__('New Orcid User'), ['action' => 'add']) ?>
+            <h3 class="heading"><?= __('Navigation') ?></h3>
+            <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
+            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
+        </div>
+    </nav>
+</aside>
 <div class="orcidUsers index content">
-    <h3><?= __('ORCID Users') ?></h3>
+    <h2><?= __('ORCID Users') ?></h2>
+    <p>The following users are within the ORCID process. View the user to see details, including the current and historic checkpoints as well as scheduled email communication.</p>
     <div class="table-responsive">
         <table>
             <thead>
@@ -16,7 +28,9 @@ $this->assign('title', 'ORCID Users');
                     <th><?= $this->Paginator->sort('ORCID', 'Orcid') ?></th>
                     <th><?= $this->Paginator->sort('TOKEN', 'Token') ?></th>
                     <th><?= $this->Paginator->sort('CREATED', 'Created') ?></th>
-                    <th><?= $this->Paginator->sort('MODIFIED', 'Modified') ?></th </tr>
+                    <th><?= $this->Paginator->sort('MODIFIED', 'Modified') ?></th>
+                    <th><?= __('Actions') ?></th>
+                </tr>
             </thead>
             <tbody>
                 <?php foreach ($orcidUsers as $orcidUser) : ?>
@@ -39,14 +53,3 @@ $this->assign('title', 'ORCID Users');
     </div>
     <?= $this->element('paginator/pagination'); ?>
 </div>
-<aside class="column">
-    <nav>
-        <div class="navigation actions">
-            <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('New Orcid User'), ['action' => 'add']) ?>
-            <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('Find Orcid User'), ['action' => 'find']) ?>
-            <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
-        </div>
-    </nav>
-</aside>

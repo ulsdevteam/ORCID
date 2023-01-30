@@ -35,6 +35,7 @@ class OrcidUsersController extends AppController
     private const ENDS_WITH = '2';
     private const EXACTLY = '3';
     private const NULL_STRING_ID = '-1';
+    private const EMPTY_STRING_ID = 0;
     private const NULL_ID = -1;
     private $OAUTH_PATH = '';
 
@@ -83,15 +84,17 @@ class OrcidUsersController extends AppController
             $statusQuery = '-1';
         }
 
-        $BatchGroups = $this->fetchTable('OrcidBatchGroups');
-        $batchGroups = $BatchGroups->find('all')->all();
+        $BatchGroupsTable = $this->fetchTable('OrcidBatchGroups');
+        $batchGroups = $BatchGroupsTable->find('all')->all();
+
         $StatusTypesTable = $this->fetchTable('OrcidStatusTypes');
         $statusTypes = $StatusTypesTable->find('all')->all();
+
         $orcidUsers = $this->paginate($this->_parameterize($userQuery, $findType, $groupQuery, $statusQuery));
 
         $findTypes = ['Containing', 'Starting With', 'Ending With', 'Matching Exactly'];
-        $statuses = [-1 => ''];
-        $groups = [0 => ''];
+        $statuses = [$this::NULL_ID => ''];
+        $groups = [$this::EMPTY_STRING_ID => ''];
 
         foreach ($batchGroups as $group) {
             $groups[$group->ID] = $group->NAME;
@@ -135,29 +138,40 @@ class OrcidUsersController extends AppController
             $groupQuery = '';
             $statusQuery = '-1';
         }
+
 		$filename = tempnam(TMP, 'rep');
+
 		$fh = fopen($filename, 'w');
-		$OrcidBatchGroup = $this->fetchTable('OrcidBatchGroups');
-		$OrcidStatusType = $this->fetchTable('OrcidStatusTypes');
-		$findTypes = [0 => __('Containing'), 1 => __('Starting With'), 2 => __('Ending With'), 3 => __('Matching Exactly')];
-		$orcidUsers = $this->_parameterize($userQuery, $findType, $groupQuery, $statusQuery);
-		$reportTitle = __('Users').($userQuery ? $findTypes[$findType].' '.'"'.$userQuery.'"' : '').($groupQuery ? ' '.__('within').' '.$OrcidBatchGroup->get($groupQuery)->NAME : '').($statusQuery != $this::NULL_STRING_ID ? ' '.__('with Current Status of').' '.$OrcidStatusType->get($statusQuery)->NAME : '');
-		fputcsv($fh, [$reportTitle,null,null,null,null]);
+		
+        $OrcidBatchGroupsTable = $this->fetchTable('OrcidBatchGroups');
+		$OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
+		
+        $findTypes = [0 => __('Containing'), 1 => __('Starting With'), 2 => __('Ending With'), 3 => __('Matching Exactly')];
+		
+        $orcidUsers = $this->_parameterize($userQuery, $findType, $groupQuery, $statusQuery);
+		
+        $reportTitle = __('Users').($userQuery ? $findTypes[$findType].' '.'"'.$userQuery.'"' : '').($groupQuery ? ' '.__('within').' '.$OrcidBatchGroupsTable->get($groupQuery)->NAME : '').($statusQuery != $this::NULL_STRING_ID ? ' '.__('with Current Status of').' '.$OrcidStatusTypesTable->get($statusQuery)->NAME : '');
+		
+        fputcsv($fh, [$reportTitle,null,null,null,null]);
 		fputcsv($fh, ['Username','ORCID iD','Name','RC','Department','Current Status','As Of']);
-		foreach ($orcidUsers as $orcidUser) {
+		
+        foreach ($orcidUsers as $orcidUser) {
 			fputcsv($fh, [
 				$orcidUser->USERNAME,
 				$orcidUser->ORCID,
 				$orcidUser->displayname,
 				$orcidUser->rc,
 				$orcidUser->department,
-				$OrcidStatusType->get($orcidUser->current_orcid_statuses[0]->ORCID_STATUS_TYPE_ID)->NAME,
-				$orcidUser->current_orcid_statuses[0]->STATUS_TIMESTAMP,
+				$OrcidStatusTypesTable->get($orcidUser->current_orcid_statuses[0]->ORCID_STATUS_TYPE_ID)->NAME,
+				$orcidUser->current_orcid_statuses[0]->STATUS_TIMESTAMP->i18nFormat('yyyy-MM-dd HH:mm:ss'),
 			]);
 		}
+
 		fclose($fh);
+
 		$this->response = $this->response->withFile($filename, ['download' => true, 'name' => 'report.csv']);
 		$this->response = $this->response->withType('text/csv');
+
 		return $this->response;
     }
 
@@ -172,8 +186,9 @@ class OrcidUsersController extends AppController
     public function view($id = null)
     {
         $orcidUser = $this->OrcidUsers->get($id, [
-            'contain' => ['OrcidEmails', 'CurrentOrcidStatuses', 'CurrentOrcidStatuses.OrcidStatusTypes', 'AllOrcidStatuses.OrcidStatusTypes'],
+            'contain' => ['OrcidEmails', 'OrcidEmails.OrcidBatches', 'CurrentOrcidStatuses', 'CurrentOrcidStatuses.OrcidStatusTypes', 'AllOrcidStatuses.OrcidStatusTypes'],
         ]);
+        
         $this->set(compact('orcidUser'));
     }
 
@@ -281,6 +296,9 @@ class OrcidUsersController extends AppController
     private function _parameterize($userQuery, $findType, $groupQuery, $statusQuery)
     {
 
+        // Initialize Batch Groups Table
+        $OrcidBatchGroupsTable = $this->fetchTable("OrcidBatchGroups");
+
         // container to hold conditions
         $conditions = [];
 
@@ -302,6 +320,9 @@ class OrcidUsersController extends AppController
 
         // query by group
         if (!empty($groupQuery)) {
+
+            $OrcidBatchGroupsTable->updateCache($groupQuery);
+            
             if ($groupQuery === $this::NULL_STRING_ID) {
                 // notMatching creates a left join
                 $orcidUsersTable = $orcidUsersTable->notMatching('OrcidBatchGroupCaches', function ($q) use ($groupQuery) {
@@ -313,19 +334,24 @@ class OrcidUsersController extends AppController
                     return $q->where(['OrcidBatchGroupCaches.ORCID_BATCH_GROUP_ID' => $groupQuery]);
                 });
             }
+
         }
 
         //query by current status
         if ($statusQuery != $this::NULL_STRING_ID) {
+
             $orcidUsersTable = $orcidUsersTable->matching('CurrentOrcidStatuses', function ($q) use ($statusQuery) {
                 return $q->where(['CurrentOrcidStatuses.ORCID_STATUS_TYPE_ID' => $statusQuery]);
             });
+
         }
         
         // if no query specified, return nothing
         if (empty($userQuery) && empty($groupQuery) && $statusQuery === $this::NULL_STRING_ID) {
+            
             // no ORCID id should be -1
             $conditions = ['ORCID' => $this::NULL_ID];
+
         }
 
         // this is the final query after all conditions

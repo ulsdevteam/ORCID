@@ -6,10 +6,10 @@
  */
 $this->assign('title', 'Edit ORCID User');
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
+<aside class="column">
+    <nav>
+        <div class="navigation actions">
+            <h3 class="heading"><?= __('Actions') ?></h3>
             <?= $this->Form->postLink(
                 __('Delete'),
                 ['action' => 'delete', $orcidUser->ID],
@@ -17,7 +17,9 @@ $this->assign('title', 'Edit ORCID User');
             ) ?>
             <?= $this->Html->link(__('List Orcid Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
-    </aside>
+    </nav>
+</aside>
+<div class="row">
     <div class="column-responsive column-80">
         <div class="orcidUsers form content">
             <?= $this->Form->create($orcidUser) ?>
