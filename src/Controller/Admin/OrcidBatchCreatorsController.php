@@ -70,7 +70,7 @@ class OrcidBatchCreatorsController extends AppController
     }
 
     /**
-     * Edit method
+     * Enable method
      *
      * @param string|null $id Orcid Batch Creator id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
@@ -94,6 +94,9 @@ class OrcidBatchCreatorsController extends AppController
         $this->set(compact('orcidBatchCreator'));
     }
 
+    /**
+     * Disable Method
+     */
     public function disable($id = null)
     {
         $orcidBatchCreator = $this->OrcidBatchCreators->get($id, [

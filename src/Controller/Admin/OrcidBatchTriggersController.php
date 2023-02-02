@@ -150,7 +150,7 @@ class OrcidBatchTriggersController extends AppController
     {
         $this->request->allowMethod('post');
         // must not be already sent or cancelled
-        $triggers = $this->OrcidBatchTrigger->find('all', ['conditions' => ['or' => [['begin_date <=' => 'today'], ['begin_date' => NULL]], 'order' => ['require_batch_id DESC']]]);
+        $triggers = $this->OrcidBatchTriggers->find('all')->contain(["OrcidStatusTypes", "OrcidBatchGroups", "OrcidBatches"])->where(['OR' => ['BEGIN_DATE <=' => FrozenTime::now(), 'BEGIN_DATE IS' => NULL]])->order(['REQUIRE_BATCH_ID' => 'DESC']);
         $success = 0;
         $failed = 0;
         $this->Emailer = new Emailer();

@@ -35,8 +35,8 @@ $this->assign('title', 'Administrator');
                     <td><?= h($orcidBatchCreator->DISPLAYNAME) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Disabled') ?></th>
-                    <td><?= $orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED ? __("Yes") : __("No") ?></td>
+                    <th><?= __('Enabled') ?></th>
+                    <td><?= $orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED ? __("No") : __("Yes") ?></td>
                 </tr>
             </table>
         </div>

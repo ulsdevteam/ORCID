@@ -113,9 +113,8 @@ class OrcidEmailsController extends AppController
 			$this->Flash->error(__('This Email cannot be sent.'));
 		} else {
 			$orcidUser = $orcidUsers->get($orcidEmail->orcid_user->ID);
-            $person = $orcidUser->email;
-            if (!empty($person)) {
-                if ($this->Emailer->sendEmail($person, $orcidEmail)) {
+            if (!empty($orcidUser)) {
+                if ($this->Emailer->sendEmail($orcidUser, $orcidEmail)) {
                     $this->Flash->success(__('The Email has been sent.'));
                 } else {
                     $this->Flash->error(__('The Email could not be sent. Please, try again.'));

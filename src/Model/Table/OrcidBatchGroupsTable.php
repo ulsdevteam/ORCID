@@ -35,15 +35,6 @@ use Cake\Core\Configure;
 class OrcidBatchGroupsTable extends Table
 {
 
-	public function getAssociatedUsers($groupId, $key)
-	{
-		[$table, $field] = explode(".", $key);
-		$this->updateCache($groupId);
-
-		return $this->OrcidBatchGroupCaches->find()->select(['ORCID_USER_ID'])->distinct()->where(['ORCID_BATCH_GROUP_ID' => ($groupId == -1 ? null : $groupId)]);
-
-	}
-
 	/**
 	 * Ensure the OrcidBatchGroup.id has an updated cache, creating the OrcidUser(s) if necessary
 	 *
@@ -56,6 +47,8 @@ class OrcidBatchGroupsTable extends Table
 		$group = $this->find()
 			->where(['ID' => $groupId])
 			->first();
+
+		$saveFailed = false;
 
 		// Have not touched GroupCache
 		if (!$group) {
@@ -113,6 +106,7 @@ class OrcidBatchGroupsTable extends Table
 					$groupMembers[$employee->USERNAME] = $employee->USERNAME;
 				}
 			}
+			
 		} elseif ($group->GROUP_DEFINITION) {
 			// group_definition is the base query
 			// TODO: risky because Person is LDAP and may not support paging
@@ -142,16 +136,21 @@ class OrcidBatchGroupsTable extends Table
 				} else {
 					$cache->DEPRECATED = NULL;
 				}
-				$this->OrcidBatchGroupCaches->save($cache);
+				if ($this->OrcidBatchGroupCaches->save($cache) === false) {
+					$saveFailed = true;
+				}
 			}
 		}
-		// If the cache entry wasn't updated, delete it
-		$this->OrcidBatchGroupCaches->deleteAll(['ORCID_BATCH_GROUP_ID' => $groupId, ['DEPRECATED IS NOT' =>  NULL]]);
-		// Indicate that this cache update is complete
-		$group->CACHE_CREATION_DATE = FrozenTime::now();
-		$this->save($group);
 
-		return true;
+		if (!$saveFailed) {
+			// If the cache entry wasn't updated, delete it
+			$this->OrcidBatchGroupCaches->deleteAll(['ORCID_BATCH_GROUP_ID' => $groupId, ['DEPRECATED IS NOT' =>  NULL]]);
+			// Indicate that this cache update is complete
+			$group->CACHE_CREATION_DATE = FrozenTime::now();
+			$this->save($group);
+		}
+
+		return !$saveFailed;
 	}
 
 	/**

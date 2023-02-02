@@ -40,13 +40,13 @@ class EnvAuthenticator extends AbstractAuthenticator
     public function __construct(IdentifierInterface $identifier, array $config = [])
     {
         if ((!(array_key_exists('FORCE_LOWERCASE', $config))) && Configure::check('FORCE_LOWERCASE')) {
-            $this->config['FORCE_LOWERCASE'] = Configure::read('FORCE_LOWERCASE');
+            $this->setConfig('FORCE_LOWERCASE', Configure::read('FORCE_LOWERCASE'));
         }
         if ((!(array_key_exists('DROP_SCOPE', $config))) && Configure::check('DROP_SCOPE')) {
-            $this->config['DROP_SCOPE'] = Configure::read('DROP_SCOPE');
+            $this->setConfig('DROP_SCOPE', Configure::read('DROP_SCOPE'));
         }
         if ((!(array_key_exists('VARIABLE_NAME', $config))) && Configure::check('VARIABLE_NAME')) {
-            $this->config['VARIABLE_NAME'] = Configure::read('VARIABLE_NAME');
+            $this->setConfig('VARIABLE_NAME', Configure::read('VARIABLE_NAME'));
         }
         parent::__construct($identifier, $config);
     }

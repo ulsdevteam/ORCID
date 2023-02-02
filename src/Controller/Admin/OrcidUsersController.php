@@ -366,8 +366,6 @@ class OrcidUsersController extends AppController
         parent::beforeFilter($event);
     }
     
-    // The adding of a new ORCID user shouldn't be too bad with it being inside the cakephp
-    // application The main issue is understanding and rewriting the actual connection.
     public function connect() {
         // Grab the remote user from Shibboleth
         $remote_user = filter_var($_SERVER['REDIRECT_REDIRECT_eppn'], FILTER_SANITIZE_STRING);
@@ -399,7 +397,6 @@ class OrcidUsersController extends AppController
                     // ORCID's workflow is a little off - a user can click deny without actually logging in
                     // Clear the existing token if we've lost permission
                     $user = $this->OrcidUsers->find("all")->where(["USERNAME" => strtoupper($remote_user)])->first();
-                    //$row = $this->execute_query_or_die($conn, 'SELECT ORCID, TOKEN FROM ULS.ORCID_USERS WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user)));
                     if (isset($user)) {
                         // Yes, the user exists.  Do we already have a valid ORCID and token?
                         if (isset($user->ORCID) && isset($user->TOKEN)) {
@@ -417,8 +414,6 @@ class OrcidUsersController extends AppController
                     // ORCID could send a different error message, but that isn't handled (yet)
                     $this->die_with_error_page('500 Unrecognized ORCID error');
                     return;
-                    /* error_log(var_export($_GET, true));
-                    throw new UnrecognizedOrcidException($_GET['error']); */
             }
             // The switch should have exit()'d for us
         } elseif (!isset($_GET['code'])) {
@@ -454,7 +449,7 @@ class OrcidUsersController extends AppController
                     $result = $this->OrcidUsers->save($user);
                 } catch (Exception $e) {
                     $result = false;
-                    Log::write('error', 'ORCID@PITT: ' . $e);
+                    Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
                 }
                 if ($result === false) {
                     $this->die_with_error_page("500 ORCID@Pitt Database Error");
@@ -499,7 +494,7 @@ class OrcidUsersController extends AppController
                     $result = $OrcidStatuses->save($newStatus);
                 } catch (Exception $e) {
                     $result = false;
-                    Log::write('error', 'ORCID@PITT: ' . $e);
+                    Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
                 }
                 if ($result === false) {
                     $this->die_with_error_page("500 ORCID@Pitt Database Error");
@@ -584,7 +579,7 @@ class OrcidUsersController extends AppController
                 $result = $this->OrcidUsers->save($user);
             } catch (Exception $e) {
                 $result = false;
-                Log::write('error', 'ORCID@PITT: ' . $e);
+                Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
             }
             if ($result === false) {
                 $this->die_with_error_page("500 ORCID@Pitt Database Error");

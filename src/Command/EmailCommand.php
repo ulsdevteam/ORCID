@@ -95,13 +95,9 @@ class EmailCommand extends Command
 		$success = 0;
 		$failed = 0;
 		foreach ($emails as $email) {
-			// TODO: warning: hardcoded foreign key relationship
-			// These need changed to use OrcidUsers since there is no Person table
-			$condition = '(cn='.$email->orcid_user->USERNAME.')';
-			$person = $usersTable->definitionSearch($condition, ['mail']);
-			if (!isset($person) || !isset($person['mail'])) {
+			if (!isset($email->orcid_user) || !isset($email->orcid_user->email)) {
 				$io->out('No email address for '.$email->orcid_user->USERNAME.'.');
-			} elseif ($this->Emailer->sendEmail($person['mail'], $email)) {
+			} elseif ($this->Emailer->sendEmail($email->orcid_user, $email)) {
 				$success++;
 			} else {
 				$failed++;

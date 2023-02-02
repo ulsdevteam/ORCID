@@ -35,7 +35,6 @@ $cakeDescription = 'ORCID @ Pitt Admin';
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake']) ?>
 
     <?= $this->Html->script('jquery-3.6.0.min') ?>
-    <?= $this->Html->script('tiny_mce4/tinymce.min') ?>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <link href="../../webroot/css/default.css" rel="stylesheet" type="text/css" />

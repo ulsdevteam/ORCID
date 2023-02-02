@@ -67,8 +67,7 @@ class OrcidBatchesController extends AppController
             }
             $this->Flash->error(__('The orcid batch could not be saved. Please, try again.'));
         }
-        $orcidBatchCreators = $this->OrcidBatches->OrcidBatchCreators->find('list', ['limit' => 200])->all();
-        $this->set(compact('orcidBatch', 'orcidBatchCreators'));
+        $this->set(compact('orcidBatch'));
     }
 
     /**
@@ -80,9 +79,7 @@ class OrcidBatchesController extends AppController
      */
     public function edit($id = null)
     {
-        $orcidBatch = $this->OrcidBatches->get($id, [
-            'contain' => [],
-        ]);
+        $orcidBatch = $this->OrcidBatches->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $orcidBatch = $this->OrcidBatches->patchEntity($orcidBatch, $this->request->getData());
             if ($this->OrcidBatches->save($orcidBatch) !== false ) {

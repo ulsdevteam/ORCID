@@ -21,7 +21,7 @@ class OrcidStatusTypesController extends AppController
      */
     public function index()
     {
-        $this->paginate = ['order' => ['OrcidStatusTypes.seq' => 'asc']];
+        $this->paginate = ['order' => ['OrcidStatusTypes.SEQ' => 'asc']];
         $orcidStatusTypes = $this->paginate($this->OrcidStatusTypes);
 
         $this->set(compact('orcidStatusTypes'));

@@ -10,7 +10,7 @@ $this->assign('title', 'Batch Email Templates');
     <nav>
         <div class="navigation actions">
             <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Html->link(__('Edit'), ['action' => 'edit']) ?>
+            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $orcidBatch->ID]) ?>
             <?= $this->Form->postLink(__('Delete Orcid Batch'), ['action' => 'delete', $orcidBatch->ID], ['confirm' => __('Are you sure you want to delete # {0}?', $orcidBatch->ID)]) ?>
             <h3 class="heading"><?= __('Navigation') ?></h3>
             <?= $this->Html->link(__('List Orcid Batches'), ['action' => 'index']) ?>
