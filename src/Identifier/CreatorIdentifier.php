@@ -21,21 +21,18 @@ use Authentication\Identifier\Resolver\ResolverInterface;
 use Authentication\Identifier\AbstractIdentifier;
 
 /**
- * Password Identifier
+ * Creator Identifier
  *
  * Identifies authentication credentials against database containing authenticated users
  *
  * ```
- *  new PasswordIdentifier([
+ *  new CreatorIdentifier([
  *      'fields' => [
  *          'username' => ['username'],
- *          'flags' => '[flags]'
+ *          'flags' => ['flagName' => ['flagFunctionName' => expectedResult]]]
  *      ]
  *  ]);
  * ```
- *
- * When configuring PasswordIdentifier you can pass in config to which fields,
- * model and additional conditions are used.
  */
 class CreatorIdentifier extends AbstractIdentifier
 {
