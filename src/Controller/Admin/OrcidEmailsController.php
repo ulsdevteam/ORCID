@@ -105,16 +105,14 @@ class OrcidEmailsController extends AppController
  */
 	public function send($id = null) {
 		$orcidEmail = $this->OrcidEmails->get($id, ['contain' => ['OrcidUsers', 'OrcidBatches']]);
-		$orcidUsers = $this->fetchTable('OrcidUsers');
 		$this->request->allowMethod('post');
 		// must not be already sent or cancelled
 		$this->Emailer = new Emailer();
 		if (!(empty($orcidEmail->SENT) || !empty($orcidEmail->CANCELLED))){
 			$this->Flash->error(__('This Email cannot be sent.'));
 		} else {
-			$orcidUser = $orcidUsers->get($orcidEmail->orcid_user->ID);
             if (!empty($orcidUser)) {
-                if ($this->Emailer->sendEmail($orcidUser, $orcidEmail)) {
+                if ($this->Emailer->sendEmail($orcidEmail->orcid_user, $orcidEmail)) {
                     $this->Flash->success(__('The Email has been sent.'));
                 } else {
                     $this->Flash->error(__('The Email could not be sent. Please, try again.'));

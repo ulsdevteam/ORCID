@@ -6,6 +6,7 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 use Cake\Core\Configure;
+use Exception;
 
 /**
  * OrcidBatchCreator Entity
@@ -47,6 +48,25 @@ class OrcidBatchCreator extends Entity
             }
         }
         return parent::__get($field);
+    }
+
+    /**
+     * This returns the current status of the flag. This way the function can be expanded
+     * if the flag ever becomes something that means more than if it is enabled or disabled.
+     * 
+     * Note, the return status of this function is true when the flag is disabled currently.
+     * False if the flag is disabled.
+     * 
+     * @param string|null $flag The flag to get the status of.
+     * @return integer 1 when disabled, 0 when enabled.
+     */
+    public function flagStatus($flagName = 'FLAGS') {
+        if ($this->has($flagName)) {
+            $status = ($this->FLAGS & $this::FLAG_DISABLED);
+            return $status;
+        } else {
+            throw new Exception("Invalid flagName");
+        }
     }
 
     /**

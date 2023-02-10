@@ -188,6 +188,7 @@ class OrcidUsersTable extends Table
         if (!$entity->has('MODIFIED')) {
             $entity->set('MODIFIED', FrozenTime::now());
         }
+        $entity->set('USERNAME', strtoupper($entity->USERNAME));
         return $entity;
     }
 

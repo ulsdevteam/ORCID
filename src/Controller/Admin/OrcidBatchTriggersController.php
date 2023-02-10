@@ -67,6 +67,9 @@ class OrcidBatchTriggersController extends AppController
         $orcidStatusTypes = $this->OrcidBatchTriggers->OrcidStatusTypes->find('list', ['limit' => 200])->all();
         $orcidBatches = $this->OrcidBatchTriggers->OrcidBatches->find('list', ['limit' => 200])->all();
         $reqBatches = [0 => __('No Requirement'), -1 => __('Require any prior Email')];
+        foreach ($orcidBatches as $id => $batchName) {
+            $reqBatches[$id] = $batchName;
+        }
         $orcidBatchGroups = $this->OrcidBatchTriggers->OrcidBatchGroups->find('list', ['limit' => 200])->all();
         $this->set(compact('orcidBatchTrigger', 'orcidStatusTypes', 'orcidBatches', 'orcidBatchGroups', 'reqBatches'));
     }

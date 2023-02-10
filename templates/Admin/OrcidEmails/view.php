@@ -10,10 +10,11 @@ $this->assign('title', 'Scheduled Emails');
     <nav>
         <div class="navigation actions">
             <h3 class="heading"><?= __('Actions') ?></h3>
-            <?= $this->Form->postLink(__('Requeue'), ['action' => 'requeue', $orcidEmail->ID], ['confirm' => __('Are you sure you want to this email'), 'class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Requeue'), ['action' => 'requeue', $orcidEmail->ID], ['confirm' => __('Are you sure you want requeue this email')]) ?>
+            <?= $this->Form->postLink(__('Requeue'), ['action' => 'cancel', $orcidEmail->ID], ['confirm' => __('Are you sure you want to cancel this email')]) ?>
             <?= $this->Form->postLink(__('Send Orcid Email'), ['action' => 'send', $orcidEmail->ID], ['confirm' => __('Are you sure you want to send "{0}"?', $orcidEmail->ID)]) ?>
             <h3 class="heading"><?= __('Navigation') ?></h3>
-            <?= $this->Html->link(__('List Orcid Emails'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('List Orcid Emails'), ['action' => 'index']) ?>
             <?= $this->Html->link(__('Home'), ['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>
         </div>
     </nav>

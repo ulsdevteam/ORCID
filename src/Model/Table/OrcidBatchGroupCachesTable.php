@@ -43,7 +43,7 @@ class OrcidBatchGroupCachesTable extends Table
         parent::initialize($config);
 
         $this->setTable('ULS.ORCID_BATCH_GROUP_CACHES');
-        $this->setDisplayField('id');
+        $this->setDisplayField('ID');
         $this->setPrimaryKey('ID');
 
         $this->belongsTo('OrcidBatchGroups', [

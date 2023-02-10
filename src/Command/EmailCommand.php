@@ -85,7 +85,6 @@ class EmailCommand extends Command
 			$io->abort('Some resource connectivity ('.implode(',', $failed).') is unavailable.  Aborting.');
 		}
 		$orcidEmailTable = $this->fetchTable('OrcidEmails');
-		$usersTable = $this->fetchTable('OrcidUsers');
 		// must not be already sent or cancelled
 		$options = ['conditions' => 
 			['OrcidEmails.SENT IS' => NULL,

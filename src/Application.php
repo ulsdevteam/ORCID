@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Identifier\CreatorIdentifier;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
@@ -152,6 +153,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         $fields = [
             IdentifierInterface::CREDENTIAL_USERNAME => 'NAME',
+            CreatorIdentifier::CREDENTIAL_FLAGS => 'FLAGS',
         ];
         // Load the authenticators. Session should be first.
         $service->loadAuthenticator('Env', [
@@ -159,9 +161,10 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         ]);
 
         // Load identifiers
-        $service->loadIdentifier('Authentication.Password', [
+        $service->loadIdentifier('Creator', [
             'fields' => [
-                'username' => 'NAME'
+                'username' => 'NAME',
+                'flags' => 'FLAGS'
             ],
             'resolver' => [
                 'className' => 'Authentication.Orm',

@@ -15,6 +15,8 @@ use Cake\Core\Configure;
  */
 class OrcidBatchCreatorsController extends AppController
 {
+    private $ldapHandler;
+    private $ldapResult;
 
     public function initialize(): void
     {

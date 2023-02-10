@@ -10,7 +10,7 @@ $this->assign('title', 'Administrator');
     <nav>
         <div class="navigation actions">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?php if ($orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED) : ?>
+            <?php if ($orcidBatchCreator->flagStatus()) : ?>
                 <?= $this->Form->postLink(__('Enable'), ['action' => 'enable', $orcidBatchCreator->ID]) ?>
             <?php else : ?>
                 <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->ID]) ?>
@@ -36,7 +36,7 @@ $this->assign('title', 'Administrator');
                 </tr>
                 <tr>
                     <th><?= __('Enabled') ?></th>
-                    <td><?= $orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED ? __("No") : __("Yes") ?></td>
+                    <td><?= $orcidBatchCreator->flagStatus() ? __("No") : __("Yes") ?></td>
                 </tr>
             </table>
         </div>

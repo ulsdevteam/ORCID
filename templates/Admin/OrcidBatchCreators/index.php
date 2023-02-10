@@ -33,10 +33,10 @@ $this->assign('title', 'Administrators');
                     <tr>
                         <td><?= h($orcidBatchCreator->NAME) ?></td>
                         <td><?= h($orcidBatchCreator->DISPLAYNAME) ?></td>
-                        <td><?= $orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED ? __("No") : __("Yes") ?></td>
+                        <td><?= $orcidBatchCreator->flagStatus() ? __("No") : __("Yes") ?></td>
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $orcidBatchCreator->ID]) ?>
-                            <?php if ($orcidBatchCreator->FLAGS & $orcidBatchCreator::FLAG_DISABLED) : ?>
+                            <?php if ($orcidBatchCreator->flagStatus()) : ?>
                                 <?= $this->Form->postLink(__('Enable'), ['action' => 'enable', $orcidBatchCreator->ID]) ?>
                             <?php else : ?>
                                 <?= $this->Form->postLink(__('Disable'), ['action' => 'disable', $orcidBatchCreator->ID]) ?>

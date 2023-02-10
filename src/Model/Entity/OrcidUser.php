@@ -77,7 +77,6 @@ class OrcidUser extends Entity
                 }
 
                 if (!isset($result['pittemployeerc'])) {
-                    $this->set("department", "");
                     $this->set("rc", "");
                 } elseif (($result['pittemployeerc']['count'] > 0)) {
 

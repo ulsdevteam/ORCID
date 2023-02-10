@@ -269,7 +269,7 @@ class OrcidUsersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
             $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
-            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => $OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->ID;
+            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => \App\Model\Table\OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->ID;
             $orcidStatuses = $OrcidStatusTable->find()->where(['ORCID_USER_ID' => $id, 'ORCID_STATUS_TYPE_ID' =>  $orcidStatusTypeID])->first();
 
             if (isset($orcidStatuses)) {

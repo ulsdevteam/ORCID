@@ -76,6 +76,7 @@ class OrcidEmailsTable extends Table
 
         $validator
             ->integer('ORCID_BATCH_ID')
+            ->requirePresence('ORCID_USER_ID', 'create')
             ->allowEmptyString("ORCID_BATCH_ID");
 
         $validator
@@ -102,7 +103,7 @@ class OrcidEmailsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);        $rules->add($rules->isUnique(['CANCELLED'], ['allowMultipleNulls' => true]), ['errorField' => 'CANCELLED']);
+        $rules->add($rules->isUnique(['ID']), ['errorField' => 'ID']);
         $rules->add($rules->existsIn('ORCID_USER_ID', 'OrcidUsers'), ['errorField' => 'ORCID_USER_ID']);
         $rules->add($rules->existsIn('ORCID_BATCH_ID', 'OrcidBatches'), ['errorField' => 'ORCID_BATCH_ID']);
 

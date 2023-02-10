@@ -96,7 +96,7 @@ class Emailer
 	 */
 	public function sendEmail($user, $orcidEmail)
 	{
-		if ($this->sendBatch($user->email, $orcidEmail->orcid_batch, $user->displayName)) {
+		if ($this->sendBatch($user->email, $orcidEmail->orcid_batch, $user->displayname)) {
 			$orcidEmail->SENT = FrozenTime::now();
 			$orcidEmailsTable = $this->fetchTable('OrcidEmails');
 			return $orcidEmailsTable->save($orcidEmail);
@@ -196,7 +196,7 @@ class Emailer
 		foreach ($userStatuses as $userStatus) {
 			// If a prior email is required, check for it
 			
-			if ($trigger->require_batch_id) {
+			if (isset($trigger->REQUIRE_BATCH_ID) || $trigger->REQUIRE_BATCH_ID === 0) {
 				$emailQuery = $OrcidEmailTable->find('all')->where(['OrcidEmails.ORCID_USER_ID' => $userStatus->ORCID_USER_ID]);
 				if ($trigger->REQUIRE_BATCH_ID !== -1) {
 					$$emailQuery->where(['OrcidEmails.ORCID_BATCH_ID' => $trigger->REQUIRE_BATCH_ID]);

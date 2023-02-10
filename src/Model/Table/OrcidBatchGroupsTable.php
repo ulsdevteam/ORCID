@@ -115,7 +115,6 @@ class OrcidBatchGroupsTable extends Table
 				$groupMembers[$person] = $person;
 			}
 		}
-		$groupMembers;
 		// Refresh the cache
 		foreach ($groupMembers as $groupMember) {
 			$options = ['conditions' => ['USERNAME' => $groupMember]];

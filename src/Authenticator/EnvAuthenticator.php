@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Authenticator;
 
+use App\Identifier\CreatorIdentifier;
 use Authentication\Identifier\IdentifierInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Authentication\Authenticator\AbstractAuthenticator;
@@ -23,7 +24,8 @@ class EnvAuthenticator extends AbstractAuthenticator
      */
     protected $_defaultConfig = [
         'fields' => [
-            IdentifierInterface::CREDENTIAL_USERNAME => 'username',
+            IdentifierInterface::CREDENTIAL_USERNAME => 'NAME',
+            CreatorIdentifier::CREDENTIAL_FLAGS => 'FLAGS'
         ],
         'skipChallenge' => true,
         'FORCE_LOWERCASE' => true,
@@ -100,7 +102,7 @@ class EnvAuthenticator extends AbstractAuthenticator
         if (!is_string($username) || $username === '') {
             return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
         }
-        $user = $this->_identifier->identify([IdentifierInterface::CREDENTIAL_USERNAME => $username]);
+        $user = $this->_identifier->identify([IdentifierInterface::CREDENTIAL_USERNAME => $username, CreatorIdentifier::CREDENTIAL_FLAGS => ['FLAGS' => ['flagStatus' => 0]]]);
         if ($user === null) {
             return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
         }
