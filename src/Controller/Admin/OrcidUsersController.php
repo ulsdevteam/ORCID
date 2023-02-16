@@ -29,14 +29,35 @@ use function PHPUnit\Framework\equalTo;
  */
 class OrcidUsersController extends AppController
 {
-
+    /** 
+     * FIND & REPORT function constants 
+     * The first four are for the selected query type.
+    */
     private const CONTAINS = '0';
     private const STARTS_WITH = '1';
     private const ENDS_WITH = '2';
     private const EXACTLY = '3';
+    // This one is used mainly for the current status when one isn't selected
+    // It is also used when selecting the no matching group for group queries
     private const NULL_STRING_ID = '-1';
+    // This is used when not selecting any group. This is different from no matching group.
     private const EMPTY_STRING_ID = 0;
+    // This is used for the value/key for the arrays when it comes to the groups and statuses.
+    // In the case of groups, it is the integer version of the NULL_STRING_ID and for the statuses
+    // it is the case when no status is selected incase a status has an id of 0.
+    // It is also used when not finding any users, to force the find to be populated with nothing.
     private const NULL_ID = -1;
+
+    /**
+     * CONNECT function constants
+     */
+    private const SHIB_USERNAME = 'REDIRECT_REDIRECT_eppn';
+    private const SHIB_GIVEN_NAME = 'REDIRECT_REDIRECT_givenName';
+    private const SHIB_SURNAME = 'REDIRECT_REDIRECT_sn';
+    private const SHIB_EMAIL = 'REDIRECT_REDIRECT_mail';
+    private const SHIB_AFFILIATIONS = 'REDIRECT_REDIRECT_PittAffiliate';
+    private const SHIB_GROUPS = 'REDIRECT_REDIRECT_PittCustomGroupMembership';
+
     private $OAUTH_PATH = '';
 
     /**
@@ -47,7 +68,7 @@ class OrcidUsersController extends AppController
 
     public function initialize(): void
     {
-        $this->OAUTH_PATH = "Resources.".(Configure::read('debug') ? 'default-orcid' : 'production-orcid').'.';
+        $this->OAUTH_PATH = "Resources.".(Configure::read("debug") ? "default-orcid" : "production-orcid").".";
         parent::initialize();
     }
 
@@ -367,167 +388,88 @@ class OrcidUsersController extends AppController
     }
     
     public function connect() {
-        // Grab the remote user from Shibboleth
-        $remote_user = filter_var($_SERVER['REDIRECT_REDIRECT_eppn'], FILTER_SANITIZE_STRING);
-        $remote_user = preg_replace('/@pitt.edu$/i', '', $remote_user);
-        // Grab variables from Shibboleth
-        $shib_gn = filter_var($_SERVER['REDIRECT_REDIRECT_givenName'], FILTER_SANITIZE_STRING);
-        $shib_ln = filter_var($_SERVER['REDIRECT_REDIRECT_sn'], FILTER_SANITIZE_STRING);
-        $shib_mail = filter_var($_SERVER['REDIRECT_REDIRECT_mail'], FILTER_SANITIZE_EMAIL); 
-        $shib_affiliations = explode(';', filter_var($_SERVER['REDIRECT_REDIRECT_PittAffiliate'], FILTER_SANITIZE_STRING)); 
-        $shib_groups = explode(';', filter_var($_SERVER['REDIRECT_REDIRECT_PittCustomGroupMembership'], FILTER_SANITIZE_STRING)); 
+        // The different items that we need to connect an user's ORCID Account to our application
+        // An array created using the Shibboleth constants, that hold each Shibboleth string.
+        $shibbolethKeys = [$this::SHIB_USERNAME, $this::SHIB_GIVEN_NAME, $this::SHIB_SURNAME, $this::SHIB_EMAIL, $this::SHIB_AFFILIATIONS, $this::SHIB_GROUPS];
+        $shib_groups = [];
+        $shib_affiliations = [];
+        // Loop through each Shibboleth key
+        foreach ($shibbolethKeys as $key){
+            // Check that the key exists as to not try and access an undefined index
+            if (array_key_exists($key, $_SERVER)) {
+                // Check that the key for the Email from Shibboleth, so as to filter it separately
+                if ($key !== $this::SHIB_EMAIL) {
+                    // Grab variables from Shibboleth and filter the strings
+                    $hold = filter_var($_SERVER[$key], FILTER_SANITIZE_STRING);
+                }
+                switch ($key) {
+                    case $this::SHIB_USERNAME:
+                        // Grab the user, and drop email if it is a part of it.
+                        $remote_user = preg_replace('/@pitt.edu$/i', '', $hold);
+                        break;
+                    case $this::SHIB_GIVEN_NAME:
+                        // Set the given name
+                        $shib_gn = $hold;
+                        break;
+                    case $this::SHIB_SURNAME:
+                        // set the surname
+                        $shib_ln = $hold;
+                        break;
+                    case $this::SHIB_EMAIL:
+                        // Grab and set the email from shibboleth
+                        $shib_mail = filter_var($_SERVER[$key], FILTER_SANITIZE_EMAIL);
+                        // For the ORCID sandbox, use mailinator URLS
+                        if (Configure::read('debug')) {
+                            $shib_mail = str_replace('@', '.', $shib_mail).'@mailinator.com';
+                        }
+                        break;
+                    case $this::SHIB_AFFILIATIONS:
+                        // break out the affiliations into an array using the explode function
+                        $shib_affiliations = explode(';', $hold);
+                        break;
+                    case $this::SHIB_GROUPS:
+                        // break out the groups into an array using the explode function
+                        $shib_groups = explode(';', $hold);
+                        break;
+                }
+            }
+        }
+        // neither are needed past this point
+        unset($hold);
+        unset($shibbolethKeys);
 
+        // Check that the user is affiliated with Pitt through some form of employment.
         if (in_array('employee', $shib_affiliations, TRUE) || in_array('faculty', $shib_affiliations, TRUE) || in_array('staff', $shib_affiliations, TRUE)) {
+            // Allow ORCID to know that.
             $orcid_affiliations = ['employment'];
         } else {
+            // No other shibboleth affiliations matter.
             $orcid_affiliations = [];
         }
+
+        // Check if the user is in the FERPA group at Pitt
         if (in_array('FERPA', $shib_groups, TRUE)) {
+            // Hold that so we don't expose student protected information to ORCID.
             $orcid_affiliations[] = 'FERPA';
         }
-    
-        $ORCID_LOGIN = Configure::read($this->OAUTH_PATH."ORCID_LOGIN");
 
-        // This default success message will be used multiple places
+        // The address to the user's ORCID account, used in two templates
+        $ORCID_LOGIN = $this->read_oauth_resource("ORCID_LOGIN");
+
         // Check for ORCID sending us an error message
-        if (isset($_GET['error'])) {
-            switch ($_GET['error']) {
-                case 'access_denied':
-                    // user explicitly denied us access (maybe)
-                    // ORCID's workflow is a little off - a user can click deny without actually logging in
-                    // Clear the existing token if we've lost permission
-                    $user = $this->OrcidUsers->find("all")->where(["USERNAME" => strtoupper($remote_user)])->first();
-                    if (isset($user)) {
-                        // Yes, the user exists.  Do we already have a valid ORCID and token?
-                        if (isset($user->ORCID) && isset($user->TOKEN)) {
-                            if (!$this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
-                                //$this->execute_query_or_die($conn, 'UPDATE ULS.ORCID_USERS SET MODIFIED = SYSDATE, TOKEN = :token WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user), 'token' => ''));
-                                $user->set("TOKEN", "");
-                                $user->set("MODIFIED", FrozenTime::now());
-                            }
-                        }
-                    }
-                    // Ask if the user meant to do that
-                    $this->viewBuilder()->setTemplatePath("connect")->setTemplate('untrusted')->setLayout('public');
-                    return;
-                default:
-                    // ORCID could send a different error message, but that isn't handled (yet)
-                    $this->die_with_error_page('500 Unrecognized ORCID error');
-                    return;
-            }
-            // The switch should have exit()'d for us
-        } elseif (!isset($_GET['code'])) {
-            // If we don't have a CODE from ORCID,
-            // We are in the workflow before the redirect to ORCID
-            // Check the status of the current user
-            // Possible outcomes of this conditional are:
-            //   An HTTP error message
-            //   A redirect to the success message
-            //   A pass through to the sendoff to ORCID
-            // Does this user exist?
-            // $row = $this->execute_query_or_die($conn, 'SELECT ORCID, TOKEN, USERNAME FROM ULS.ORCID_USERS WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user)));
-            $user = $this->OrcidUsers->find("all")
-            ->where(["USERNAME" => strtoupper($remote_user)])
-            ->first();
-            if (isset($user) && isset($user->USERNAME)) {
-                // Yes, the user exists.  Do we already have a valid ORCID and token?
-                if (isset($user->ORCID) && isset($user->TOKEN)) {
-                    if ($this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
-                        // Yes, we already have a valid ORCID and token.  Send a success message and exit
-                        $this->viewBuilder()->setTemplatePath("connect")->setTemplate('success')->setLayout('public')->setVar("user", $user)->setVar("ORCID_LOGIN", $ORCID_LOGIN);
-                        return;
-                    }
-                }
-            } else {
-                // This user doesn't exist yet.  Add them.
-                // $this->execute_query_or_die($conn, 'INSERT INTO ULS.ORCID_USERS (USERNAME, CREATED, MODIFIED) VALUES (:shibUser, SYSDATE, SYSDATE)', array('shibUser' => strtoupper($remote_user)));
-                $user = $this->OrcidUsers->newEmptyEntity();
-                $user->USERNAME = strtoupper($remote_user);
-                $user->CREATED = FrozenTime::now();
-                $user->MODIFIED = FrozenTime::now();
-                try {
-                    $result = $this->OrcidUsers->save($user);
-                } catch (Exception $e) {
-                    $result = false;
-                    Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
-                }
-                if ($result === false) {
-                    $this->die_with_error_page("500 ORCID@Pitt Database Error");
-                    return;
-                }
-            }
-
-            // If we haven't exited to this point, note that the user has visited and we are going to redirect them to ORCID
-
-            $OrcidStatuses = $this->fetchTable('OrcidStatuses');
-
-            $orcidStatusQuery = $OrcidStatuses->find('all')
-            ->select('ID')
-            ->where(function (QueryExpression $exp, Query $q) {
-                return $exp->equalFields('OrcidStatuses.ORCID_STATUS_TYPE_ID', 'a.ID');
-            })->andWhere(function (QueryExpression $exp, Query $q) {
-                return $exp->equalFields('OrcidStatuses.ORCID_USER_ID', 'OrcidUsers.ID');
-            });
-
-            $user = $this->OrcidUsers->find('all')
-            ->select(['ORCID_USER_ID' => 'OrcidUsers.ID', 'ORCID_STATUS_TYPE_ID' => 'a.ID'])
-            ->join([
-                'a' => [
-                    'table' => 'ULS.ORCID_STATUS_TYPES',
-                    'conditions' => [
-                        'OrcidUsers.USERNAME' => strtoupper($remote_user),
-                        'a.SEQ' => 2,
-                    ],
-                ],
-            ])
-            ->where(function (QueryExpression $exp, Query $q) use ($orcidStatusQuery) {
-                return $exp->notExists($orcidStatusQuery);
-            });
-
-            $newUser = $user->first();
-            if (isset($newUser)) {
-                $newStatus = $OrcidStatuses->newEmptyEntity();
-                $newStatus->ORCID_USER_ID = $newUser->ORCID_USER_ID;
-                $newStatus->ORCID_STATUS_TYPE_ID = $newUser->ORCID_STATUS_TYPE_ID;
-                $newStatus->STATUS_TIMESTAMP = FrozenTime::now();
-                try {
-                    $result = $OrcidStatuses->save($newStatus);
-                } catch (Exception $e) {
-                    $result = false;
-                    Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
-                }
-                if ($result === false) {
-                    $this->die_with_error_page("500 ORCID@Pitt Database Error");
-                    return;
-                }
-            }
-
-            // For the ORCID sandbox, use mailinator URLS
-            if (Configure::read('debug')) {
-                $shib_mail = str_replace('@', '.', $shib_mail).'@mailinator.com';
-            }
-
-            // redirect to ORCID
-            $state = bin2hex(openssl_random_pseudo_bytes(16));
-            setcookie('oauth_state', $state, [
-                'expires' => (time() + 3600),
-                'httponly' => true
-            ]);
-            $url = Configure::read($this->OAUTH_PATH."OAUTH_AUTHORIZATION_URL") . '?' . http_build_query([
-                'response_type' => 'code',
-                'client_id' => Configure::read($this->OAUTH_PATH."OAUTH_CLIENT_ID"),
-                'redirect_uri' => Configure::read($this->OAUTH_PATH."OAUTH_REDIRECT_URI"),
-                'scope' => Configure::read("Resources.OAUTH_SCOPE"),
-                'state' => $state,
-                'given_names' => $shib_gn,
-                'family_names' => $shib_ln,
-                'email' => $shib_mail,
-                // ORCID bug: https://trello.com/c/Y0dqjqId/362-authorization-code-not-generated-when-signed-in-user-visits-link-with-orcid-parameter
-                // ULS ticket: https://ulstracker.atlassian.net/browse/SYSDEV-1615
-                'orcid' => isset($row['ORCID']) ? $row['ORCID'] : '',
-            ]);
-            $this->redirect($url);
+        if ($this->check_for_errors_from_redirect($remote_user, $orcid_affiliations)) {
             return;
+        }
+
+        // Check that we haven't redirected yet
+        if ($this->check_if_not_redirected()) {
+            // Calls the helper function to check if we should do the redirect or not
+            if ($this->check_to_redirect_to_ORCID($remote_user, $ORCID_LOGIN, $orcid_affiliations)) {
+                $this->redirect_to_ORCID($shib_gn, $shib_ln, $shib_mail);
+                return;
+            } else {
+                return;
+            }
         }
         // We handled ORCID errors and initial touches before the ORCID handoff above.
         // Since we are here, this must mean we are returning from ORCID and have a CODE
@@ -543,12 +485,12 @@ class OrcidUsersController extends AppController
         // 
         // fetch the access token
         $client = new Client();
-        $result = $client->post(Configure::read($this->OAUTH_PATH.'OAUTH_TOKEN_URL'), [
+        $result = $client->post($this->read_oauth_resource('OAUTH_TOKEN_URL'), [
             'code' => $_GET['code'],
             'grant_type' => 'authorization_code',
-            'client_id' => Configure::read($this->OAUTH_PATH.'OAUTH_CLIENT_ID'),
-            'client_secret' => Configure::read($this->OAUTH_PATH.'OAUTH_CLIENT_SECRET'),
-            'redirect_uri' => Configure::read($this->OAUTH_PATH.'OAUTH_REDIRECT_URI'),
+            'client_id' => $this->read_oauth_resource('OAUTH_CLIENT_ID'),
+            'client_secret' => $this->read_oauth_resource('OAUTH_CLIENT_SECRET'),
+            'redirect_uri' => $this->read_oauth_resource('OAUTH_REDIRECT_URI'),
             'scope' => '',
         ], 
         [
@@ -585,7 +527,6 @@ class OrcidUsersController extends AppController
                 $this->die_with_error_page("500 ORCID@Pitt Database Error");
                 return;
             }
-            //execute_query_or_die($conn, 'UPDATE ULS.ORCID_USERS SET MODIFIED = SYSDATE, ORCID = :orcid, TOKEN = :token WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user), 'token' => $response['access_token'], 'orcid' => $response['orcid']));
         } else {
             $this->die_with_error_page('500 ORCID API connection error');
             return;
@@ -603,7 +544,7 @@ class OrcidUsersController extends AppController
      */
     function read_profile($orcid, $token) {
         $client = new Client();
-        $result = $client->get(Configure::read($this->OAUTH_PATH.'OAUTH_API_URL').$orcid.'/record', null, [
+        $result = $client->get($this->read_oauth_resource('OAUTH_API_URL').$orcid.'/record', null, [
             'headers' =>[
                 'Content-Type' => 'application/vdn.orcid+xml',
                 'Authorization' => 'Bearer ' . $token,
@@ -633,8 +574,8 @@ class OrcidUsersController extends AppController
         $client = new Client();
         $payloadChildren = $payload->children("common", true);
         $payloadChildren->{"external-id-value"} = $id;
-        $payloadChildren->{"external-id-url"} = Configure::read($this->OAUTH_PATH."EXTERNAL_WEBHOOK").'?id='.$id;
-        $result = $client->post(Configure::read($this->OAUTH_PATH.'OAUTH_API_URL').$orcid.'/external-identifiers', $payload->asXML(), [
+        $payloadChildren->{"external-id-url"} = $this->read_oauth_resource("EXTERNAL_WEBHOOK").'?id='.$id;
+        $result = $client->post($this->read_oauth_resource('OAUTH_API_URL').$orcid.'/external-identifiers', $payload->asXML(), [
         'type' => 'xml',
         'headers' => [
             'Content-Type' => 'application/vdn.orcid+xml',
@@ -670,7 +611,7 @@ class OrcidUsersController extends AppController
             $payload = Xml::build(Configure::read('App.wwwRoot').'xml/education.xml', ['readFile' => true]);
         }
         $client = new Client();
-        $result = $client->post(Configure::read($this->OAUTH_PATH.'OAUTH_API_URL').$orcid.'/'.$type, $payload->asXML(), [
+        $result = $client->post($this->read_oauth_resource('OAUTH_API_URL').$orcid.'/'.$type, $payload->asXML(), [
         'type' => 'xml',
         'headers' => [
             'Content-Type' => 'application/vdn.orcid+xml',
@@ -699,7 +640,6 @@ class OrcidUsersController extends AppController
             $xml->registerXPathNamespace('c', "http://www.orcid.org/ns/common");
             // Check if disambiguation source exists for education or employment by matching with our disambiguation-source and disambiguation-organization-identifier
             $elements = $xml->xpath('//e:'.$type.'-summary[e:organization/c:disambiguated-organization[c:disambiguation-source[text()="'.Configure::read("Resources.PITT_AFFILIATION_KEY").'"] and c:disambiguated-organization-identifier[text()="'.Configure::read("Resources.PITT_AFFILIATION_ID").'"]]]'); 
-        // NOT SURE HOW THIS WILL WORK, we'll see in live testing.
         } catch (Exception $e) {
             error_log($e->getMessage());
             return false;
@@ -762,11 +702,257 @@ class OrcidUsersController extends AppController
     }
     
     /**
-     * Generate an error page based on a HTTP error code and message
-     * @param string $error
+     * Helper function to generate an error page based on a HTTP error code and message
+     * @param string $error The error to be propagated down.
      */
     function die_with_error_page($error) {
         $this->viewBuilder()->setTemplatePath("Error")->setTemplate('orciderror')->setLayout('public')->setVar('error', $error);
+    }
+
+    /**
+     * helper function to easily return the data from the config file for OAUTH resources.
+     * 
+     * @param string $resourceName The specific resource name that we want to get
+     * @return string the information that was pulled from the config file for that OAUTH resource.
+     */
+    function read_oauth_resource($resourceName) {
+        return Configure::readOrFail($this->OAUTH_PATH.$resourceName);
+    }
+
+    /**
+     * Logic to check for errors when being redirected back from ORCID when connecting an account
+     * 
+     * @param string $remote_user The username to check for an account with.
+     * @param string[] $orcid_affiliations The affiliations that orcid cares about for this user.
+     * @return bool true if an error was found, false if no errors were found
+     */
+    function check_for_errors_from_redirect(
+        string $remote_user,
+        array $orcid_affiliations = []
+        ): bool {
+        if (isset($_GET['error'])) {
+            switch ($_GET['error']) {
+                case 'access_denied':
+                    // user explicitly denied us access (maybe)
+                    // ORCID's workflow is a little off - a user can click deny without actually logging in
+                    // Clear the existing token if we've lost permission
+                    $user = $this->OrcidUsers->find("all")->where(["USERNAME" => strtoupper($remote_user)])->first();
+                    if (isset($user)) {
+                        // Yes, the user exists.  Do we have both the ORCID ID and the ORCID Token
+                        if (isset($user->ORCID) && isset($user->TOKEN)) {
+                            // Yes, we have both but are they valid
+                            if (!$this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
+                                // Yes they are valid. We need to remove the Token from the user
+                                //$this->execute_query_or_die($conn, 'UPDATE ULS.ORCID_USERS SET MODIFIED = SYSDATE, TOKEN = :token WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user), 'token' => ''));
+                                $user->Token = '';
+                                $user->MODIFIED = FrozenTime::now();
+                                $this->OrcidUsers->save($user);
+                            }
+                        }
+                    }
+                    // Ask if the user meant to do that
+                    $this->viewBuilder()->setTemplatePath("connect")->setTemplate('untrusted')->setLayout('public');
+                    return true;
+                default:
+                    // ORCID could send a different error message, but that isn't handled (yet)
+                    $this->die_with_error_page('500 Unrecognized ORCID error');
+                    return true;
+            }
+        }
+        // We have no errors, so we will continue on in the connect function
+        return false;
+    }
+
+    /**
+     * helper function to easily check if we have not redirected yet.
+     * 
+     * @return boolean true if we haven't redirected, else false if we have.
+     */
+    function check_if_not_redirected(): bool {
+        // After the redirect, we will have a 'code' within the GET global variable. 
+        // So for it to not have redirected yet, then we need to check that it is missing.
+        return !isset($_GET['code']);
+    }
+
+    /**
+     * Helper function to check if we should redirect to ORCID or not.
+     * Even if we haven't redirected, there could be an error with the user so we should die.
+     * The user already successfully linked their ORCID account so no need to redirect to ORCID.
+     * IF neither of the above happen, then we should redirect to ORCID.
+     * 
+     * @param string $remote_user The username we have gotten from Shibboleth
+     * @param string $ORCID_LOGIN The address to the user's ORCID account 
+     * @param string[] $orcid_affiliations The affiliations that ORCID cares about for the user
+     * 
+     * @return bool 
+     */
+    function check_to_redirect_to_ORCID(
+        string $remote_user, 
+        string $ORCID_LOGIN,
+        array $orcid_affiliations
+        ): bool {
+        // If we don't have a CODE from ORCID,
+        // We are in the workflow before the redirect to ORCID
+        // Check the status of the current user
+        // Possible outcomes of this conditional are:
+        //   An HTTP error message
+        //   A redirect to the success message
+        //   A pass through to the sendoff to ORCID
+
+        // Does this user exist?
+        $user = $this->OrcidUsers->find("all")
+        ->where(["USERNAME" => strtoupper($remote_user)])
+        ->first();
+        if (isset($user) && isset($user->USERNAME)) {
+            // Yes, the user exists.  Do we already have both an ORCID and token?
+            if (isset($user->ORCID) && isset($user->TOKEN)) {
+                // Yes we have both, are they valid?
+                if ($this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
+                    // Yes, we already have a valid ORCID and token.  We want to display the success message to the end user.
+                    $this->viewBuilder()->setTemplatePath("connect")->setTemplate('success')->setLayout('public')->setVar("user", $user)->setVar("ORCID_LOGIN", $ORCID_LOGIN);
+                    // We do not want to redirect to ORCID, so return false
+                    return false;
+                }
+            }
+        } else {
+            // This user doesn't exist yet.  Add the user to the database.
+
+            // Setup a new orcid user
+            $user = $this->OrcidUsers->newEmptyEntity();
+            // Set the username to be the one supplied
+            $user->USERNAME = strtoupper($remote_user);
+            // Set the created and modified dates to be now.
+            // Note: This is not needed.
+            $user->CREATED = FrozenTime::now();
+            $user->MODIFIED = FrozenTime::now();
+
+            // Check to see if we successfully saved the user
+            try {
+                $result = $this->OrcidUsers->save($user);
+                // If we don't need we log that to the log files
+            } catch (Exception $e) {
+                // This is a flag so we know to die if it wasn't saved.
+                $result = false;
+                Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
+            }
+            if ($result === false) {
+                // This setups the error page
+                $this->die_with_error_page("500 ORCID@Pitt Database Error");
+                // We return false because we should error out completely.
+                return false;
+            }
+        }
+
+        // If we haven't exited to this point, note that the user has visited and we are going to redirect them to ORCID
+        
+        // Get the ORCID Statuses table
+        $OrcidStatuses = $this->fetchTable('OrcidStatuses');
+
+        /**
+         *  This query is getting all IDs (primary key) out of ORCID Statuses
+         *  where the ORCID_STATUS_TYPE_ID matches "a.IDs"
+         * "a.IDs" is the ORCID Status Type ID from an inner join between
+         * ORCID Users and ORCID Status Types. It is joined on where the 
+         * ORCID Users username being equal to the remote_user (which is a username from Shibboleth)
+         * and where the ORCID Status Types' sequence is equal to 2.
+         * Sequence 2 is when the user has been emailed, but not gone through the ORCID process 
+         */
+        $orcidStatusQuery = $OrcidStatuses->find('all')
+        ->select('ID')
+        ->where(function (QueryExpression $exp, Query $q) {
+            return $exp->equalFields('OrcidStatuses.ORCID_STATUS_TYPE_ID', 'a.ID');
+        })->andWhere(function (QueryExpression $exp, Query $q) {
+            return $exp->equalFields('OrcidStatuses.ORCID_USER_ID', 'OrcidUsers.ID');
+        });
+
+        /** We are finding all ORCID users inner joined with the ORCID Status Types 
+         *  The join is on where the ORCID users username is equal to the remote_user
+         *  and where the ORCID Status Types Sequence is 2. (Look above for clarity on both.)
+         *  where the user does not already have an ORCID Status for those conditions from above.
+        */
+        $user = $this->OrcidUsers->find('all')
+        ->select(['ORCID_USER_ID' => 'OrcidUsers.ID', 'ORCID_STATUS_TYPE_ID' => 'a.ID'])
+        ->join([
+            'a' => [
+                'table' => 'ULS.ORCID_STATUS_TYPES',
+                'conditions' => [
+                    'OrcidUsers.USERNAME' => strtoupper($remote_user),
+                    'a.SEQ' => 2,
+                ],
+            ],
+        ])
+        ->where(function (QueryExpression $exp, Query $q) use ($orcidStatusQuery) {
+            return $exp->notExists($orcidStatusQuery);
+        });
+
+        // We want to get that user out of the query.
+        $newUser = $user->first();
+
+        // Check to see if that user exists, skips if that user already has this status
+        if (isset($newUser)) {
+
+            // Since it does, then we need to add a new status for Sequence 2 for that user.
+
+            // Create an empty ORCID Status
+            $newStatus = $OrcidStatuses->newEmptyEntity();
+            // Set the ORCID status's user id to be the ID of the user we got back.
+            $newStatus->ORCID_USER_ID = $newUser->ORCID_USER_ID;
+            // Set the ORCID status's status type id to be the ID of the status type we got back
+            $newStatus->ORCID_STATUS_TYPE_ID = $newUser->ORCID_STATUS_TYPE_ID;
+            // Set the status timestamp to now
+            $newStatus->STATUS_TIMESTAMP = FrozenTime::now();
+
+            // Check to see if we successfully saved the status.
+            try {
+                $result = $OrcidStatuses->save($newStatus);
+                // If we don't need we log that to the log files
+            } catch (Exception $e) {
+                // This is a flag so we know to die if it wasn't saved.
+                $result = false;
+                Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
+            }
+            if ($result === false) {
+                // This setups the error page
+                $this->die_with_error_page("500 ORCID@Pitt Database Error");
+                // We return false because we should error out completely.
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * helper function to redirect to ORCID
+     * 
+     * @param string $shib_gn The user's given name that we are passing to ORCID
+     * @param string $shib_ln The user's surname that we are passing to ORCID
+     * @param string $shib_mail The user's email that we are passing to ORCID
+     */
+    function redirect_to_ORCID(
+        string $shib_gn, 
+        string $shib_ln, 
+        string $shib_mail
+        ): void {
+        $state = bin2hex(openssl_random_pseudo_bytes(16));
+        setcookie('oauth_state', $state, [
+            'expires' => (time() + 3600),
+            'httponly' => true
+        ]);
+        $url = $this->read_oauth_resource("OAUTH_AUTHORIZATION_URL") . '?' . http_build_query([
+            'response_type' => 'code',
+            'client_id' => $this->read_oauth_resource("OAUTH_CLIENT_ID"),
+            'redirect_uri' => $this->read_oauth_resource("OAUTH_REDIRECT_URI"),
+            'scope' => Configure::read("Resources.OAUTH_SCOPE"),
+            'state' => $state,
+            'given_names' => $shib_gn,
+            'family_names' => $shib_ln,
+            'email' => $shib_mail,
+            // ORCID bug: https://trello.com/c/Y0dqjqId/362-authorization-code-not-generated-when-signed-in-user-visits-link-with-orcid-parameter
+            // ULS ticket: https://ulstracker.atlassian.net/browse/SYSDEV-1615
+            'orcid' => isset($row['ORCID']) ? $row['ORCID'] : '',
+        ]);
+        $this->redirect($url);
     }
 
 }
