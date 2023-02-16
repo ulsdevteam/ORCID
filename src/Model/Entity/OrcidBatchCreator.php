@@ -62,7 +62,7 @@ class OrcidBatchCreator extends Entity
      */
     public function flagStatus($flagName = 'FLAGS') {
         if ($this->has($flagName)) {
-            $status = ($this->FLAGS & $this::FLAG_DISABLED);
+            $status = ($this->get($flagName) & $this::FLAG_DISABLED);
             return $status;
         } else {
             throw new Exception("Invalid flagName");

@@ -51,7 +51,6 @@ class CreatorIdentifier extends AbstractIdentifier
     protected $_defaultConfig = [
         'fields' => [
             self::CREDENTIAL_USERNAME => 'username',
-            self::CREDENTIAL_PASSWORD => null,
 			self::CREDENTIAL_FLAGS => 'flags'
         ],
         'resolver' => 'Authentication.Orm',
