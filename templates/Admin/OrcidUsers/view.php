@@ -68,7 +68,7 @@ $this->assign('title', 'ORCID User');
                 </tr>
                 <tr>
                     <th><?= __('Department') ?></th>
-                    <td><?= h($orcidUser->rcdepartment) ?></td>
+                    <td><?= h((isset($orcidUser->rc) ? "RC " . $orcidUser->rc. " / " : "") . $orcidUser->department) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Current Checkpoint') ?></th>

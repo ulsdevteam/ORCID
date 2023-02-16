@@ -76,27 +76,10 @@ class OrcidUser extends Entity
                     $this->set("department", "");
                 }
 
-                if (!isset($result['pittemployeerc'])) {
-                    $this->set("rc", "");
-                } elseif (($result['pittemployeerc']['count'] > 0)) {
-
+                if (isset($result['pittemployeerc'])) {
                     $this->set("rc", $result['pittemployeerc'][0]);
-
-                    if (isset($result['department'])) {
-                        $this->set("rcdepartment", "RC " . $result['pittemployeerc'][0] . " / " . $result['department'][0]);
-                    } else {
-                        $this->set("rcdepartment", "RC " . $result['pittemployeerc'][0]);
-                    }
-
                 } else {
-
-                    if (isset($result['department'])) {
-                        $this->set("rcdepartment", $result['department'][0]);
-                    } else {
-                        $this->set("rcdepartment", "");
-                    }
-
-                    $this->set("rc", "");                
+                    $this->set("rc", "");
                 }
             } else {
 
