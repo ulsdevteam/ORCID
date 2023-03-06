@@ -27,28 +27,34 @@ class EmailCommand extends Command
 
 	protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->addArgument('function', [
-            'help' => 'What is your name'
+        $parser->addArgument('sendAll', [
+            'help' => 'Sends all of the emails currently queued up.',
         ]);
+		$parser->addArgument('queueAll', [
+			'help' => 'Queues up the emails to be sent.',
+		]);
         return $parser;
     }
 
     public function execute(Arguments $args, ConsoleIo $io): int
     {
-		$function = $args->getArgument('function');
-		if (isset($function)) {
-			switch ($function) {
-				case "sendAll":
-					$this->sendAll($io);
-					break;
-				case "queueAll":
-					$this->queueAll($io);
-					break;
-				default:
-					$io->abort("Incorrect command");
+		if (isset($args)){
+			$functions = $args->getArguments();
+			if (isset($functions[0]) && (count($functions) == 1)) {
+				$function = strtoupper($functions[0]);
+				switch ($function) {
+					case "SENDALL":
+						$this->sendAll($io);
+						break;
+					case "QUEUEALL":
+						$this->queueAll($io);
+						break;
+					default:
+						$io->abort("Incorrect command");
+				}
+				
+				return static::CODE_SUCCESS;
 			}
-			
-			return static::CODE_SUCCESS;
 		}
 		$io->out(__d('cake_console', 'Interactive ORCID Email Shell'));
 		$io->hr();
