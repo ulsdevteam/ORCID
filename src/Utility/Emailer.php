@@ -199,7 +199,7 @@ class Emailer
 			if (isset($trigger->REQUIRE_BATCH_ID) || $trigger->REQUIRE_BATCH_ID === 0) {
 				$emailQuery = $OrcidEmailTable->find('all')->where(['OrcidEmails.ORCID_USER_ID' => $userStatus->ORCID_USER_ID]);
 				if ($trigger->REQUIRE_BATCH_ID !== -1) {
-					$$emailQuery->where(['OrcidEmails.ORCID_BATCH_ID' => $trigger->REQUIRE_BATCH_ID]);
+					$emailQuery->where(['OrcidEmails.ORCID_BATCH_ID' => $trigger->REQUIRE_BATCH_ID]);
 				}
 				if (!$emailQuery->first()) {
 					// if the prior email was not found, skip
