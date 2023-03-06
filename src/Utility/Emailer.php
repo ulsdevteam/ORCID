@@ -126,7 +126,7 @@ class Emailer
 			->setTo($toRecipient, $displayName)
 			->setSubject($orcidBatch->SUBJECT);
 		$Mailer
-			->setEmailFormat('html')
+			->setEmailFormat('both')
 			->viewBuilder()
 			->setTemplate('rendered')
 			->setLayout('default')
