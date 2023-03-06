@@ -58,20 +58,6 @@ class OrcidUsersController extends AppController
     private const SHIB_AFFILIATIONS = 'REDIRECT_REDIRECT_PittAffiliate';
     private const SHIB_GROUPS = 'REDIRECT_REDIRECT_PittCustomGroupMembership';
 
-    private $OAUTH_PATH = '';
-
-    /**
-     * Initialize Method
-     * 
-     * @return void Sets OAUTH_PATH at beginning of creation
-     */
-
-    public function initialize(): void
-    {
-        $this->OAUTH_PATH = "Resources.".(Configure::read("debug") ? "default-orcid" : "production-orcid").".";
-        parent::initialize();
-    }
-
     /**
      * Index method
      *
@@ -461,9 +447,9 @@ class OrcidUsersController extends AppController
             return;
         }
 
-        // Check that we haven't redirected yet
-        if ($this->check_if_not_redirected()) {
-            // Calls the helper function to check if we should do the redirect or not
+        // Check that the user is returned from ORCID or not
+        if (!$this->user_is_returned_from_orcid()) {
+            // Check if the user should redirect to ORCID or display a different webpage
             if ($this->check_to_redirect_to_ORCID($remote_user, $ORCID_LOGIN, $orcid_affiliations)) {
                 $this->redirect_to_ORCID($shib_gn, $shib_ln, $shib_mail);
                 return;
@@ -514,7 +500,6 @@ class OrcidUsersController extends AppController
             $user = $this->OrcidUsers->find("all")
             ->where(["USERNAME" => strtoupper($remote_user)])
             ->first();
-            $user->MODIFIED = FrozenTime::now();
             $user->ORCID = $response['orcid'];
             $user->TOKEN = $response['access_token'];
             try {
@@ -716,11 +701,14 @@ class OrcidUsersController extends AppController
      * @return string the information that was pulled from the config file for that OAUTH resource.
      */
     function read_oauth_resource($resourceName) {
-        return Configure::readOrFail($this->OAUTH_PATH.$resourceName);
+        $OAUTH_PATH = "Resources.".(Configure::read("debug") ? "default-orcid" : "production-orcid").".";
+        return Configure::readOrFail($OAUTH_PATH.$resourceName);
     }
 
     /**
      * Logic to check for errors when being redirected back from ORCID when connecting an account
+     * If an error exists, the function updates the Viewbuilder to display an error
+     * For an access denied error, then the user's record is validated and updates the Token for that user
      * 
      * @param string $remote_user The username to check for an account with.
      * @param string[] $orcid_affiliations The affiliations that orcid cares about for this user.
@@ -743,9 +731,7 @@ class OrcidUsersController extends AppController
                             // Yes, we have both but are they valid
                             if (!$this->validate_record($user->ORCID, $user->TOKEN, $remote_user, $orcid_affiliations)) {
                                 // Yes they are valid. We need to remove the Token from the user
-                                //$this->execute_query_or_die($conn, 'UPDATE ULS.ORCID_USERS SET MODIFIED = SYSDATE, TOKEN = :token WHERE USERNAME = :shibUser', array('shibUser' => strtoupper($remote_user), 'token' => ''));
                                 $user->Token = '';
-                                $user->MODIFIED = FrozenTime::now();
                                 $this->OrcidUsers->save($user);
                             }
                         }
@@ -766,12 +752,12 @@ class OrcidUsersController extends AppController
     /**
      * helper function to easily check if we have not redirected yet.
      * 
-     * @return boolean true if we haven't redirected, else false if we have.
+     * @return boolean true if we have returned from orcid, false if we haven't
      */
-    function check_if_not_redirected(): bool {
+    function user_is_returned_from_orcid(): bool {
         // After the redirect, we will have a 'code' within the GET global variable. 
         // So for it to not have redirected yet, then we need to check that it is missing.
-        return !isset($_GET['code']);
+        return isset($_GET['code']);
     }
 
     /**
@@ -821,10 +807,6 @@ class OrcidUsersController extends AppController
             $user = $this->OrcidUsers->newEmptyEntity();
             // Set the username to be the one supplied
             $user->USERNAME = strtoupper($remote_user);
-            // Set the created and modified dates to be now.
-            // Note: This is not needed.
-            $user->CREATED = FrozenTime::now();
-            $user->MODIFIED = FrozenTime::now();
 
             // Check to see if we successfully saved the user
             try {
