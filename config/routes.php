@@ -67,6 +67,8 @@ return static function (RouteBuilder $routes) {
          */
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
         $builder->connect('/connect', ['prefix' => 'Admin', 'controller' => 'OrcidUsers', 'action' => 'connect']);
+        $builder->connect('/optout', ['prefix' => 'Admin', 'controller' => 'OrcidUsers', 'action' => 'publicOptout', 'home']);
+        $builder->connect('/optout/*', ['prefix' => 'Admin', 'controller' => 'OrcidUsers', 'action' => 'publicOptout', 'home']);
         $builder->connect('/admin', ['controller' => 'PrivatePages', 'action' => 'display', 'admin']);
         $builder->connect('/orcadmin', ['controller' => 'PrivatePages', 'action' => 'display', 'admin']);
 
