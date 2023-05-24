@@ -100,12 +100,17 @@ class EmailCommand extends Command
 		$success = 0;
 		$failed = 0;
 		foreach ($emails as $email) {
-			if (!isset($email->orcid_user) || !isset($email->orcid_user->email)) {
-				$io->out('No email address for '.$email->orcid_user->USERNAME.'.');
-			} elseif ($this->Emailer->sendEmail($email->orcid_user, $email)) {
-				$success++;
+			if (!isset($email->orcid_user)) {
+				$io->out("No user for email with id: ".$email->ID.".");
 			} else {
-				$failed++;
+				$userEmail = $email->orcid_user->email;
+				if (empty($userEmail)) {
+					$io->out("No email address for ".$email->orcid_user->USERNAME.".");
+				} elseif ($this->Emailer->sendEmail($email->orcid_user, $email)) {
+					$success++;
+				} else {
+					$failed++;
+				}
 			}
 		}
 		if ($success) {

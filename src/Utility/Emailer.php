@@ -116,8 +116,7 @@ class Emailer
 	{
 		$Mailer = new Mailer();
 		if (Configure::read('debug')) {
-			$toRecipientHold = str_replace('@', '.', $toRecipient) . '@mailinator.com';
-			$toRecipient = "Trl75.pitt.edu@mailinator.com";
+			$toRecipient = str_replace('@', '.', $toRecipient) . '@mailinator.com';
 		}
 		$Mailer
 			->setFrom($orcidBatch->FROM_ADDR, $orcidBatch->FROM_NAME)
@@ -176,9 +175,6 @@ class Emailer
 		
 		$userStatuses = $CurrentOrcidStatusTable->find('all')->where(['CurrentOrcidStatuses.ORCID_STATUS_TYPE_ID' => $trigger->ORCID_STATUS_TYPE_ID]);
 
-		// This will be our selection of users
-		$users = [];
-
 		if (isset($trigger->orcid_batch_group->ID)) {
 			$groupId = $trigger->orcid_batch_group->ID;
 
@@ -192,11 +188,10 @@ class Emailer
 		
 		$triggerDate = new FrozenTime($trigger->TRIGGER_DELAY . ' days ago');
 		$userStatuses->where(['CurrentOrcidStatuses.STATUS_TIMESTAMP <=' => $triggerDate]);
-		
 		foreach ($userStatuses as $userStatus) {
 			// If a prior email is required, check for it
 			
-			if (isset($trigger->REQUIRE_BATCH_ID) || $trigger->REQUIRE_BATCH_ID === 0) {
+			if (isset($trigger->REQUIRE_BATCH_ID) && (!$trigger->REQUIRE_BATCH_ID === 0)) {
 				$emailQuery = $OrcidEmailTable->find('all')->where(['OrcidEmails.ORCID_USER_ID' => $userStatus->ORCID_USER_ID]);
 				if ($trigger->REQUIRE_BATCH_ID !== -1) {
 					$emailQuery->where(['OrcidEmails.ORCID_BATCH_ID' => $trigger->REQUIRE_BATCH_ID]);
@@ -210,7 +205,7 @@ class Emailer
 			$emailQuery = $OrcidEmailTable->find('all')->where(['OrcidEmails.ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'OrcidEmails.ORCID_BATCH_ID' => $trigger->ORCID_BATCH_ID]);
 			// If a maximum repeat is set, count the number of times sent
 			if ($trigger->MAXIMUM_REPEAT) {
-				if ($emailQuery->count() >= $trigger->maximum_repeat) {
+				if ($emailQuery->count() >= $trigger->MAXIMUM_REPEAT) {
 					// if already at or past the limit, skip
 					continue;
 				}
@@ -225,7 +220,7 @@ class Emailer
 			}
 			if (!$emailQuery->first()) {
 				$newEmail = $OrcidEmailTable->newEntity(['ORCID_USER_ID' => $userStatus->ORCID_USER_ID, 'ORCID_BATCH_ID' => $trigger->ORCID_BATCH_ID, 'QUEUED' => FrozenTime::now()]);
-				if ($OrcidEmailTable->save($newEmail) !== false ) {
+				if (!($OrcidEmailTable->save($newEmail) !== false) ) {
 					$failures++;
 				}
 			}
