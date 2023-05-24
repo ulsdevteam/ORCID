@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang='en-US'>
 <?php use Cake\Core\Configure; ?>
 
 <head>
@@ -27,8 +28,12 @@
         Pittsburgh</a></div>
   </div>
   <div id="wrapper">
+    <?= $this->Flash->render() ?>
     <header>
-      <h1><img src="../../webroot/img/header.jpg" alt="ORCID @ Pitt"></h1>
+      <h1>
+        <div class="sr-only">ORCID @ Pitt</div>
+        <img src="../../webroot/img/header.jpg" alt="ORCID @ Pitt">
+      </h1>
     </header>
     <?= $this->fetch('content') ?>
     <footer>

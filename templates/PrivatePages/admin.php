@@ -2,6 +2,7 @@
 
 <aside class="column">
     <nav>
+        <h2><?php echo __('Navigation'); ?></h2>
         <div class="navigation actions">
             <h3><?php echo __('ORCID Users'); ?></h3>
             <?php echo $this->Html->link(__('List ORCID Users'), ['controller' => 'orcid_users', 'action' => 'index', 'prefix' => 'Admin']); ?>

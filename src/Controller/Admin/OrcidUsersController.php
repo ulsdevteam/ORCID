@@ -314,7 +314,7 @@ class OrcidUsersController extends AppController
         if (array_key_exists($key, $_SERVER)) {
             $shib_user = $_SERVER[$key];
             $username = preg_replace('/@pitt.edu$/i', '', $shib_user);
-            $orcidUser = $this->OrcidUsers->find()->select('ID')->where(['USERNAME' => $username])->first();
+            $orcidUser = $this->OrcidUsers->find()->select(['ID', 'USERNAME'])->where(['USERNAME' => $username])->first();
             if (!isset($orcidUser)) {
                 // Create new orcid User
                 $orcidUser = $this->OrcidUsers->newEmptyEntity();
@@ -331,37 +331,40 @@ class OrcidUsersController extends AppController
                     Log::write('error', 'ORCID@PITT: ' . $e->getMessage());
                 }
                 if ($result === false) {
-                    // This setups the error page
+                    // This setups the error page 
+                    $this->Flash->error(__('Could not successfully opt out.'));
                     $this->die_with_error_page("500 ORCID@Pitt Database Error");
                     // We return false because we should error out completely.
-                    return false;
+                    return;
                 }
             }
             $user = $orcidUser->USERNAME;
             $id = $orcidUser->ID;
-            if ($this->request->is(['post', 'put'])) {
-                $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
-                $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
-                $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => \App\Model\Table\OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->ID;
-                $orcidStatuses = $OrcidStatusTable->find()->where(['ORCID_USER_ID' => $id, 'ORCID_STATUS_TYPE_ID' =>  $orcidStatusTypeID])->first();
+            $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
+            $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
+            $orcidStatusTypeID = $OrcidStatusTypesTable->find()->where(['SEQ' => \App\Model\Table\OrcidStatusTypesTable::OPTOUT_SEQUENCE])->first()->ID;
+            $orcidStatuses = $OrcidStatusTable->find()->where(['ORCID_USER_ID' => $id, 'ORCID_STATUS_TYPE_ID' =>  $orcidStatusTypeID])->first();
 
-                if (isset($orcidStatuses)) {
-                    $status = __('You have already opted out for future messages from ORCID@Pitt.');
-                    return;
-                }
-                $time = FrozenTime::now();
-                $data = [
-                    'ORCID_USER_ID' => $id,
-                    'ORCID_STATUS_TYPE_ID' => $orcidStatusTypeID,
-                    'STATUS_TIMESTAMP' => $time
-                ];
-                $OptOutStatus = $OrcidStatusTable->newEntity($data);
-                if ($OrcidStatusTable->save($OptOutStatus) !== false ) {
-                    $status = __('The ORCID Opt-out has been saved.');
-                } else {
-                    $this->die_with_error_page(__('500 ORCID@Pitt Database Error'));
-                    return;
-                }
+            if (isset($orcidStatuses)) {
+                $this->Flash->success(__('Already Opted Out.'));
+                $status = __('You have already opted out for future messages from ORCID@Pitt.');
+                $this->set(compact('user', 'status'));
+                return;
+            }
+            $time = FrozenTime::now();
+            $data = [
+                'ORCID_USER_ID' => $id,
+                'ORCID_STATUS_TYPE_ID' => $orcidStatusTypeID,
+                'STATUS_TIMESTAMP' => $time
+            ];
+            $OptOutStatus = $OrcidStatusTable->newEntity($data);
+            if ($OrcidStatusTable->save($OptOutStatus) !== false ) {
+                $this->Flash->success(__('Successfully Opted Out.'));
+                $status = __('Your ORCID Opt-out status has been saved.');
+            } else {
+                $this->Flash->error(__('Could not successfully opt out.'));
+                $this->die_with_error_page(__('500 ORCID@Pitt Database Error'));
+                return;
             }
         }
         $this->set(compact('user', 'status'));

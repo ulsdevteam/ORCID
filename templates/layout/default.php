@@ -18,7 +18,7 @@
 $cakeDescription = 'ORCID @ Pitt Admin';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang='en-US'>
 
 <head>
     <?= $this->Html->charset() ?>
@@ -42,14 +42,14 @@ $cakeDescription = 'ORCID @ Pitt Admin';
 </head>
 
 <body>
-    <div id="header">
+    <header id="header">
         <h1>
             <a href="<?= $this->Url->build(['controller' => '', 'action' => 'admin', 'prefix' => false]) ?>">ORCID @ Pitt Admin</a>
         </h1>
-    </div>
+    </header>
     <main class="main">
+        <?= $this->Flash->render() ?>
         <div class="container">
-            <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
         </div>
     </main>

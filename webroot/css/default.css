@@ -8,7 +8,7 @@ body {
 }
 
 #pitt-header.blue {
-	background-color:#111155;
+	background-color:#003594;
 	height:66px;
 	width:100%;
 	min-width:320px;
@@ -16,10 +16,10 @@ body {
 }
 
 #pittlogo {
-	background-image:url(/img/pitt-logo-bluebkg.gif);
+	background-image:url(/img/University_of_Pittsburgh_Logo_RGB_Secondary_Reverse_2-Color.png);
 	background-repeat: no-repeat;
 	background-position:left;
-	background-color:#111155;
+	background-color:#003594;
 	height:66px;
 	width:84%;
 	min-width:320px;
@@ -122,9 +122,41 @@ section h2 {
 	color:#000;
 }
 
-.errormessage {
-	color: #bb9e3e;
-	font-weight: bold;
+/* Flash messages */
+.message {
+    padding: 1rem;
+
+    background: #eff8ff;
+    color: #2779bd;
+
+    border-color: #6cb2eb;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+	flex-basis: 100%;
+}
+
+.message.hidden {
+    display: none;
+}
+
+.message.success {
+    background: #e3fcec;
+    color: #1f9d55;
+    border-color: #51d88a;
+}
+
+.message.warning {
+    background: #fffabc;
+    color: #8d7b00;
+    border-color: #d3b800;
+}
+
+.message.error {
+    background: #fcebea;
+    color: #cc1f1a;
+    border-color: #ef5753;
 }
 
 footer {
@@ -263,4 +295,14 @@ footer {
 	width: 100%;
 }
 
+.sr-only {
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    left:-10000px;
 }

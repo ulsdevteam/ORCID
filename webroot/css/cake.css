@@ -148,6 +148,7 @@ body {
     border-style: solid;
     border-radius: 4px;
     margin-bottom: 2rem;
+    flex-basis: 100%;
 }
 
 .message.hidden {
@@ -293,7 +294,12 @@ td:last-child {
 
 .actions h3 {
     padding-top: 0;
-    color: #777;
+    color: #000000;
+}
+
+nav h2 {
+    padding-top: 0;
+    color: #000000;
 }
 
 h2 {
@@ -312,6 +318,7 @@ h3 {
 .column {
     background-color: white;
     padding-right: 2%;
+    flex-basis: 20%;
 }
 
 .content .actions {
@@ -353,6 +360,13 @@ td, th, dd, dt{
     color: #cccc9a;
     background-color: #115;
     font-family: "MuseoSlab500Regular","museo-slab","Rockwell",sans-serif;
+}
+
+header#header h1 {
+    text-align: initial;
+	border-bottom: initial;
+	padding-bottom:initial;
+	margin-bottom: 0.5em;
 }
 
 #header a, #footer a {
