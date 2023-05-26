@@ -310,7 +310,6 @@ class OrcidUsersController extends AppController
     {
         $key = $this::SHIB_USERNAME;
         $user = null;
-        $status = __("This user could not be found.");
         if (array_key_exists($key, $_SERVER)) {
             $shib_user = $_SERVER[$key];
             $username = preg_replace('/@pitt.edu$/i', '', $shib_user);
@@ -333,12 +332,11 @@ class OrcidUsersController extends AppController
                 if ($result === false) {
                     // This setups the error page 
                     $this->Flash->error(__('Could not successfully opt out.'));
-                    $this->die_with_error_page("500 ORCID@Pitt Database Error");
+                    $this->die_with_error_page("500 ORCID@Pitt Database Error", "optout");
                     // We return false because we should error out completely.
                     return;
                 }
             }
-            $user = $orcidUser->USERNAME;
             $id = $orcidUser->ID;
             $OrcidStatusTable = $this->fetchTable('OrcidStatuses');
             $OrcidStatusTypesTable = $this->fetchTable('OrcidStatusTypes');
@@ -346,9 +344,7 @@ class OrcidUsersController extends AppController
             $orcidStatuses = $OrcidStatusTable->find()->where(['ORCID_USER_ID' => $id, 'ORCID_STATUS_TYPE_ID' =>  $orcidStatusTypeID])->first();
 
             if (isset($orcidStatuses)) {
-                $this->Flash->success(__('Already Opted Out.'));
-                $status = __('You have already opted out for future messages from ORCID@Pitt.');
-                $this->set(compact('user', 'status'));
+                $this->viewBuilder()->setTemplatePath("optout")->setTemplate('success')->setLayout('public');
                 return;
             }
             $time = FrozenTime::now();
@@ -359,15 +355,15 @@ class OrcidUsersController extends AppController
             ];
             $OptOutStatus = $OrcidStatusTable->newEntity($data);
             if ($OrcidStatusTable->save($OptOutStatus) !== false ) {
-                $this->Flash->success(__('Successfully Opted Out.'));
-                $status = __('Your ORCID Opt-out status has been saved.');
+                $this->viewBuilder()->setTemplatePath("optout")->setTemplate('success')->setLayout('public');
+                return;
             } else {
                 $this->Flash->error(__('Could not successfully opt out.'));
-                $this->die_with_error_page(__('500 ORCID@Pitt Database Error'));
+                $this->die_with_error_page(__('500 ORCID@Pitt Database Error'), "optout");
                 return;
             }
         }
-        $this->set(compact('user', 'status'));
+        $this->viewBuilder()->setTemplatePath("optout")->setTemplate('notfound')->setLayout('public');
         return;
     }
 
@@ -760,9 +756,13 @@ class OrcidUsersController extends AppController
     /**
      * Helper function to generate an error page based on a HTTP error code and message
      * @param string $error The error to be propagated down.
+     * @param string $templatePath Optional. The path of the error template to be used.
+     *                             Defaults to Error.
+     * @param string $template Optional. The name of the template to be used,
+     *                         Defaults to orciderror.
      */
-    function die_with_error_page($error) {
-        $this->viewBuilder()->setTemplatePath("Error")->setTemplate('orciderror')->setLayout('public')->setVar('error', $error);
+    function die_with_error_page($error, $templatePath = "Error", $template = "orciderror") {
+        $this->viewBuilder()->setTemplatePath($templatePath)->setTemplate($template)->setLayout('public')->setVar('error', $error);
     }
 
     /**

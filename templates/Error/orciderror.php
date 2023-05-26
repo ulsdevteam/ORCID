@@ -17,6 +17,6 @@ use PhpParser\Node\Stmt\Echo_;
 		If you need assistance with creating your ORCID iD, please contact the ORCID Communications Group (<a href="mailto:orcidcomm@mail.pitt.edu">orcidcomm@mail.pitt.edu</a>).
 	</p>
 	<p>
-		Thank you for your patience
+		Thank you for your patience.
 	</p>
 </section>
