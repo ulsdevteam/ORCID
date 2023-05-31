@@ -309,7 +309,6 @@ class OrcidUsersController extends AppController
     public function publicOptout()
     {
         $key = $this::SHIB_USERNAME;
-        $user = null;
         if (array_key_exists($key, $_SERVER)) {
             $shib_user = $_SERVER[$key];
             $username = preg_replace('/@pitt.edu$/i', '', $shib_user);
