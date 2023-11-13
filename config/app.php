@@ -292,7 +292,7 @@ return [
             'file' => 'debug',
             'url' => env('LOG_DEBUG_URL', null),
             'scopes' => false,
-            'levels' => ['notice', 'info', 'debug'],
+            'levels' => ( filter_var(env('ORCID_DEBUG', false), FILTER_VALIDATE_BOOLEAN) ? ['notice', 'info', 'debug'] : ['warning'] )
         ],
         'error' => [
             'className' => FileLog::class,
@@ -300,7 +300,7 @@ return [
             'file' => 'error',
             'url' => env('LOG_ERROR_URL', null),
             'scopes' => false,
-            'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            'levels' =>  ( filter_var(env('ORCID_DEBUG', false), FILTER_VALIDATE_BOOLEAN) ? ['warning', 'error', 'critical', 'alert', 'emergency'] : [ 'error', 'critical', 'alert', 'emergency'] )
         ],
         // To enable this dedicated query log, you need set your datasource's log flag to true
         'queries' => [
