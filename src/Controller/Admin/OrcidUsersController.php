@@ -559,6 +559,7 @@ class OrcidUsersController extends AppController
         $response = $result->getJson();
         if (isset($response['orcid'])) {
             if (!$this->validate_record($response['orcid'], $response['access_token'], $remote_user, $orcid_affiliations)) {
+                Log::write('error', 'ORCID@PITT: ' . json_encode($response));
                 $this->die_with_error_page('500 ORCID Validation error');
                 return;
             }
@@ -640,6 +641,7 @@ class OrcidUsersController extends AppController
         if ( $result->getStatusCode() == 201 || $result->getStatusCode() == 200) {
             return $result;
         } else {
+            Log::write('error', 'ORCID@PITT: write_extid ' . $result->getStatusCode() . ' ' . $result->getStringBody());
             return false;
         }
     }
@@ -674,6 +676,7 @@ class OrcidUsersController extends AppController
         if ( $result->getStatusCode() == 201 || $result->getStatusCode() == 200) {
             return $result;
         } else {
+            Log::write('error', 'ORCID@PITT: write_affiliation ' . $result->getStatusCode() . ' ' . $result->getStringBody());
             return false;
         }
     }
