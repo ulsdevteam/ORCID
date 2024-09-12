@@ -52,7 +52,3 @@ yarn-debug.log
 yarn-error.log
 
 # User Specified Files
-src/Controller/AppController.php
-config/sandbox.php
-config/constants.php
-templates/Admin/OrcidUsers/connect.php
